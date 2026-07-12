@@ -21,11 +21,10 @@ jobs:
             build_ios: true
             build_android: true
     runs-on: ${{ matrix.os }}
-    env:
-      # Use a temporary pub cache to make caching more reliable
-      PUB_CACHE: ${{ runner.temp }}/pub-cache
-
     steps:
+      - name: Configure Pub cache
+        run: echo "PUB_CACHE=${RUNNER_TEMP}/pub-cache" >> "$GITHUB_ENV"
+
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -73,4 +72,3 @@ jobs:
         with:
           files: coverage/lcov.info
           fail_ci_if_error: false
-
