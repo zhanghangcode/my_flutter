@@ -62,9 +62,25 @@ jobs:
         if: matrix.build_android == true && matrix.os == 'ubuntu-latest'
         run: flutter build apk --release --no-shrink
 
+      - name: Upload Android APK
+        if: matrix.build_android == true && matrix.os == 'ubuntu-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-release-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
+          if-no-files-found: error
+
       - name: Build iOS (no codesign)
         if: matrix.build_ios == true && matrix.os == 'macos-latest'
         run: flutter build ios --no-codesign
+
+      - name: Upload iOS app (no codesign)
+        if: matrix.build_ios == true && matrix.os == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-runner-app-unsigned
+          path: build/ios/iphoneos/Runner.app
+          if-no-files-found: error
 
       - name: Upload coverage to Codecov (optional)
         if: always()
