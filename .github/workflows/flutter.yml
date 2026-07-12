@@ -1,0 +1,76 @@
+name: Flutter CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    name: Flutter CI Matrix
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            flutter-channel: stable
+            build_ios: false
+            build_android: true
+          - os: macos-latest
+            flutter-channel: stable
+            build_ios: true
+            build_android: true
+    runs-on: ${{ matrix.os }}
+    env:
+      # Use a temporary pub cache to make caching more reliable
+      PUB_CACHE: ${{ runner.temp }}/pub-cache
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java (needed for Android builds)
+        if: matrix.os == 'ubuntu-latest' || matrix.os == 'macos-latest'
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.flutter-channel }}
+          cache: true
+
+      - name: Cache Pub
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.pub-cache
+            ${{ env.PUB_CACHE }}
+          key: ${{ runner.os }}-pub-${{ hashFiles('**/pubspec.yaml') }}
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Flutter analyze
+        run: flutter analyze
+
+      - name: Run Flutter tests
+        run: flutter test --coverage
+
+      - name: Build Android APK
+        if: matrix.build_android == true && matrix.os == 'ubuntu-latest'
+        run: flutter build apk --release --no-shrink
+
+      - name: Build iOS (no codesign)
+        if: matrix.build_ios == true && matrix.os == 'macos-latest'
+        run: flutter build ios --no-codesign
+
+      - name: Upload coverage to Codecov (optional)
+        if: always()
+        uses: codecov/codecov-action@v4
+        with:
+          files: coverage/lcov.info
+          fail_ci_if_error: false
+
