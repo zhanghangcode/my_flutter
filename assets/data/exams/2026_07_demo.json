@@ -1,0 +1,91 @@
+{
+  "id": "2026_07_demo",
+  "titleJa": "2026年7月・体験版",
+  "questions": [
+    {
+      "id": "demo_q1",
+      "examId": "2026_07_demo",
+      "section": 1,
+      "number": 1,
+      "type": "即時応答",
+      "promptJa": "学生はまず何をしますか。",
+      "options": [
+        {"id": "a", "label": 1, "textJa": "学生証を見せます"},
+        {"id": "b", "label": 2, "textJa": "申込書を書きます"},
+        {"id": "c", "label": 3, "textJa": "本を返します"},
+        {"id": "d", "label": 4, "textJa": "図書館を予約します"}
+      ],
+      "correctOptionId": "b",
+      "audioAssetPath": "assets/audio/demo_q1.wav",
+      "sentences": [
+        {"id": "q1_s1", "order": 0, "textJa": "図書館で学生と係員が話しています。", "translationZh": "学生和工作人员正在图书馆交谈。", "startMs": 0, "endMs": 3900},
+        {"id": "q1_s2", "order": 1, "textJa": "学生はまず何をしますか。", "translationZh": "学生首先要做什么？", "startMs": 3900, "endMs": 7100},
+        {"id": "q1_s3", "order": 2, "speaker": "学生", "textJa": "すみません。本を借りたいんですが、初めて利用します。", "translationZh": "不好意思，我想借书，这是第一次使用。", "startMs": 7100, "endMs": 12500},
+        {"id": "q1_s4", "order": 3, "speaker": "係員", "textJa": "では、先にこの申込書を書いてください。そのあと、学生証を見せてください。", "translationZh": "那么，请先填写这张申请表，之后再出示学生证。", "startMs": 12500, "endMs": 19300},
+        {"id": "q1_s5", "order": 4, "speaker": "学生", "textJa": "わかりました。", "translationZh": "明白了。", "startMs": 19300, "endMs": 21200}
+      ],
+      "explanation": {
+        "ja": "係員は「先にこの申込書を書いてください」と言っています。正解は2番です。",
+        "zh": "工作人员说“请先填写这张申请表”，因此正确答案是第2项。",
+        "optionReasonsZh": {"a": "学生证是在填写申请表之后出示。", "c": "对话中没有要求还书。", "d": "不需要预约图书馆。"}
+      }
+    },
+    {
+      "id": "demo_q2",
+      "examId": "2026_07_demo",
+      "section": 1,
+      "number": 2,
+      "type": "課題理解",
+      "promptJa": "女の人は次に何をしますか。",
+      "options": [
+        {"id": "a", "label": 1, "textJa": "会議室を予約します"},
+        {"id": "b", "label": 2, "textJa": "資料を印刷します"},
+        {"id": "c", "label": 3, "textJa": "参加者へメールを送ります"},
+        {"id": "d", "label": 4, "textJa": "会議を中止します"}
+      ],
+      "correctOptionId": "c",
+      "audioAssetPath": "assets/audio/demo_q2.wav",
+      "sentences": [
+        {"id": "q2_s1", "order": 0, "textJa": "会社で二人が会議の準備について話しています。", "translationZh": "两个人正在公司讨论会议准备。", "startMs": 0, "endMs": 4300},
+        {"id": "q2_s2", "order": 1, "textJa": "女の人は次に何をしますか。", "translationZh": "女方接下来要做什么？", "startMs": 4300, "endMs": 7300},
+        {"id": "q2_s3", "order": 2, "speaker": "男", "textJa": "会議室の予約は終わりました。", "translationZh": "会议室已经预约好了。", "startMs": 7300, "endMs": 10400},
+        {"id": "q2_s4", "order": 3, "speaker": "女", "textJa": "資料はもう印刷しましたか。", "translationZh": "资料已经打印了吗？", "startMs": 10400, "endMs": 13200},
+        {"id": "q2_s5", "order": 4, "speaker": "男", "textJa": "まだです。先に参加者へ時間の変更を知らせてください。", "translationZh": "还没有。请先通知参加者时间有变。", "startMs": 13200, "endMs": 18600},
+        {"id": "q2_s6", "order": 5, "speaker": "女", "textJa": "はい、すぐメールを送ります。", "translationZh": "好的，我马上发邮件。", "startMs": 18600, "endMs": 20800}
+      ],
+      "explanation": {
+        "ja": "女の人は「すぐメールを送ります」と答えています。正解は3番です。",
+        "zh": "女方回答“马上发邮件”，因此正确答案是第3项。",
+        "optionReasonsZh": {"a": "会议室已经预约完成。", "b": "打印资料还没做，但不是下一步。", "d": "对话没有取消会议。"}
+      }
+    },
+    {
+      "id": "demo_q3",
+      "examId": "2026_07_demo",
+      "section": 1,
+      "number": 3,
+      "type": "ポイント理解",
+      "promptJa": "男の人は何番線へ行きますか。",
+      "options": [
+        {"id": "a", "label": 1, "textJa": "1番線"},
+        {"id": "b", "label": 2, "textJa": "3番線"},
+        {"id": "c", "label": 3, "textJa": "5番線"},
+        {"id": "d", "label": 4, "textJa": "7番線"}
+      ],
+      "correctOptionId": "c",
+      "audioAssetPath": "assets/audio/demo_q3.wav",
+      "sentences": [
+        {"id": "q3_s1", "order": 0, "textJa": "駅で案内を聞いています。", "translationZh": "一名男子正在车站询问信息。", "startMs": 0, "endMs": 3300},
+        {"id": "q3_s2", "order": 1, "textJa": "男の人は何番線へ行きますか。", "translationZh": "男子要去几号站台？", "startMs": 3300, "endMs": 6200},
+        {"id": "q3_s3", "order": 2, "speaker": "男", "textJa": "空港行きの電車は3番線ですか。", "translationZh": "去机场的电车是在3号站台吗？", "startMs": 6200, "endMs": 9700},
+        {"id": "q3_s4", "order": 3, "speaker": "駅員", "textJa": "今は工事中なので、5番線から出ます。", "translationZh": "因为目前施工，列车从5号站台出发。", "startMs": 9700, "endMs": 13700},
+        {"id": "q3_s5", "order": 4, "speaker": "男", "textJa": "5番線ですね。ありがとうございます。", "translationZh": "是5号站台，谢谢。", "startMs": 13700, "endMs": 16600}
+      ],
+      "explanation": {
+        "ja": "駅員は電車が5番線から出ると言っています。正解は3番です。",
+        "zh": "工作人员说明列车从5号站台出发，因此正确答案是第3项。",
+        "optionReasonsZh": {"a": "对话中没有提到1号站台。", "b": "3号站台只是男子最初的猜测。", "d": "对话中没有提到7号站台。"}
+      }
+    }
+  ]
+}

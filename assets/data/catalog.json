@@ -1,0 +1,14 @@
+{
+  "schemaVersion": 1,
+  "exams": [
+    {
+      "id": "2026_07_demo",
+      "year": 2026,
+      "month": 7,
+      "titleJa": "2026年7月・体験版",
+      "audioQuality": "良い",
+      "questionCount": 3,
+      "resourcePath": "assets/data/exams/2026_07_demo.json"
+    }
+  ]
+}

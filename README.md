@@ -1,16 +1,29 @@
-# my_flutter
+# 聴解トレーニング
 
-A new Flutter project.
+Android / iOS 向けの、オフライン優先の日语听力练习 Flutter App。MVP には練習、模擬テスト、お気に入り、学習記録、音声と本文の同期が含まれます。
 
-## Getting Started
+## 実行
 
-This project is a starting point for a Flutter application.
+```bash
+flutter pub get
+dart run build_runner build
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+品質チェック：
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+```bash
+dart format .
+flutter analyze
+flutter test
+```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 教材の追加
+
+- 教材一覧：`assets/data/catalog.json`
+- 試験 JSON：`assets/data/exams/<examId>.json`
+- 音声：`assets/audio/`
+
+各文には音声ファイル内の相対時間として `startMs` と `endMs` が必要です。問題 ID、文 ID は全教材で重複させず、`correctOptionId` は必ず存在する選択肢を参照してください。不正な JSON、時間の重複、音声欠落はアプリ内のエラー状態として表示されます。
+
+同梱の体験教材と音声はデモ用に生成したオリジナルコンテンツです。商用試験の文章や音声は同梱しないでください。
