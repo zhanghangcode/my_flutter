@@ -2,20 +2,43 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/favorites/presentation/favorites_page.dart';
+import '../features/practice/application/practice_detail_controller.dart';
 import '../features/practice/presentation/practice_detail_page.dart';
 import '../features/practice/presentation/practice_list_page.dart';
 import '../features/settings/presentation/settings_page.dart';
+import '../features/splash/presentation/splash_page.dart';
 import '../features/test/presentation/test_home_page.dart';
 import '../features/test/presentation/test_result_page.dart';
 import '../features/test/presentation/test_session_page.dart';
 import 'shell_page.dart';
 
+// 詳細画面を Bottom Navigation より上に全画面表示するためのルート Navigator です。
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
+/// アプリ全体の画面構成と遷移規則を管理する GoRouter。
+///
+/// URL 形式の Route を一元管理することで、画面側はパスとパラメータだけを指定して
+/// 遷移できます。StatefulShellRoute の各 branch は独立した Navigator を持つため、
+/// Bottom Navigation を切り替えても各タブのナビゲーションスタックが保持されます。
 final appRouter = GoRouter(
   navigatorKey: _rootNavigatorKey,
-  initialLocation: '/practice',
+  initialLocation: '/splash',
   routes: [
+    // SplashはShellの外に置き、起動中にBottom Navigationを表示しません。
+    GoRoute(
+      path: '/splash',
+      pageBuilder: (context, state) => CustomTransitionPage<void>(
+        key: state.pageKey,
+        transitionDuration: const Duration(milliseconds: 200),
+        reverseTransitionDuration: const Duration(milliseconds: 200),
+        child: const SplashPage(),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          if (MediaQuery.disableAnimationsOf(context)) return child;
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    ),
+    // 4 つの主要画面は indexedStack 上に保持し、非表示タブの State を破棄しません。
     StatefulShellRoute.indexedStack(
       builder: (context, state, shell) => AppShellPage(shell: shell),
       branches: [
@@ -53,16 +76,29 @@ final appRouter = GoRouter(
         ),
       ],
     ),
+    // 練習詳細はルート Navigator へ積み、Bottom Navigation を隠して表示します。
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/practice/:examId/question/:questionId',
-      builder: (context, state) => PracticeDetailPage(
-        key: ValueKey(state.pathParameters['questionId']),
-        examId: state.pathParameters['examId']!,
-        questionId: state.pathParameters['questionId']!,
-        sentenceId: state.uri.queryParameters['sentenceId'],
-      ),
+      // GoRouterState から path/query parameter を取り出し、画面の入力値へ変換します。
+      builder: (context, state) {
+        final questionId = state.pathParameters['questionId']!;
+        final questionChange = switch (state.extra) {
+          final PracticeQuestionChange value
+              when value.questionId == questionId =>
+            value,
+          _ => null,
+        };
+        return PracticeDetailPage(
+          key: ValueKey(questionId),
+          examId: state.pathParameters['examId']!,
+          questionId: questionId,
+          sentenceId: state.uri.queryParameters['sentenceId'],
+          questionChange: questionChange,
+        );
+      },
     ),
+    // テスト中は主タブから独立した全画面フローとして扱います。
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/test/:examId/session',
@@ -71,6 +107,7 @@ final appRouter = GoRouter(
         examId: state.pathParameters['examId']!,
       ),
     ),
+    // sessionId を使って Drift に保存された提出結果を再表示します。
     GoRoute(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/test/result/:sessionId',

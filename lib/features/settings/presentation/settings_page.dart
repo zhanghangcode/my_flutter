@@ -4,11 +4,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/providers.dart';
 import '../../../core/widgets/async_states.dart';
 
+/// 再生・表示設定と学習データ管理を提供する設定画面。
+///
+/// Scaffold と AppBar で主画面の枠を作り、設定の非同期状態に応じて内容を切り替えます。
+/// 各操作は SettingsController または LearningRepository へ委譲します。
 class SettingsPage extends ConsumerWidget {
   const SettingsPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch により、保存直前に更新された設定値を各入力 Widget へ即時反映します。
     final settings = ref.watch(settingsControllerProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('設定')),
@@ -109,6 +114,7 @@ class SettingsPage extends ConsumerWidget {
   }
 
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {
+    // 破壊的操作は確認 Dialog を通し、明示的に同意された場合だけ実行します。
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -128,6 +134,7 @@ class SettingsPage extends ConsumerWidget {
     );
     if (confirmed != true) return;
     await ref.read(learningRepositoryProvider).clearAll();
+    // DB 処理中に画面が破棄されていない場合だけ SnackBar を表示します。
     if (context.mounted) {
       ScaffoldMessenger.of(
         context,

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+/// アプリ固有の色を一元管理するカラートークン。
+///
+/// 画面ごとに色値を重複させず、深色 UI と状態色の一貫性を保ちます。
 abstract final class AppColors {
   static const background = Color(0xFF070707);
   static const surface = Color(0xFF202124);
@@ -9,7 +12,13 @@ abstract final class AppColors {
   static const success = Color(0xFF43A047);
 }
 
+/// アプリ全体へ適用する Material 3 の Dark Theme を生成します。
+///
+/// Scaffold、AppBar、Card、NavigationBar などの共通外観をここで定義し、
+/// 個別画面が同じデザイン規則を共有できるようにします。
 ThemeData buildDarkTheme() {
+  // ColorScheme は seedColor から Material コンポーネント用の状態色を生成します。
+  // 明示した dark brightness と surface により、深色 UI を基準に配色します。
   final scheme = ColorScheme.fromSeed(
     seedColor: AppColors.accent,
     brightness: Brightness.dark,
@@ -19,6 +28,7 @@ ThemeData buildDarkTheme() {
     useMaterial3: true,
     brightness: Brightness.dark,
     colorScheme: scheme,
+    // Scaffold の背景を統一し、Route 間で背景色が変わらないようにします。
     scaffoldBackgroundColor: AppColors.background,
     cardColor: AppColors.surface,
     dividerColor: Colors.white24,

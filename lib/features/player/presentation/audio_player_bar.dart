@@ -6,13 +6,31 @@ import '../../../app/theme.dart';
 import '../../practice/domain/practice_models.dart';
 import '../application/audio_player_controller.dart';
 
+/// 練習詳細の下部に固定表示する音声操作バー。
+///
+/// Slider と再生操作は AudioPlayerController へ委譲し、速度変更だけは次回起動時にも
+/// 復元できるよう SettingsController にも保存します。SafeArea で端末下端を保護します。
 class AudioPlayerBar extends ConsumerWidget {
-  const AudioPlayerBar({super.key});
+  const AudioPlayerBar({
+    super.key,
+    required this.showPreviousQuestion,
+    required this.showNextQuestion,
+    required this.questionNavigationEnabled,
+    required this.onPreviousQuestion,
+    required this.onNextQuestion,
+  });
 
   static const height = 154.0;
 
+  final bool showPreviousQuestion;
+  final bool showNextQuestion;
+  final bool questionNavigationEnabled;
+  final VoidCallback onPreviousQuestion;
+  final VoidCallback onNextQuestion;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch は表示更新に使用し、ref.read で取得した Controller は操作時だけ呼びます。
     final player = ref.watch(audioPlayerControllerProvider);
     final controller = ref.read(audioPlayerControllerProvider.notifier);
     final maxMilliseconds = player.duration.inMilliseconds <= 0
@@ -116,12 +134,17 @@ class AudioPlayerBar extends ConsumerWidget {
                           ),
                         ),
                       ),
-                      IconButton(
-                        tooltip: '前の文',
-                        onPressed: player.hasSource
-                            ? controller.previousSentence
+                      SizedBox(
+                        width: 48,
+                        child: showPreviousQuestion
+                            ? IconButton(
+                                tooltip: '前の問題',
+                                onPressed: questionNavigationEnabled
+                                    ? onPreviousQuestion
+                                    : null,
+                                icon: const Icon(Icons.skip_previous, size: 34),
+                              )
                             : null,
-                        icon: const Icon(Icons.skip_previous, size: 34),
                       ),
                       IconButton.filled(
                         tooltip: player.isPlaying ? '一時停止' : '再生',
@@ -143,12 +166,17 @@ class AudioPlayerBar extends ConsumerWidget {
                                     : Icons.play_arrow,
                               ),
                       ),
-                      IconButton(
-                        tooltip: '次の文',
-                        onPressed: player.hasSource
-                            ? controller.nextSentence
+                      SizedBox(
+                        width: 48,
+                        child: showNextQuestion
+                            ? IconButton(
+                                tooltip: '次の問題',
+                                onPressed: questionNavigationEnabled
+                                    ? onNextQuestion
+                                    : null,
+                                icon: const Icon(Icons.skip_next, size: 34),
+                              )
                             : null,
-                        icon: const Icon(Icons.skip_next, size: 34),
                       ),
                       IconButton(
                         tooltip: _repeatLabel(player.repeatMode),

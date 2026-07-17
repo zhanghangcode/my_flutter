@@ -5,11 +5,16 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../core/widgets/async_states.dart';
 
+/// 模擬テストの教材一覧と最近の提出結果を表示する入口画面。
+///
+/// Scaffold と AppBar の下に試験カードと履歴を並べ、選択した試験は
+/// GoRouter を通して全画面のテストセッションへ遷移します。
 class TestHomePage extends ConsumerWidget {
   const TestHomePage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 教材と結果の Provider を watch し、追加・提出された内容を一覧へ反映します。
     final exams = ref.watch(examCatalogProvider);
     final results = ref.watch(testResultsProvider).value ?? [];
     return Scaffold(
@@ -41,9 +46,19 @@ class TestHomePage extends ConsumerWidget {
                     child: Icon(Icons.timer_outlined),
                   ),
                   title: Text(exam.titleJa),
-                  subtitle: Text('${exam.questionCount}問 ・ ローカル教材'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => context.push('/test/${exam.id}/session'),
+                  subtitle: Text(
+                    exam.supportsTest
+                        ? '${exam.questionCount}問 ・ ローカル教材'
+                        : '${exam.questionCount}問 ・ 練習専用・採点データ未収録',
+                  ),
+                  trailing: Icon(
+                    exam.supportsTest
+                        ? Icons.chevron_right
+                        : Icons.lock_outline,
+                  ),
+                  onTap: exam.supportsTest
+                      ? () => context.push('/test/${exam.id}/session')
+                      : null,
                 ),
               ),
               const SizedBox(height: 12),

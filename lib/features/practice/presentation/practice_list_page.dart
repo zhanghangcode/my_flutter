@@ -7,11 +7,16 @@ import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../domain/practice_models.dart';
 
+/// 利用可能な試験を年月単位のカードで表示する練習の入口画面。
+///
+/// Scaffold と AppBar で主画面の枠を作り、FutureProvider の状態に応じて
+/// 読み込み中・エラー・空状態・教材一覧を切り替えます。
 class PracticeListPage extends ConsumerWidget {
   const PracticeListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // ref.watch により、再試行や更新で catalog が変わると画面も再 build されます。
     final catalog = ref.watch(examCatalogProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('練習')),
@@ -44,6 +49,7 @@ class PracticeListPage extends ConsumerWidget {
   }
 }
 
+/// 1 回分の試験情報とローカル利用状態を表示するカード。
 class _ExamCard extends ConsumerWidget {
   const _ExamCard({required this.exam});
 
@@ -113,7 +119,9 @@ class _ExamCard extends ConsumerWidget {
 
   Future<void> _open(BuildContext context, WidgetRef ref) async {
     try {
+      // ユーザー操作時だけ ref.read で教材を取得し、一覧の不要な再 build を避けます。
       final resource = await ref.read(examResourceProvider(exam.id).future);
+      // 非同期読み込み中に画面が破棄された場合は BuildContext を使用しません。
       if (!context.mounted) return;
       if (resource.questions.isEmpty) {
         ScaffoldMessenger.of(

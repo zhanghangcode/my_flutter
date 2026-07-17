@@ -6,10 +6,14 @@ import '../../../app/providers.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 
+/// sessionId ごとの提出結果を取得する画面ローカルな family Provider。
 final _testResultProvider = FutureProvider.family((ref, int sessionId) {
   return ref.watch(testRepositoryProvider).getResult(sessionId);
 });
 
+/// 正答率、集計値、復習対象を表示するテスト結果画面。
+///
+/// Drift の結果と静的教材を ID で関連付け、誤答問題から練習詳細へ遷移できます。
 class TestResultPage extends ConsumerWidget {
   const TestResultPage({super.key, required this.sessionId});
 
@@ -17,6 +21,7 @@ class TestResultPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Route から受け取った sessionId を family Provider のキーとして使用します。
     final result = ref.watch(_testResultProvider(sessionId));
     return Scaffold(
       appBar: AppBar(title: const Text('テスト結果')),
@@ -35,6 +40,7 @@ class TestResultPage extends ConsumerWidget {
             milliseconds: item.durationMs,
           ).inSeconds.remainder(60);
           final exam = ref.watch(examResourceProvider(item.examId)).value;
+          // 未回答を含め、正解 ID と一致しない問題を復習対象として抽出します。
           final wrongQuestions =
               exam?.questions
                   .where(

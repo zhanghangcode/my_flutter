@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// 非同期データの読み込み中に共通表示するインジケーター。
 class AppLoadingView extends StatelessWidget {
   const AppLoadingView({super.key});
 
@@ -8,6 +9,7 @@ class AppLoadingView extends StatelessWidget {
       const Center(child: CircularProgressIndicator());
 }
 
+/// データが存在しない場合に、理由と次の行動を伝える共通 Widget。
 class AppEmptyView extends StatelessWidget {
   const AppEmptyView({super.key, required this.icon, required this.message});
 
@@ -36,6 +38,7 @@ class AppEmptyView extends StatelessWidget {
   }
 }
 
+/// 非同期処理の失敗内容と、任意の再試行操作を表示する共通 Widget。
 class AppErrorView extends StatelessWidget {
   const AppErrorView({super.key, required this.message, this.onRetry});
 

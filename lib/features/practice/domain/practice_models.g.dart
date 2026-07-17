@@ -21,12 +21,13 @@ Map<String, dynamic> _$ExamCatalogToJson(_ExamCatalog instance) =>
 
 _ExamSummary _$ExamSummaryFromJson(Map<String, dynamic> json) => _ExamSummary(
   id: json['id'] as String,
-  year: (json['year'] as num).toInt(),
-  month: (json['month'] as num).toInt(),
+  year: (json['year'] as num?)?.toInt(),
+  month: (json['month'] as num?)?.toInt(),
   titleJa: json['titleJa'] as String,
   audioQuality: json['audioQuality'] as String,
   questionCount: (json['questionCount'] as num).toInt(),
   resourcePath: json['resourcePath'] as String,
+  supportsTest: json['supportsTest'] as bool,
 );
 
 Map<String, dynamic> _$ExamSummaryToJson(_ExamSummary instance) =>
@@ -38,10 +39,12 @@ Map<String, dynamic> _$ExamSummaryToJson(_ExamSummary instance) =>
       'audioQuality': instance.audioQuality,
       'questionCount': instance.questionCount,
       'resourcePath': instance.resourcePath,
+      'supportsTest': instance.supportsTest,
     };
 
 _ExamResource _$ExamResourceFromJson(Map<String, dynamic> json) =>
     _ExamResource(
+      schemaVersion: (json['schemaVersion'] as num).toInt(),
       id: json['id'] as String,
       titleJa: json['titleJa'] as String,
       questions: (json['questions'] as List<dynamic>)
@@ -51,6 +54,7 @@ _ExamResource _$ExamResourceFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$ExamResourceToJson(_ExamResource instance) =>
     <String, dynamic>{
+      'schemaVersion': instance.schemaVersion,
       'id': instance.id,
       'titleJa': instance.titleJa,
       'questions': instance.questions,
@@ -66,14 +70,16 @@ _Question _$QuestionFromJson(Map<String, dynamic> json) => _Question(
   options: (json['options'] as List<dynamic>)
       .map((e) => AnswerOption.fromJson(e as Map<String, dynamic>))
       .toList(),
-  correctOptionId: json['correctOptionId'] as String,
+  correctOptionId: json['correctOptionId'] as String?,
   audioAssetPath: json['audioAssetPath'] as String,
   sentences: (json['sentences'] as List<dynamic>)
       .map((e) => TranscriptSentence.fromJson(e as Map<String, dynamic>))
       .toList(),
-  explanation: QuestionExplanation.fromJson(
-    json['explanation'] as Map<String, dynamic>,
-  ),
+  explanation: json['explanation'] == null
+      ? null
+      : QuestionExplanation.fromJson(
+          json['explanation'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$QuestionToJson(_Question instance) => <String, dynamic>{
@@ -111,8 +117,8 @@ _TranscriptSentence _$TranscriptSentenceFromJson(Map<String, dynamic> json) =>
       speaker: json['speaker'] as String?,
       textJa: json['textJa'] as String,
       translationZh: json['translationZh'] as String?,
-      startMs: (json['startMs'] as num).toInt(),
-      endMs: (json['endMs'] as num).toInt(),
+      startMs: _nullableMillisecondsFromJson(json['startMs']),
+      endMs: _nullableMillisecondsFromJson(json['endMs']),
     );
 
 Map<String, dynamic> _$TranscriptSentenceToJson(_TranscriptSentence instance) =>

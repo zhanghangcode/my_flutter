@@ -9,13 +9,16 @@ void main() {
   late DriftTestRepository repository;
 
   setUp(() {
+    // Given: セッションと回答を隔離できるインメモリ Drift DB を用意します。
     database = AppDatabase.forTesting(NativeDatabase.memory());
     repository = DriftTestRepository(database);
   });
 
+  // テスト終了ごとに DB 接続を閉じます。
   tearDown(() => database.close());
 
   test('unanswered questions count as incorrect', () async {
+    // Given: 正解が b の 1 問だけを含む試験を用意します。
     const question = Question(
       id: 'q1',
       examId: 'exam',
@@ -32,10 +35,16 @@ void main() {
       sentences: [],
       explanation: QuestionExplanation(ja: '説明', zh: '说明'),
     );
-    const exam = ExamResource(id: 'exam', titleJa: '試験', questions: [question]);
+    const exam = ExamResource(
+      schemaVersion: 2,
+      id: 'exam',
+      titleJa: '試験',
+      questions: [question],
+    );
     final started = DateTime.now().toUtc();
     final id = await repository.createSession(exam.id, started);
 
+    // When: 回答 Map を空のままセッションを提出します。
     final result = await repository.submitSession(
       sessionId: id,
       exam: exam,
@@ -43,6 +52,7 @@ void main() {
       startedAtUtc: started,
     );
 
+    // Then: 未回答は不正解として集計・保存され、回答値は null になります。
     expect(result.totalCount, 1);
     expect(result.correctCount, 0);
     expect(result.answers['q1'], isNull);

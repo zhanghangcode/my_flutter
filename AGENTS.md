@@ -152,6 +152,25 @@ Before coding:
 3. Produce a short implementation plan.
 4. Identify files that will be created or changed.
 
+## コードコメント規則
+
+- 手動で作成する Dart コードには、必要に応じて日本語コメントを追加する。
+- コメントは自然で簡潔な日本語を使用する。
+- Flutter、Dart、Riverpod、GoRouter、Widget などの技術用語は英語表記を維持する。
+- 公開 class、公開メソッド、Provider、Repository、Controller には `///` を使用する。
+- 複雑なビジネスロジック、状態遷移、非同期処理、ライフサイクルには `//` を使用する。
+- コメントではコードの直訳ではなく、設計理由、責務、データフローを説明する。
+- import、単純な代入、明らかな Widget に不要なコメントを追加しない。
+- すべての行にコメントを追加しない。
+- コメント追加のためだけにリファクタリングしない。
+- 実装を変更した場合は、関連するコメントも更新する。
+- 実装内容と一致しない推測コメントを追加しない。
+- 中国語コメントがある場合は、意味を保持した自然な日本語へ置き換える。
+- 以下の自動生成ファイルは変更しない。
+   - `*.g.dart`
+   - `*.freezed.dart`
+- テストでは必要に応じて Given / When / Then の日本語コメントを使用する。
+
 During implementation:
 
 - Implement only the requested milestone.

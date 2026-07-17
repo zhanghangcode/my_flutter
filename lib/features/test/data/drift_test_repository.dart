@@ -4,6 +4,7 @@ import '../../../database/app_database.dart';
 import '../../practice/domain/practice_models.dart';
 import '../domain/test_models.dart';
 
+/// [TestRepository] を Drift で実装し、テスト履歴を端末へ保存します。
 class DriftTestRepository implements TestRepository {
   DriftTestRepository(this._database);
 
@@ -29,12 +30,18 @@ class DriftTestRepository implements TestRepository {
     required Map<String, String?> answers,
     required DateTime startedAtUtc,
   }) async {
+    if (exam.questions.any((question) => !question.isGradable)) {
+      throw StateError('採点できない問題はテスト結果へ保存できません。');
+    }
     final now = DateTime.now().toUtc();
     var correctCount = 0;
+    // 問題別回答とセッション集計を同一 transaction で確定し、部分保存を防ぎます。
     await _database.transaction(() async {
       for (final question in exam.questions) {
+        final correctOptionId = question.correctOptionId!;
         final selected = answers[question.id];
-        final correct = selected == question.correctOptionId;
+        // answers にキーがない未回答問題も false として採点します。
+        final correct = selected == correctOptionId;
         if (correct) correctCount++;
         await _database
             .into(_database.testSessionAnswers)
@@ -43,7 +50,7 @@ class DriftTestRepository implements TestRepository {
                 sessionId: sessionId,
                 questionId: question.id,
                 selectedOptionId: Value(selected),
-                correctOptionId: question.correctOptionId,
+                correctOptionId: correctOptionId,
                 isCorrect: correct,
               ),
             );
@@ -75,6 +82,7 @@ class DriftTestRepository implements TestRepository {
     final sessionQuery = _database.select(_database.testSessions)
       ..where((row) => row.id.equals(sessionId));
     final session = await sessionQuery.getSingleOrNull();
+    // 進行中または存在しないセッションを、提出結果として公開しません。
     if (session == null || session.status != 'submitted') return null;
     final answerQuery = _database.select(_database.testSessionAnswers)
       ..where((row) => row.sessionId.equals(sessionId));
@@ -98,6 +106,7 @@ class DriftTestRepository implements TestRepository {
       ..where((row) => row.status.equals('submitted'))
       ..orderBy([(row) => OrderingTerm.desc(row.submittedAtUtc)]);
     return query.watch().asyncMap((sessions) async {
+      // セッションの更新を起点に、問題別回答を含む domain model へ再構築します。
       final results = <TestResult>[];
       for (final session in sessions) {
         final result = await getResult(session.id);

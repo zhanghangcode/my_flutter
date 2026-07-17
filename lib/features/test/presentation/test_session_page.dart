@@ -9,6 +9,10 @@ import '../../player/application/audio_player_controller.dart';
 import '../../practice/presentation/widgets/answer_options.dart';
 import '../application/test_session_controller.dart';
 
+/// 原文と正解を隠して問題を順番に解くテスト実施画面。
+///
+/// State の初期化と音声停止を画面ライフサイクルに連動させるため、
+/// ConsumerStatefulWidget として実装しています。
 class TestSessionPage extends ConsumerStatefulWidget {
   const TestSessionPage({super.key, required this.examId});
 
@@ -24,6 +28,7 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   @override
   void initState() {
     super.initState();
+    // initState 中に Provider を更新せず、現在の同期処理が終わった後に開始します。
     Future.microtask(() async {
       if (!_started) {
         _started = true;
@@ -36,14 +41,17 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
 
   @override
   void dispose() {
+    // Route を離れた後もテスト音声が再生され続けないよう停止します。
     unawaited(ref.read(audioPlayerControllerProvider.notifier).stop());
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    // AsyncValue を watch し、開始処理の loading・error・data を切り替えます。
     final sessionAsync = ref.watch(testSessionControllerProvider);
     return PopScope(
+      // システムの戻る操作も確認 Dialog を経由させ、誤終了を防ぎます。
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _confirmExit(context);
@@ -121,6 +129,7 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                   ),
                 ),
                 SafeArea(
+                  // 回答操作を Home Indicator やシステムナビゲーションから離します。
                   top: false,
                   child: Padding(
                     padding: const EdgeInsets.all(12),
@@ -167,11 +176,13 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
         .read(testSessionControllerProvider.notifier)
         .submit();
     if (result != null && context.mounted) {
+      // 提出完了後は sessionId を Route に渡し、保存済み結果を表示します。
       context.go('/test/result/${result.sessionId}');
     }
   }
 
   Future<void> _confirmExit(BuildContext context) async {
+    // 未提出回答が保存されないことを明示し、ユーザーの確認を得ます。
     final leave = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(

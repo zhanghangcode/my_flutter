@@ -1,0 +1,202 @@
+{
+  "schemaVersion": 2,
+  "id": "n2_listening_problem1",
+  "titleJa": "N2聴解・問題1（3問）",
+  "questions": [
+    {
+      "id": "n2_listening_problem1_q01",
+      "examId": "n2_listening_problem1",
+      "section": 1,
+      "number": 1,
+      "type": "課題理解",
+      "promptJa": "男の学生は、この後まず何をしますか",
+      "options": [],
+      "correctOptionId": null,
+      "audioAssetPath": "assets/audio/問題1_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_listening_problem1_q01_s001",
+          "order": 0,
+          "textJa": "大学で女の学生と男の学生が話しています。男の学生はこの後まず、何をしますか。"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s002",
+          "order": 1,
+          "speaker": "女の学生",
+          "textJa": "中村くん。シンポジウムのポスター、掲示板に貼ってくれたんだね｡  ありがとう｡"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s003",
+          "order": 2,
+          "speaker": "男の学生",
+          "textJa": "えぇ､  他に僕がやっておくことってありますか？"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s004",
+          "order": 3,
+          "speaker": "女の学生",
+          "textJa": "マイクとか会場の準備は前日にすればいいし､  当日のスタッフ用のスケジュール表､  これないから欲しいな｡  今週中にお願いしていい？"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s005",
+          "order": 4,
+          "speaker": "男の学生",
+          "textJa": "あ、はい。"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s006",
+          "order": 5,
+          "speaker": "女の学生",
+          "textJa": "それから１番大事な当日配る資料､  コピーまだなんじゃない？ 100 部だよね？"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s007",
+          "order": 6,
+          "speaker": "男の学生",
+          "textJa": "あ､  それなんですけど､  発表者の方からの資料まだ全部集まってないんですよ。"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s008",
+          "order": 7,
+          "speaker": "女の学生",
+          "textJa": "そう､  みなさんお忙しい方ばかりだから・・・私から発表者に資料を送ってもらうようにすぐに連絡をするから､集まり次第コピーしよう｡  週明けには出してもらうようにするね｡"
+        },
+        {
+          "id": "n2_listening_problem1_q01_s009",
+          "order": 8,
+          "speaker": "男の学生",
+          "textJa": "はい､  わかりました｡"
+        }
+      ],
+      "explanation": null
+    },
+    {
+      "id": "n2_listening_problem1_q02",
+      "examId": "n2_listening_problem1",
+      "section": 1,
+      "number": 2,
+      "type": "課題理解",
+      "promptJa": "女の店員はこの後まず、何をしますか。",
+      "options": [],
+      "correctOptionId": null,
+      "audioAssetPath": "assets/audio/問題1_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_listening_problem1_q02_s001",
+          "order": 0,
+          "textJa": "スーパーで男の店長と女の店員が話しています。女の店員はこの後まず、何をしますか。"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s002",
+          "order": 1,
+          "speaker": "店長",
+          "textJa": "おはようございます、森田さん｡  今日は一部の商品に値引きシールを付ける作業をやってくれることになってたね｡"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s003",
+          "order": 2,
+          "speaker": "女の店員",
+          "textJa": "あ､  はい。準備してます｡"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s004",
+          "order": 3,
+          "speaker": "店長",
+          "textJa": "えっと､  忙しい時に悪いんだけど､  倉庫に行って南コーヒーの豆､  何袋あるか数えてきてくれる？数が少なかったら今日中に注文しないといけないんだ。"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s005",
+          "order": 4,
+          "speaker": "女の店員",
+          "textJa": "あ､  わかりました。急ぎですか？"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s006",
+          "order": 5,
+          "speaker": "店長",
+          "textJa": "あー､  そのシールを貼る作業が終わってからでいいから。袋の数を数えたらメモを私の机の上に置いといて｡"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s007",
+          "order": 6,
+          "speaker": "女の店員",
+          "textJa": "わかりました｡"
+        },
+        {
+          "id": "n2_listening_problem1_q02_s008",
+          "order": 7,
+          "speaker": "店長",
+          "textJa": "お客さんがレジにたくさん並んでるから､私もすぐレジを手伝わなきゃいけなくて｡  値引きシールを付けた商品をレジの横の棚に並べるのは明日の開店前にみんなですればいいから｡  じゃ、よろしくね。"
+        }
+      ],
+      "explanation": null
+    },
+    {
+      "id": "n2_listening_problem1_q03",
+      "examId": "n2_listening_problem1",
+      "section": 1,
+      "number": 3,
+      "type": "課題理解",
+      "promptJa": "男の人は何の写真を撮らなければなりませんか。",
+      "options": [],
+      "correctOptionId": null,
+      "audioAssetPath": "assets/audio/問題1_第03問.mp3",
+      "sentences": [
+        {
+          "id": "n2_listening_problem1_q03_s001",
+          "order": 0,
+          "textJa": "出版社で女の人と男の人が話しています。男の人は何の写真を撮らなければなりませんか。"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s002",
+          "order": 1,
+          "speaker": "女",
+          "textJa": "すみません､  雑誌に載せる蕎麦屋の写真を私の代わりに撮りに行ってくれるそうでありがとうございます｡"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s003",
+          "order": 2,
+          "speaker": "男",
+          "textJa": "あ､  はい｡  緑駅前の蕎麦屋さんですよね？"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s004",
+          "order": 3,
+          "speaker": "女",
+          "textJa": "はい。えっと､  説明しますね｡  この雑誌では通常はお店で 1 番の人気料理の写真を撮らせてもらうんですが、今回この写真はお店から提供していただくことになっています｡"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s005",
+          "order": 4,
+          "speaker": "男",
+          "textJa": "はい､  わかりました｡"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s006",
+          "order": 5,
+          "speaker": "女",
+          "textJa": "それから店内の様子の撮影についてはお店に許可をいただいています｡  お客様が写り込まないように撮影をお願いしますね｡調理する人の写真は店によっては掲載しますが、こちらは掲載不可とのことです｡"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s007",
+          "order": 6,
+          "speaker": "男",
+          "textJa": "はい。"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s008",
+          "order": 7,
+          "speaker": "女",
+          "textJa": "外から見た入口の写真は天候に左右されるから先日、天気が良い日に済ませてきましたので結構です｡よろしくお願いします｡"
+        },
+        {
+          "id": "n2_listening_problem1_q03_s009",
+          "order": 8,
+          "speaker": "男",
+          "textJa": "わかりました｡"
+        }
+      ],
+      "explanation": null
+    }
+  ]
+}

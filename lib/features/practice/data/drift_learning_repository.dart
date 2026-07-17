@@ -4,6 +4,7 @@ import '../../../database/app_database.dart';
 import '../domain/learning_repository.dart';
 import '../domain/practice_models.dart';
 
+/// [LearningRepository] を Drift で実装し、ユーザーの学習状態を端末へ保存します。
 class DriftLearningRepository implements LearningRepository {
   DriftLearningRepository(this._database);
 
@@ -52,6 +53,7 @@ class DriftLearningRepository implements LearningRepository {
     final query = _database.select(_database.favoriteQuestions)
       ..where((row) => row.questionId.equals(questionId));
     final existing = await query.getSingleOrNull();
+    // 同じ操作で登録と解除を行い、UI 側に現在状態の分岐を持たせません。
     if (existing == null) {
       await _database
           .into(_database.favoriteQuestions)
@@ -113,6 +115,7 @@ class DriftLearningRepository implements LearningRepository {
     String optionId,
     bool isCorrect,
   ) async {
+    // 最新回答は上書きしつつ、過去の試行回数だけを累積します。
     final previous = await getAnswer(questionId);
     await _database
         .into(_database.practiceAnswers)
@@ -138,6 +141,7 @@ class DriftLearningRepository implements LearningRepository {
       lastPositionMs: row.lastPositionMs,
       lastContentMode: ContentMode.values.firstWhere(
         (mode) => mode.name == row.lastContentMode,
+        // 将来モード名が変わっても、本文表示へ安全にフォールバックします。
         orElse: () => ContentMode.transcript,
       ),
       practiceCount: row.practiceCount,
@@ -150,6 +154,7 @@ class DriftLearningRepository implements LearningRepository {
 
   @override
   Future<void> markQuestionOpened(String questionId) async {
+    // 既存の位置と表示モードを維持したまま、閲覧回数と最終日時を更新します。
     final previous = await getProgress(questionId);
     await _database
         .into(_database.practiceProgress)

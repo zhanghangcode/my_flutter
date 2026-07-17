@@ -5,6 +5,10 @@ import '../../../../app/theme.dart';
 import '../../application/practice_detail_controller.dart';
 import '../../domain/practice_models.dart';
 
+/// 練習モードとテストモードで共有する選択肢一覧。
+///
+/// 練習では PracticeDetailController の State を購読して採点結果まで表示し、
+/// テストでは親から渡された選択値と callback のみを使用して正解を隠します。
 class AnswerOptions extends ConsumerWidget {
   const AnswerOptions({
     super.key,
@@ -21,6 +25,19 @@ class AnswerOptions extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!question.isGradable) {
+      return const Card(
+        child: Padding(
+          padding: EdgeInsets.all(18),
+          child: Text(
+            '選択肢・正解は未収録です',
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Colors.white60),
+          ),
+        ),
+      );
+    }
+    // 表示は ref.watch で追従し、タップ時の更新は ref.read で Controller へ委譲します。
     final detail = ref.watch(practiceDetailControllerProvider);
     final selected = showPracticeActions
         ? detail.selectedOptionId
@@ -76,6 +93,7 @@ class AnswerOptions extends ConsumerWidget {
   }
 }
 
+/// 選択・正解・不正解の状態を色とアイコンで表現する 1 選択肢分の Widget。
 class _OptionCard extends StatelessWidget {
   const _OptionCard({
     required this.option,
@@ -146,6 +164,7 @@ class _OptionCard extends StatelessWidget {
   }
 }
 
+/// 提出後の正誤を明示するフィードバック Widget。
 class _ResultBanner extends StatelessWidget {
   const _ResultBanner({required this.isCorrect});
 

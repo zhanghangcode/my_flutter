@@ -287,7 +287,7 @@ as List<ExamSummary>,
 /// @nodoc
 mixin _$ExamSummary {
 
- String get id; int get year; int get month; String get titleJa; String get audioQuality; int get questionCount; String get resourcePath;
+ String get id; int? get year; int? get month; String get titleJa; String get audioQuality; int get questionCount; String get resourcePath; bool get supportsTest;
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -300,16 +300,16 @@ $ExamSummaryCopyWith<ExamSummary> get copyWith => _$ExamSummaryCopyWithImpl<Exam
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath);
+int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest);
 
 @override
 String toString() {
-  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath)';
+  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest)';
 }
 
 
@@ -320,7 +320,7 @@ abstract mixin class $ExamSummaryCopyWith<$Res>  {
   factory $ExamSummaryCopyWith(ExamSummary value, $Res Function(ExamSummary) _then) = _$ExamSummaryCopyWithImpl;
 @useResult
 $Res call({
- String id, int year, int month, String titleJa, String audioQuality, int questionCount, String resourcePath
+ String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest
 });
 
 
@@ -337,16 +337,17 @@ class _$ExamSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? year = null,Object? month = null,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,year: null == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
-as int,month: null == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
-as int,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
+as String,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as int?,month: freezed == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as int?,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
 as String,audioQuality: null == audioQuality ? _self.audioQuality : audioQuality // ignore: cast_nullable_to_non_nullable
 as String,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,resourcePath: null == resourcePath ? _self.resourcePath : resourcePath // ignore: cast_nullable_to_non_nullable
-as String,
+as String,supportsTest: null == supportsTest ? _self.supportsTest : supportsTest // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -431,10 +432,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int year,  int month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ExamSummary() when $default != null:
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
   return orElse();
 
 }
@@ -452,10 +453,10 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int year,  int month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)  $default,) {final _that = this;
 switch (_that) {
 case _ExamSummary():
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -472,10 +473,10 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int year,  int month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)?  $default,) {final _that = this;
 switch (_that) {
 case _ExamSummary() when $default != null:
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
   return null;
 
 }
@@ -487,16 +488,17 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 @JsonSerializable()
 
 class _ExamSummary implements ExamSummary {
-  const _ExamSummary({required this.id, required this.year, required this.month, required this.titleJa, required this.audioQuality, required this.questionCount, required this.resourcePath});
+  const _ExamSummary({required this.id, this.year, this.month, required this.titleJa, required this.audioQuality, required this.questionCount, required this.resourcePath, required this.supportsTest});
   factory _ExamSummary.fromJson(Map<String, dynamic> json) => _$ExamSummaryFromJson(json);
 
 @override final  String id;
-@override final  int year;
-@override final  int month;
+@override final  int? year;
+@override final  int? month;
 @override final  String titleJa;
 @override final  String audioQuality;
 @override final  int questionCount;
 @override final  String resourcePath;
+@override final  bool supportsTest;
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -511,16 +513,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath);
+int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest);
 
 @override
 String toString() {
-  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath)';
+  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest)';
 }
 
 
@@ -531,7 +533,7 @@ abstract mixin class _$ExamSummaryCopyWith<$Res> implements $ExamSummaryCopyWith
   factory _$ExamSummaryCopyWith(_ExamSummary value, $Res Function(_ExamSummary) _then) = __$ExamSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, int year, int month, String titleJa, String audioQuality, int questionCount, String resourcePath
+ String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest
 });
 
 
@@ -548,16 +550,17 @@ class __$ExamSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? year = null,Object? month = null,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,}) {
   return _then(_ExamSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String,year: null == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
-as int,month: null == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
-as int,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
+as String,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
+as int?,month: freezed == month ? _self.month : month // ignore: cast_nullable_to_non_nullable
+as int?,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
 as String,audioQuality: null == audioQuality ? _self.audioQuality : audioQuality // ignore: cast_nullable_to_non_nullable
 as String,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,resourcePath: null == resourcePath ? _self.resourcePath : resourcePath // ignore: cast_nullable_to_non_nullable
-as String,
+as String,supportsTest: null == supportsTest ? _self.supportsTest : supportsTest // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -568,7 +571,7 @@ as String,
 /// @nodoc
 mixin _$ExamResource {
 
- String get id; String get titleJa; List<Question> get questions;
+ int get schemaVersion; String get id; String get titleJa; List<Question> get questions;
 /// Create a copy of ExamResource
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -581,16 +584,16 @@ $ExamResourceCopyWith<ExamResource> get copyWith => _$ExamResourceCopyWithImpl<E
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamResource&&(identical(other.id, id) || other.id == id)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&const DeepCollectionEquality().equals(other.questions, questions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamResource&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.id, id) || other.id == id)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&const DeepCollectionEquality().equals(other.questions, questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,titleJa,const DeepCollectionEquality().hash(questions));
+int get hashCode => Object.hash(runtimeType,schemaVersion,id,titleJa,const DeepCollectionEquality().hash(questions));
 
 @override
 String toString() {
-  return 'ExamResource(id: $id, titleJa: $titleJa, questions: $questions)';
+  return 'ExamResource(schemaVersion: $schemaVersion, id: $id, titleJa: $titleJa, questions: $questions)';
 }
 
 
@@ -601,7 +604,7 @@ abstract mixin class $ExamResourceCopyWith<$Res>  {
   factory $ExamResourceCopyWith(ExamResource value, $Res Function(ExamResource) _then) = _$ExamResourceCopyWithImpl;
 @useResult
 $Res call({
- String id, String titleJa, List<Question> questions
+ int schemaVersion, String id, String titleJa, List<Question> questions
 });
 
 
@@ -618,9 +621,10 @@ class _$ExamResourceCopyWithImpl<$Res>
 
 /// Create a copy of ExamResource
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? titleJa = null,Object? questions = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? schemaVersion = null,Object? id = null,Object? titleJa = null,Object? questions = null,}) {
   return _then(_self.copyWith(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
+as int,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
 as String,questions: null == questions ? _self.questions : questions // ignore: cast_nullable_to_non_nullable
 as List<Question>,
@@ -708,10 +712,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String titleJa,  List<Question> questions)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int schemaVersion,  String id,  String titleJa,  List<Question> questions)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ExamResource() when $default != null:
-return $default(_that.id,_that.titleJa,_that.questions);case _:
+return $default(_that.schemaVersion,_that.id,_that.titleJa,_that.questions);case _:
   return orElse();
 
 }
@@ -729,10 +733,10 @@ return $default(_that.id,_that.titleJa,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String titleJa,  List<Question> questions)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int schemaVersion,  String id,  String titleJa,  List<Question> questions)  $default,) {final _that = this;
 switch (_that) {
 case _ExamResource():
-return $default(_that.id,_that.titleJa,_that.questions);case _:
+return $default(_that.schemaVersion,_that.id,_that.titleJa,_that.questions);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -749,10 +753,10 @@ return $default(_that.id,_that.titleJa,_that.questions);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String titleJa,  List<Question> questions)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int schemaVersion,  String id,  String titleJa,  List<Question> questions)?  $default,) {final _that = this;
 switch (_that) {
 case _ExamResource() when $default != null:
-return $default(_that.id,_that.titleJa,_that.questions);case _:
+return $default(_that.schemaVersion,_that.id,_that.titleJa,_that.questions);case _:
   return null;
 
 }
@@ -764,9 +768,10 @@ return $default(_that.id,_that.titleJa,_that.questions);case _:
 @JsonSerializable()
 
 class _ExamResource implements ExamResource {
-  const _ExamResource({required this.id, required this.titleJa, required final  List<Question> questions}): _questions = questions;
+  const _ExamResource({required this.schemaVersion, required this.id, required this.titleJa, required final  List<Question> questions}): _questions = questions;
   factory _ExamResource.fromJson(Map<String, dynamic> json) => _$ExamResourceFromJson(json);
 
+@override final  int schemaVersion;
 @override final  String id;
 @override final  String titleJa;
  final  List<Question> _questions;
@@ -790,16 +795,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamResource&&(identical(other.id, id) || other.id == id)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&const DeepCollectionEquality().equals(other._questions, _questions));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamResource&&(identical(other.schemaVersion, schemaVersion) || other.schemaVersion == schemaVersion)&&(identical(other.id, id) || other.id == id)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&const DeepCollectionEquality().equals(other._questions, _questions));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,titleJa,const DeepCollectionEquality().hash(_questions));
+int get hashCode => Object.hash(runtimeType,schemaVersion,id,titleJa,const DeepCollectionEquality().hash(_questions));
 
 @override
 String toString() {
-  return 'ExamResource(id: $id, titleJa: $titleJa, questions: $questions)';
+  return 'ExamResource(schemaVersion: $schemaVersion, id: $id, titleJa: $titleJa, questions: $questions)';
 }
 
 
@@ -810,7 +815,7 @@ abstract mixin class _$ExamResourceCopyWith<$Res> implements $ExamResourceCopyWi
   factory _$ExamResourceCopyWith(_ExamResource value, $Res Function(_ExamResource) _then) = __$ExamResourceCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String titleJa, List<Question> questions
+ int schemaVersion, String id, String titleJa, List<Question> questions
 });
 
 
@@ -827,9 +832,10 @@ class __$ExamResourceCopyWithImpl<$Res>
 
 /// Create a copy of ExamResource
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? titleJa = null,Object? questions = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? schemaVersion = null,Object? id = null,Object? titleJa = null,Object? questions = null,}) {
   return _then(_ExamResource(
-id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
+schemaVersion: null == schemaVersion ? _self.schemaVersion : schemaVersion // ignore: cast_nullable_to_non_nullable
+as int,id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,titleJa: null == titleJa ? _self.titleJa : titleJa // ignore: cast_nullable_to_non_nullable
 as String,questions: null == questions ? _self._questions : questions // ignore: cast_nullable_to_non_nullable
 as List<Question>,
@@ -843,7 +849,7 @@ as List<Question>,
 /// @nodoc
 mixin _$Question {
 
- String get id; String get examId; int get section; int get number; String get type; String get promptJa; List<AnswerOption> get options; String get correctOptionId; String get audioAssetPath; List<TranscriptSentence> get sentences; QuestionExplanation get explanation;
+ String get id; String get examId; int get section; int get number; String get type; String get promptJa; List<AnswerOption> get options; String? get correctOptionId; String get audioAssetPath; List<TranscriptSentence> get sentences; QuestionExplanation? get explanation;
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -876,11 +882,11 @@ abstract mixin class $QuestionCopyWith<$Res>  {
   factory $QuestionCopyWith(Question value, $Res Function(Question) _then) = _$QuestionCopyWithImpl;
 @useResult
 $Res call({
- String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation explanation
+ String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation
 });
 
 
-$QuestionExplanationCopyWith<$Res> get explanation;
+$QuestionExplanationCopyWith<$Res>? get explanation;
 
 }
 /// @nodoc
@@ -893,7 +899,7 @@ class _$QuestionCopyWithImpl<$Res>
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = null,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,examId: null == examId ? _self.examId : examId // ignore: cast_nullable_to_non_nullable
@@ -902,20 +908,23 @@ as int,number: null == number ? _self.number : number // ignore: cast_nullable_t
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,promptJa: null == promptJa ? _self.promptJa : promptJa // ignore: cast_nullable_to_non_nullable
 as String,options: null == options ? _self.options : options // ignore: cast_nullable_to_non_nullable
-as List<AnswerOption>,correctOptionId: null == correctOptionId ? _self.correctOptionId : correctOptionId // ignore: cast_nullable_to_non_nullable
-as String,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
+as List<AnswerOption>,correctOptionId: freezed == correctOptionId ? _self.correctOptionId : correctOptionId // ignore: cast_nullable_to_non_nullable
+as String?,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
 as String,sentences: null == sentences ? _self.sentences : sentences // ignore: cast_nullable_to_non_nullable
-as List<TranscriptSentence>,explanation: null == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
-as QuestionExplanation,
+as List<TranscriptSentence>,explanation: freezed == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
+as QuestionExplanation?,
   ));
 }
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$QuestionExplanationCopyWith<$Res> get explanation {
-  
-  return $QuestionExplanationCopyWith<$Res>(_self.explanation, (value) {
+$QuestionExplanationCopyWith<$Res>? get explanation {
+    if (_self.explanation == null) {
+    return null;
+  }
+
+  return $QuestionExplanationCopyWith<$Res>(_self.explanation!, (value) {
     return _then(_self.copyWith(explanation: value));
   });
 }
@@ -1000,7 +1009,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation explanation)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Question() when $default != null:
 return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
@@ -1021,7 +1030,7 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation explanation)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)  $default,) {final _that = this;
 switch (_that) {
 case _Question():
 return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
@@ -1041,7 +1050,7 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation explanation)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)?  $default,) {final _that = this;
 switch (_that) {
 case _Question() when $default != null:
 return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
@@ -1056,7 +1065,7 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 @JsonSerializable()
 
 class _Question implements Question {
-  const _Question({required this.id, required this.examId, required this.section, required this.number, required this.type, required this.promptJa, required final  List<AnswerOption> options, required this.correctOptionId, required this.audioAssetPath, required final  List<TranscriptSentence> sentences, required this.explanation}): _options = options,_sentences = sentences;
+  const _Question({required this.id, required this.examId, required this.section, required this.number, required this.type, required this.promptJa, required final  List<AnswerOption> options, this.correctOptionId, required this.audioAssetPath, required final  List<TranscriptSentence> sentences, this.explanation}): _options = options,_sentences = sentences;
   factory _Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 
 @override final  String id;
@@ -1072,7 +1081,7 @@ class _Question implements Question {
   return EqualUnmodifiableListView(_options);
 }
 
-@override final  String correctOptionId;
+@override final  String? correctOptionId;
 @override final  String audioAssetPath;
  final  List<TranscriptSentence> _sentences;
 @override List<TranscriptSentence> get sentences {
@@ -1081,7 +1090,7 @@ class _Question implements Question {
   return EqualUnmodifiableListView(_sentences);
 }
 
-@override final  QuestionExplanation explanation;
+@override final  QuestionExplanation? explanation;
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
@@ -1116,11 +1125,11 @@ abstract mixin class _$QuestionCopyWith<$Res> implements $QuestionCopyWith<$Res>
   factory _$QuestionCopyWith(_Question value, $Res Function(_Question) _then) = __$QuestionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation explanation
+ String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation
 });
 
 
-@override $QuestionExplanationCopyWith<$Res> get explanation;
+@override $QuestionExplanationCopyWith<$Res>? get explanation;
 
 }
 /// @nodoc
@@ -1133,7 +1142,7 @@ class __$QuestionCopyWithImpl<$Res>
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = null,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,}) {
   return _then(_Question(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,examId: null == examId ? _self.examId : examId // ignore: cast_nullable_to_non_nullable
@@ -1142,11 +1151,11 @@ as int,number: null == number ? _self.number : number // ignore: cast_nullable_t
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as String,promptJa: null == promptJa ? _self.promptJa : promptJa // ignore: cast_nullable_to_non_nullable
 as String,options: null == options ? _self._options : options // ignore: cast_nullable_to_non_nullable
-as List<AnswerOption>,correctOptionId: null == correctOptionId ? _self.correctOptionId : correctOptionId // ignore: cast_nullable_to_non_nullable
-as String,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
+as List<AnswerOption>,correctOptionId: freezed == correctOptionId ? _self.correctOptionId : correctOptionId // ignore: cast_nullable_to_non_nullable
+as String?,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
 as String,sentences: null == sentences ? _self._sentences : sentences // ignore: cast_nullable_to_non_nullable
-as List<TranscriptSentence>,explanation: null == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
-as QuestionExplanation,
+as List<TranscriptSentence>,explanation: freezed == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
+as QuestionExplanation?,
   ));
 }
 
@@ -1154,9 +1163,12 @@ as QuestionExplanation,
 /// with the given fields replaced by the non-null parameter values.
 @override
 @pragma('vm:prefer-inline')
-$QuestionExplanationCopyWith<$Res> get explanation {
-  
-  return $QuestionExplanationCopyWith<$Res>(_self.explanation, (value) {
+$QuestionExplanationCopyWith<$Res>? get explanation {
+    if (_self.explanation == null) {
+    return null;
+  }
+
+  return $QuestionExplanationCopyWith<$Res>(_self.explanation!, (value) {
     return _then(_self.copyWith(explanation: value));
   });
 }
@@ -1435,7 +1447,7 @@ as String,
 /// @nodoc
 mixin _$TranscriptSentence {
 
- String get id; int get order; String? get speaker; String get textJa; String? get translationZh; int get startMs; int get endMs;
+ String get id; int get order; String? get speaker; String get textJa; String? get translationZh;@JsonKey(fromJson: _nullableMillisecondsFromJson) int? get startMs;@JsonKey(fromJson: _nullableMillisecondsFromJson) int? get endMs;
 /// Create a copy of TranscriptSentence
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1468,7 +1480,7 @@ abstract mixin class $TranscriptSentenceCopyWith<$Res>  {
   factory $TranscriptSentenceCopyWith(TranscriptSentence value, $Res Function(TranscriptSentence) _then) = _$TranscriptSentenceCopyWithImpl;
 @useResult
 $Res call({
- String id, int order, String? speaker, String textJa, String? translationZh, int startMs, int endMs
+ String id, int order, String? speaker, String textJa, String? translationZh,@JsonKey(fromJson: _nullableMillisecondsFromJson) int? startMs,@JsonKey(fromJson: _nullableMillisecondsFromJson) int? endMs
 });
 
 
@@ -1485,16 +1497,16 @@ class _$TranscriptSentenceCopyWithImpl<$Res>
 
 /// Create a copy of TranscriptSentence
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? order = null,Object? speaker = freezed,Object? textJa = null,Object? translationZh = freezed,Object? startMs = null,Object? endMs = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? order = null,Object? speaker = freezed,Object? textJa = null,Object? translationZh = freezed,Object? startMs = freezed,Object? endMs = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,speaker: freezed == speaker ? _self.speaker : speaker // ignore: cast_nullable_to_non_nullable
 as String?,textJa: null == textJa ? _self.textJa : textJa // ignore: cast_nullable_to_non_nullable
 as String,translationZh: freezed == translationZh ? _self.translationZh : translationZh // ignore: cast_nullable_to_non_nullable
-as String?,startMs: null == startMs ? _self.startMs : startMs // ignore: cast_nullable_to_non_nullable
-as int,endMs: null == endMs ? _self.endMs : endMs // ignore: cast_nullable_to_non_nullable
-as int,
+as String?,startMs: freezed == startMs ? _self.startMs : startMs // ignore: cast_nullable_to_non_nullable
+as int?,endMs: freezed == endMs ? _self.endMs : endMs // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 
@@ -1579,7 +1591,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh,  int startMs,  int endMs)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? startMs, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? endMs)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _TranscriptSentence() when $default != null:
 return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translationZh,_that.startMs,_that.endMs);case _:
@@ -1600,7 +1612,7 @@ return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translatio
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh,  int startMs,  int endMs)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? startMs, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? endMs)  $default,) {final _that = this;
 switch (_that) {
 case _TranscriptSentence():
 return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translationZh,_that.startMs,_that.endMs);case _:
@@ -1620,7 +1632,7 @@ return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translatio
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh,  int startMs,  int endMs)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int order,  String? speaker,  String textJa,  String? translationZh, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? startMs, @JsonKey(fromJson: _nullableMillisecondsFromJson)  int? endMs)?  $default,) {final _that = this;
 switch (_that) {
 case _TranscriptSentence() when $default != null:
 return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translationZh,_that.startMs,_that.endMs);case _:
@@ -1635,7 +1647,7 @@ return $default(_that.id,_that.order,_that.speaker,_that.textJa,_that.translatio
 @JsonSerializable()
 
 class _TranscriptSentence implements TranscriptSentence {
-  const _TranscriptSentence({required this.id, required this.order, this.speaker, required this.textJa, this.translationZh, required this.startMs, required this.endMs});
+  const _TranscriptSentence({required this.id, required this.order, this.speaker, required this.textJa, this.translationZh, @JsonKey(fromJson: _nullableMillisecondsFromJson) this.startMs, @JsonKey(fromJson: _nullableMillisecondsFromJson) this.endMs});
   factory _TranscriptSentence.fromJson(Map<String, dynamic> json) => _$TranscriptSentenceFromJson(json);
 
 @override final  String id;
@@ -1643,8 +1655,8 @@ class _TranscriptSentence implements TranscriptSentence {
 @override final  String? speaker;
 @override final  String textJa;
 @override final  String? translationZh;
-@override final  int startMs;
-@override final  int endMs;
+@override@JsonKey(fromJson: _nullableMillisecondsFromJson) final  int? startMs;
+@override@JsonKey(fromJson: _nullableMillisecondsFromJson) final  int? endMs;
 
 /// Create a copy of TranscriptSentence
 /// with the given fields replaced by the non-null parameter values.
@@ -1679,7 +1691,7 @@ abstract mixin class _$TranscriptSentenceCopyWith<$Res> implements $TranscriptSe
   factory _$TranscriptSentenceCopyWith(_TranscriptSentence value, $Res Function(_TranscriptSentence) _then) = __$TranscriptSentenceCopyWithImpl;
 @override @useResult
 $Res call({
- String id, int order, String? speaker, String textJa, String? translationZh, int startMs, int endMs
+ String id, int order, String? speaker, String textJa, String? translationZh,@JsonKey(fromJson: _nullableMillisecondsFromJson) int? startMs,@JsonKey(fromJson: _nullableMillisecondsFromJson) int? endMs
 });
 
 
@@ -1696,16 +1708,16 @@ class __$TranscriptSentenceCopyWithImpl<$Res>
 
 /// Create a copy of TranscriptSentence
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? order = null,Object? speaker = freezed,Object? textJa = null,Object? translationZh = freezed,Object? startMs = null,Object? endMs = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? order = null,Object? speaker = freezed,Object? textJa = null,Object? translationZh = freezed,Object? startMs = freezed,Object? endMs = freezed,}) {
   return _then(_TranscriptSentence(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,order: null == order ? _self.order : order // ignore: cast_nullable_to_non_nullable
 as int,speaker: freezed == speaker ? _self.speaker : speaker // ignore: cast_nullable_to_non_nullable
 as String?,textJa: null == textJa ? _self.textJa : textJa // ignore: cast_nullable_to_non_nullable
 as String,translationZh: freezed == translationZh ? _self.translationZh : translationZh // ignore: cast_nullable_to_non_nullable
-as String?,startMs: null == startMs ? _self.startMs : startMs // ignore: cast_nullable_to_non_nullable
-as int,endMs: null == endMs ? _self.endMs : endMs // ignore: cast_nullable_to_non_nullable
-as int,
+as String?,startMs: freezed == startMs ? _self.startMs : startMs // ignore: cast_nullable_to_non_nullable
+as int?,endMs: freezed == endMs ? _self.endMs : endMs // ignore: cast_nullable_to_non_nullable
+as int?,
   ));
 }
 

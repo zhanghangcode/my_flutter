@@ -5,6 +5,9 @@ import 'package:flutter/services.dart';
 import '../domain/practice_models.dart';
 import '../domain/practice_repository.dart';
 
+/// Flutter Asset 内の JSON を読み込み、教材モデルへ変換する Repository 実装。
+///
+/// 読み込んだ catalog と試験をメモリに保持し、同じ Asset の再デコードを避けます。
 class AssetPracticeRepository implements PracticeRepository {
   AssetPracticeRepository({AssetBundle? bundle})
     : _bundle = bundle ?? rootBundle;
@@ -21,6 +24,7 @@ class AssetPracticeRepository implements PracticeRepository {
 
   @override
   Future<ExamResource> getExam(String examId) async {
+    // 画面間で同じ試験を参照する場合は、検証済みのキャッシュを再利用します。
     final cached = _examCache[examId];
     if (cached != null) return cached;
 
@@ -35,7 +39,9 @@ class AssetPracticeRepository implements PracticeRepository {
       final resource = ExamResource.fromJson(
         jsonDecode(source) as Map<String, dynamic>,
       );
+      // UI へ不整合な教材を渡す前に、ID・正解・時間軸の整合性を確認します。
       _validateResource(resource, summary);
+      await _validateAudioAssets(resource);
       _examCache[examId] = resource;
       return resource;
     } on ContentValidationException {
@@ -50,12 +56,17 @@ class AssetPracticeRepository implements PracticeRepository {
   @override
   Future<Question> getQuestion(String questionId) async {
     final exams = await getExams();
+    final matches = <Question>[];
     for (final exam in exams) {
       final resource = await getExam(exam.id);
       for (final question in resource.questions) {
-        if (question.id == questionId) return question;
+        if (question.id == questionId) matches.add(question);
       }
     }
+    if (matches.length > 1) {
+      throw ContentValidationException('問題IDが試験間で重複しています: $questionId');
+    }
+    if (matches case [final question]) return question;
     throw ContentValidationException('問題が見つかりません: $questionId');
   }
 
@@ -76,13 +87,20 @@ class AssetPracticeRepository implements PracticeRepository {
       final catalog = ExamCatalog.fromJson(
         jsonDecode(source) as Map<String, dynamic>,
       );
-      if (catalog.schemaVersion != 1) {
+      if (catalog.schemaVersion != 2) {
         throw ContentValidationException(
           '対応していない教材形式です: ${catalog.schemaVersion}',
         );
       }
+      // family Provider のキーとして安全に使えるよう、試験 ID の重複を拒否します。
       final ids = <String>{};
       for (final exam in catalog.exams) {
+        if (exam.id.isEmpty || exam.resourcePath.isEmpty) {
+          throw const ContentValidationException('試験IDまたは教材pathが空です。');
+        }
+        if (exam.questionCount < 0) {
+          throw ContentValidationException('問題数が不正です: ${exam.id}');
+        }
         if (!ids.add(exam.id)) {
           throw ContentValidationException('試験IDが重複しています: ${exam.id}');
         }
@@ -97,6 +115,11 @@ class AssetPracticeRepository implements PracticeRepository {
   }
 
   void _validateResource(ExamResource resource, ExamSummary summary) {
+    if (resource.schemaVersion != 2) {
+      throw ContentValidationException(
+        '対応していない試験データ形式です: ${resource.schemaVersion}',
+      );
+    }
     if (resource.id != summary.id) {
       throw const ContentValidationException('試験IDが教材一覧と一致しません。');
     }
@@ -112,23 +135,74 @@ class AssetPracticeRepository implements PracticeRepository {
       if (question.examId != resource.id) {
         throw ContentValidationException('問題の試験IDが一致しません: ${question.id}');
       }
-      if (!question.options.any(
-        (item) => item.id == question.correctOptionId,
-      )) {
+      if (question.section <= 0 || question.number <= 0) {
+        throw ContentValidationException('問題番号が不正です: ${question.id}');
+      }
+      if (question.audioAssetPath.isEmpty) {
+        throw ContentValidationException('音声pathが空です: ${question.id}');
+      }
+      final optionIds = <String>{};
+      for (final option in question.options) {
+        if (option.id.isEmpty || !optionIds.add(option.id)) {
+          throw ContentValidationException(
+            '選択肢IDが不正または重複しています: ${question.id}',
+          );
+        }
+      }
+      if (question.correctOptionId != null && !question.isGradable) {
         throw ContentValidationException('正解の選択肢がありません: ${question.id}');
       }
+      if (summary.supportsTest && !question.isGradable) {
+        throw ContentValidationException('テスト対象の正解が未収録です: ${question.id}');
+      }
       var previousEnd = -1;
-      for (final sentence in question.sentences) {
+      var hasTimedSentence = false;
+      var hasUntimedSentence = false;
+      for (var index = 0; index < question.sentences.length; index++) {
+        final sentence = question.sentences[index];
         if (!sentenceIds.add(sentence.id)) {
           throw ContentValidationException('文IDが重複しています: ${sentence.id}');
         }
-        if (sentence.startMs < 0 || sentence.endMs <= sentence.startMs) {
+        if (sentence.order != index) {
+          throw ContentValidationException('文の順序が不正です: ${sentence.id}');
+        }
+        final startMs = sentence.startMs;
+        final endMs = sentence.endMs;
+        if ((startMs == null) != (endMs == null)) {
           throw ContentValidationException('時間情報が不正です: ${sentence.id}');
         }
-        if (sentence.startMs < previousEnd) {
-          throw ContentValidationException('文の時間が重複しています: ${sentence.id}');
+        if (startMs == null) {
+          hasUntimedSentence = true;
+        } else if (endMs != null) {
+          hasTimedSentence = true;
+          if (startMs < 0 || endMs <= startMs) {
+            throw ContentValidationException('時間情報が不正です: ${sentence.id}');
+          }
+          if (startMs < previousEnd) {
+            throw ContentValidationException('文の時間が重複しています: ${sentence.id}');
+          }
+          // startMs 順で重複しないことを次の文の検証基準として保持します。
+          previousEnd = endMs;
         }
-        previousEnd = sentence.endMs;
+      }
+      if (hasTimedSentence && hasUntimedSentence) {
+        throw ContentValidationException('時間軸が部分的に設定されています: ${question.id}');
+      }
+    }
+  }
+
+  Future<void> _validateAudioAssets(ExamResource resource) async {
+    for (final question in resource.questions) {
+      try {
+        final data = await _bundle.load(question.audioAssetPath);
+        if (data.lengthInBytes == 0) {
+          throw StateError('0 byte');
+        }
+      } catch (error) {
+        throw ContentValidationException(
+          '音声Assetが見つからないか空です: ${question.id}\n'
+          '${question.audioAssetPath}\n$error',
+        );
       }
     }
   }
