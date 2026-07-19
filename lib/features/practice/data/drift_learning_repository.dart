@@ -6,11 +6,16 @@ import '../domain/practice_models.dart';
 
 /// [LearningRepository] を Drift で実装し、ユーザーの学習状態を端末へ保存します。
 class DriftLearningRepository implements LearningRepository {
+  /// Driftを使用する学習記録Repositoryを生成します。
+  ///
+  /// [_database]は呼び出し元が所有するAppDatabaseで、生成時にDB書き込みは行いません。
   DriftLearningRepository(this._database);
 
+  /// 学習記録・お気に入りを読み書きするDriftデータベースです。
   final AppDatabase _database;
 
   @override
+  /// 登録日時の新しい順でお気に入り問題IDを監視します。
   Stream<Set<String>> watchFavoriteQuestionIds() {
     final query = _database.select(_database.favoriteQuestions)
       ..orderBy([(row) => OrderingTerm.desc(row.createdAtUtc)]);
@@ -20,6 +25,7 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// 登録日時の新しい順でお気に入り文IDを監視します。
   Stream<Set<String>> watchFavoriteSentenceIds() {
     final query = _database.select(_database.favoriteSentences)
       ..orderBy([(row) => OrderingTerm.desc(row.createdAtUtc)]);
@@ -29,6 +35,7 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// 最後の回答が不正解の問題IDを回答日時順で監視します。
   Stream<List<String>> watchWrongQuestionIds() {
     final query = _database.select(_database.practiceAnswers)
       ..where((row) => row.isCorrect.equals(false))
@@ -39,6 +46,7 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// 最近開いた問題IDを最終学習日時順で最大20件監視します。
   Stream<List<String>> watchRecentQuestionIds() {
     final query = _database.select(_database.practiceProgress)
       ..orderBy([(row) => OrderingTerm.desc(row.lastPracticedAtUtc)])
@@ -49,6 +57,7 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]のお気に入り登録を追加または解除します。
   Future<void> toggleQuestionFavorite(String questionId) async {
     final query = _database.select(_database.favoriteQuestions)
       ..where((row) => row.questionId.equals(questionId));
@@ -71,6 +80,9 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [sentenceId]のお気に入り登録を追加または解除します。
+  ///
+  /// [questionId]は文の所属問題として保存します。
   Future<void> toggleSentenceFavorite(
     String sentenceId,
     String questionId,
@@ -96,6 +108,9 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]の最後の回答を復元します。
+  ///
+  /// 回答が未保存の場合は`null`を返します。
   Future<AnswerRecord?> getAnswer(String questionId) async {
     final query = _database.select(_database.practiceAnswers)
       ..where((row) => row.questionId.equals(questionId));
@@ -110,6 +125,9 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]への回答を保存し、試行回数を加算します。
+  ///
+  /// [optionId]は選択肢ID、[isCorrect]は採点済みの正誤です。
   Future<void> saveAnswer(
     String questionId,
     String optionId,
@@ -131,6 +149,9 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]の保存済み進捗を復元します。
+  ///
+  /// 進捗がない場合は`null`を返します。
   Future<LearningProgress?> getProgress(String questionId) async {
     final query = _database.select(_database.practiceProgress)
       ..where((row) => row.questionId.equals(questionId));
@@ -153,6 +174,7 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]を開いた時刻と累計回数を更新します。
   Future<void> markQuestionOpened(String questionId) async {
     // 既存の位置と表示モードを維持したまま、閲覧回数と最終日時を更新します。
     final previous = await getProgress(questionId);
@@ -172,6 +194,9 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// [questionId]の位置と表示モードを保存します。
+  ///
+  /// [positionMs]は問題音声先頭からのmilliseconds、[contentMode]は次回復元する表示モードです。
   Future<void> saveProgress(
     String questionId, {
     required int positionMs,
@@ -192,5 +217,6 @@ class DriftLearningRepository implements LearningRepository {
   }
 
   @override
+  /// AppDatabaseへ委譲してすべての学習記録を削除します。
   Future<void> clearAll() => _database.clearLearningData();
 }

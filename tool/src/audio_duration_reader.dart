@@ -1,7 +1,10 @@
 import 'dart:io';
 import 'dart:typed_data';
 
-/// WAVまたはMP3 Assetのヘッダーを解析し、再生時間をmillisecondsで返します。
+/// WAV または MP3 Asset のヘッダーを解析し、再生時間を milliseconds で返します。
+///
+/// 検証ツール専用の軽量な解析であり、対応外形式や破損ヘッダーは
+/// [FormatException] として呼び出し元に通知します。
 int readAudioDurationMs(File file) {
   final bytes = file.readAsBytesSync();
   final extension = file.path.split('.').last.toLowerCase();
@@ -12,6 +15,7 @@ int readAudioDurationMs(File file) {
   };
 }
 
+/// WAV の chunk 情報から byte rate と音声データ長を取り出し、再生時間を計算します。
 int _readWavDurationMs(Uint8List bytes) {
   if (bytes.length < 44 ||
       _ascii(bytes, 0, 4) != 'RIFF' ||
@@ -40,6 +44,9 @@ int _readWavDurationMs(Uint8List bytes) {
   return (audioDataSize * 1000 / byteRate).round();
 }
 
+/// MP3 Layer III のフレームを走査し、サンプル数から再生時間を計算します。
+///
+/// ID3v2 タグを読み飛ばし、不正な候補は 1 byte ずつ進めて次のフレーム同期を探します。
 int _readMp3DurationMs(Uint8List bytes) {
   var offset = _id3v2Size(bytes);
   var totalSamples = 0;
@@ -91,6 +98,7 @@ int _readMp3DurationMs(Uint8List bytes) {
   return (totalSamples * 1000 / sampleRateForDuration).round();
 }
 
+/// 先頭の ID3v2 タグ全体の長さを返し、タグがない場合は 0 を返します。
 int _id3v2Size(Uint8List bytes) {
   if (bytes.length < 10 || _ascii(bytes, 0, 3) != 'ID3') return 0;
   final payloadSize =
@@ -102,10 +110,14 @@ int _id3v2Size(Uint8List bytes) {
   return 10 + payloadSize + (hasFooter ? 10 : 0);
 }
 
+/// [bytes] の指定範囲を ASCII 文字列として読み取ります。
 String _ascii(Uint8List bytes, int start, int length) =>
     String.fromCharCodes(bytes.sublist(start, start + length));
 
+/// MPEG-1 Layer III で使用するサンプルレートの対応表。
 const _mpeg1SampleRates = [44100, 48000, 32000];
+
+/// MPEG-1 Layer III の bitrate index に対応する kbps 値。
 const _mpeg1Layer3Bitrates = [
   0,
   32,
@@ -124,6 +136,8 @@ const _mpeg1Layer3Bitrates = [
   320,
   0,
 ];
+
+/// MPEG-2/2.5 Layer III の bitrate index に対応する kbps 値。
 const _mpeg2Layer3Bitrates = [
   0,
   8,

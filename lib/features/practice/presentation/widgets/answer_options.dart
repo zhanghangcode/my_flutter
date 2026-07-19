@@ -10,6 +10,11 @@ import '../../domain/practice_models.dart';
 /// 練習では PracticeDetailController の State を購読して採点結果まで表示し、
 /// テストでは親から渡された選択値と callback のみを使用して正解を隠します。
 class AnswerOptions extends ConsumerWidget {
+  /// 練習またはTestの選択肢一覧を生成します。
+  ///
+  /// [question]は表示・採点対象、[testSelection]と[onTestSelect]はTestモードの親Stateとの
+  /// 連携に使用します。[showPracticeActions]が`true`ならPracticeDetailControllerを使い、
+  /// `false`なら正解や解説を隠して[onTestSelect]だけを呼びます。
   const AnswerOptions({
     super.key,
     required this.question,
@@ -18,12 +23,20 @@ class AnswerOptions extends ConsumerWidget {
     this.showPracticeActions = true,
   });
 
+  /// 選択肢、正解、採点可否を持つ対象問題です。
   final Question question;
+
+  /// Testモードで親から渡される選択中の選択肢IDです。未選択時は`null`です。
   final String? testSelection;
+
+  /// Testモードで選択肢をタップした時に選択肢IDを通知するCallbackです。`null`なら通知しません。
   final ValueChanged<String>? onTestSelect;
+
+  /// `true`なら練習用の採点・再回答操作を表示し、`false`ならTest用表示にします。
   final bool showPracticeActions;
 
   @override
+  /// 問題の採点可否と現在の回答Stateに応じた選択肢UIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     if (!question.isGradable) {
       return const Card(
@@ -95,6 +108,10 @@ class AnswerOptions extends ConsumerWidget {
 
 /// 選択・正解・不正解の状態を色とアイコンで表現する 1 選択肢分の Widget。
 class _OptionCard extends StatelessWidget {
+  /// 1つの選択肢を状態色付きで表示するカードを生成します。
+  ///
+  /// [option]は表示内容、[selected]、[isCorrect]、[isWrong]は表示状態です。[onTap]は利用者が
+  /// カードをタップした時に呼ばれます。
   const _OptionCard({
     required this.option,
     required this.selected,
@@ -103,13 +120,23 @@ class _OptionCard extends StatelessWidget {
     required this.onTap,
   });
 
+  /// 表示する選択肢です。
   final AnswerOption option;
+
+  /// この選択肢が現在選択されているかを示します。
   final bool selected;
+
+  /// 提出後にこの選択肢が正解として表示されるかを示します。
   final bool isCorrect;
+
+  /// 提出後にこの選択肢が誤答として表示されるかを示します。
   final bool isWrong;
+
+  /// カードタップ時に親へ選択を通知するCallbackです。
   final VoidCallback onTap;
 
   @override
+  /// 選択・正誤に対応する色、番号、本文を含むカードを構築します。
   Widget build(BuildContext context) {
     final color = isCorrect
         ? AppColors.success
@@ -166,11 +193,16 @@ class _OptionCard extends StatelessWidget {
 
 /// 提出後の正誤を明示するフィードバック Widget。
 class _ResultBanner extends StatelessWidget {
+  /// 提出後の正誤フィードバックを生成します。
+  ///
+  /// [isCorrect]が`true`なら正解、`false`なら不正解の色と文言を表示します。
   const _ResultBanner({required this.isCorrect});
 
+  /// 提出した選択肢が正解かを示します。
   final bool isCorrect;
 
   @override
+  /// 正誤に対応するIconと文言を含むバナーを構築します。
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(14),

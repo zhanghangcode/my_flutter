@@ -6,11 +6,18 @@ import '../domain/test_models.dart';
 
 /// [TestRepository] を Drift で実装し、テスト履歴を端末へ保存します。
 class DriftTestRepository implements TestRepository {
+  /// Driftを使用するテスト結果Repositoryを生成します。
+  ///
+  /// [_database]は呼び出し元が所有するAppDatabaseで、生成時にDB書き込みは行いません。
   DriftTestRepository(this._database);
 
+  /// テストセッションと回答を読み書きするDriftデータベースです。
   final AppDatabase _database;
 
   @override
+  /// 進行中のテストセッションを作成し、採番IDを返します。
+  ///
+  /// [examId]は対象試験、[startedAtUtc]はUTC開始日時です。
   Future<int> createSession(String examId, DateTime startedAtUtc) {
     return _database
         .into(_database.testSessions)
@@ -24,6 +31,10 @@ class DriftTestRepository implements TestRepository {
   }
 
   @override
+  /// 全回答を採点してセッションと問題別結果をtransactionで保存します。
+  ///
+  /// [sessionId]は更新対象、[exam]は正解を持つ試験、[answers]は問題IDごとの回答、
+  /// [startedAtUtc]は所要時間計算に使用します。採点不能問題があれば例外を送出します。
   Future<TestResult> submitSession({
     required int sessionId,
     required ExamResource exam,
@@ -78,6 +89,9 @@ class DriftTestRepository implements TestRepository {
   }
 
   @override
+  /// 提出済みの[sessionId]をTestResultとして復元します。
+  ///
+  /// 存在しない、または進行中のセッションなら`null`を返します。
   Future<TestResult?> getResult(int sessionId) async {
     final sessionQuery = _database.select(_database.testSessions)
       ..where((row) => row.id.equals(sessionId));
@@ -101,6 +115,7 @@ class DriftTestRepository implements TestRepository {
   }
 
   @override
+  /// 提出済みセッションの結果一覧を提出日時の新しい順で監視します。
   Stream<List<TestResult>> watchResults() {
     final query = _database.select(_database.testSessions)
       ..where((row) => row.status.equals('submitted'))

@@ -17,6 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../helpers/practice_test_fakes.dart';
 
+/// N2 練習教材の本文・音声・再生モード連携を検証する統合 Widget テスト群です。
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 

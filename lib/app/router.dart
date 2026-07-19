@@ -12,7 +12,7 @@ import '../features/test/presentation/test_result_page.dart';
 import '../features/test/presentation/test_session_page.dart';
 import 'shell_page.dart';
 
-// 詳細画面を Bottom Navigation より上に全画面表示するためのルート Navigator です。
+/// 詳細画面をBottom Navigationより上に全画面表示するルートNavigatorのKeyです。
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 /// アプリ全体の画面構成と遷移規則を管理する GoRouter。

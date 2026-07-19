@@ -9,9 +9,13 @@ import '../../../core/widgets/async_states.dart';
 /// Scaffold と AppBar で主画面の枠を作り、設定の非同期状態に応じて内容を切り替えます。
 /// 各操作は SettingsController または LearningRepository へ委譲します。
 class SettingsPage extends ConsumerWidget {
+  /// 再生・表示・学習データ設定を表示する画面を生成します。
+  ///
+  /// [key]は任意のWidget識別子で、設定の読み込みはProvider購読時に開始されます。
   const SettingsPage({super.key});
 
   @override
+  /// 設定Providerの非同期状態に応じた設定画面を構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     // ref.watch により、保存直前に更新された設定値を各入力 Widget へ即時反映します。
     final settings = ref.watch(settingsControllerProvider);
@@ -113,6 +117,10 @@ class SettingsPage extends ConsumerWidget {
     );
   }
 
+  /// 学習記録の全削除を確認し、同意時だけRepositoryへ削除を依頼します。
+  ///
+  /// [context]はDialogとSnackBar、[ref]はLearningRepositoryの取得に使用します。キャンセル時は
+  /// 何も変更せず、削除完了後にWidgetが破棄済みならSnackBarを表示しません。
   Future<void> _confirmClear(BuildContext context, WidgetRef ref) async {
     // 破壊的操作は確認 Dialog を通し、明示的に同意された場合だけ実行します。
     final confirmed = await showDialog<bool>(
@@ -144,11 +152,16 @@ class SettingsPage extends ConsumerWidget {
 }
 
 class _SectionTitle extends StatelessWidget {
+  /// 設定一覧の区分見出しを生成します。
+  ///
+  /// [text]は表示する見出し文言です。
   const _SectionTitle(this.text);
 
+  /// 表示する設定区分の文言です。
   final String text;
 
   @override
+  /// Themeのprimary色を使用した見出し行を構築します。
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 24, 20, 8),

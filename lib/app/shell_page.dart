@@ -6,11 +6,17 @@ import 'package:go_router/go_router.dart';
 /// [StatefulNavigationShell] が選択中 branch と各 branch の Navigator を管理するため、
 /// タブを移動しても、それぞれの画面状態とナビゲーション履歴が維持されます。
 class AppShellPage extends StatelessWidget {
+  /// Bottom Navigationを持つ主要画面のShellを生成します。
+  ///
+  /// [shell]はGoRouterが管理する選択中branchと各Navigatorを持ちます。[key]は任意で、
+  /// このWidgetの生成によるナビゲーション状態の変更はありません。
   const AppShellPage({super.key, required this.shell});
 
+  /// Bottom Navigationと同期するStatefulNavigationShellです。
   final StatefulNavigationShell shell;
 
   @override
+  /// 現在のbranchと4つのNavigationDestinationを含むScaffoldを構築します。
   Widget build(BuildContext context) {
     return Scaffold(
       body: shell,

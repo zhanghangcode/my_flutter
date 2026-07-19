@@ -12,9 +12,13 @@ import '../domain/practice_models.dart';
 /// Scaffold と AppBar で主画面の枠を作り、FutureProvider の状態に応じて
 /// 読み込み中・エラー・空状態・教材一覧を切り替えます。
 class PracticeListPage extends ConsumerWidget {
+  /// 利用可能な練習教材を表示する画面を生成します。
+  ///
+  /// [key]は任意のWidget識別子で、生成時に教材読み込みを直接開始しません。
   const PracticeListPage({super.key});
 
   @override
+  /// 教材一覧Providerの状態に応じた練習一覧UIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     // ref.watch により、再試行や更新で catalog が変わると画面も再 build されます。
     final catalog = ref.watch(examCatalogProvider);
@@ -51,11 +55,16 @@ class PracticeListPage extends ConsumerWidget {
 
 /// 1 回分の試験情報とローカル利用状態を表示するカード。
 class _ExamCard extends ConsumerWidget {
+  /// 1件の試験教材を開くカードを生成します。
+  ///
+  /// [exam]は表示する試験メタデータです。カードを生成しただけではRoute遷移や教材取得は行いません。
   const _ExamCard({required this.exam});
 
+  /// カードへ表示し、詳細JSONを検索する試験メタデータです。
   final ExamSummary exam;
 
   @override
+  /// 試験情報とタップ可能なカードUIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     return Card(
       clipBehavior: Clip.antiAlias,
@@ -117,6 +126,10 @@ class _ExamCard extends ConsumerWidget {
     );
   }
 
+  /// 試験詳細を読み込み、先頭問題の練習詳細Routeを開きます。
+  ///
+  /// [context]はSnackBarとGoRouter遷移、[ref]は教材Providerの読み込みに使用します。
+  /// 問題が空または読み込みに失敗した場合はRoute遷移せず、利用者へSnackBarで通知します。
   Future<void> _open(BuildContext context, WidgetRef ref) async {
     try {
       // ユーザー操作時だけ ref.read で教材を取得し、一覧の不要な再 build を避けます。

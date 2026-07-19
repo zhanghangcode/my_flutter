@@ -6,7 +6,9 @@ import '../../../app/providers.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 
-/// sessionId ごとの提出結果を取得する画面ローカルな family Provider。
+/// sessionIdごとの提出結果を取得する画面ローカルなfamily Provider。
+///
+/// family引数の[sessionId]をDrift検索キーとして使用し、結果がない場合は`null`を返します。
 final _testResultProvider = FutureProvider.family((ref, int sessionId) {
   return ref.watch(testRepositoryProvider).getResult(sessionId);
 });
@@ -15,11 +17,17 @@ final _testResultProvider = FutureProvider.family((ref, int sessionId) {
 ///
 /// Drift の結果と静的教材を ID で関連付け、誤答問題から練習詳細へ遷移できます。
 class TestResultPage extends ConsumerWidget {
+  /// 提出済みテストの結果画面を生成します。
+  ///
+  /// [sessionId]はDriftから復元する提出済みセッションIDです。[key]は任意で、生成時に
+  /// テスト結果を変更しません。
   const TestResultPage({super.key, required this.sessionId});
 
+  /// 表示する提出済みテストセッションのIDです。
   final int sessionId;
 
   @override
+  /// 集計、誤答復習、お気に入り操作を含む結果UIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     // Route から受け取った sessionId を family Provider のキーとして使用します。
     final result = ref.watch(_testResultProvider(sessionId));
@@ -153,12 +161,19 @@ class TestResultPage extends ConsumerWidget {
 }
 
 class _ResultRow extends StatelessWidget {
+  /// 結果カード内のラベルと値の1行を生成します。
+  ///
+  /// [label]は項目名、[value]は表示済みの集計値です。
   const _ResultRow({required this.label, required this.value});
 
+  /// 表示する集計項目名です。
   final String label;
+
+  /// 表示する集計値です。
   final String value;
 
   @override
+  /// 左右にラベルと値を配置した結果行を構築します。
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),

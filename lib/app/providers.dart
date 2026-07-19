@@ -95,16 +95,25 @@ final testResultsProvider = StreamProvider<List<TestResult>>(
 /// UI は ref.watch で現在値を購読し、ユーザー操作時だけ ref.read で
 /// [saveChanges] を呼び出すことで、表示更新と永続化を分離します。
 class SettingsController extends AsyncNotifier<AppSettings> {
+  /// 設定を読み書きするRepositoryです。
+  ///
+  /// [build]でProviderから取得し、設定保存時に使用します。
   late SettingsRepository _repository;
 
   @override
+  /// SettingsRepositoryから初期設定を非同期で読み込みます。
+  ///
+  /// Providerの初回購読時に呼ばれ、完了後の値は[AppSettings]としてUIへ公開されます。
   Future<AppSettings> build() async {
     // Repository の差し替えを Provider 経由にすることで、テスト可能性を保ちます。
     _repository = ref.watch(settingsRepositoryProvider);
     return _repository.load();
   }
 
-  /// 現在値へ変更関数を適用し、UI 更新後に永続ストレージへ保存します。
+  /// 現在値へ変更関数を適用し、UI更新後に永続ストレージへ保存します。
+  ///
+  /// [change]は現在の設定を受け取り、保存する新しい設定を返すCallbackです。保存失敗時も
+  /// UIには先行して新しい値が反映されます。
   Future<void> saveChanges(
     AppSettings Function(AppSettings current) change,
   ) async {

@@ -11,6 +11,7 @@ import 'package:nihongo_listening/features/practice/domain/practice_models.dart'
 
 import '../../../helpers/practice_test_fakes.dart';
 
+/// PracticeDetailController の問題切り替えと音声状態の引継ぎを検証するテスト群です。
 void main() {
   test('問題数とindexから前後問題の有無を安全に判定する', () {
     // Given / When / Then: 先頭、中央、末尾、1問、不正indexの境界を確認します。

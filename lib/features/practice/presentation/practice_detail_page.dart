@@ -22,6 +22,10 @@ import 'widgets/transcript_list.dart';
 /// 画面下部の AudioPlayerBar はモード切り替えの外側に置くため、内容を切り替えても
 /// 再生状態を維持します。Route の ID を使って教材と保存済み学習状態を復元します。
 class PracticeDetailPage extends ConsumerStatefulWidget {
+  /// Route から受け取った教材と、任意の問題切り替え情報で詳細画面を構築します。
+  ///
+  /// [questionChange] がある場合は、前画面で確定した対象問題をすぐに描画しつつ、
+  /// 音声と学習状態の初期化を背景で進めます。
   const PracticeDetailPage({
     super.key,
     required this.examId,
@@ -30,25 +34,53 @@ class PracticeDetailPage extends ConsumerStatefulWidget {
     this.questionChange,
   });
 
+  /// 問題が属する試験を識別し、問題一覧の取得に使用する ID。
   final String examId;
+
+  /// 初回表示する問題を一意に識別する ID。
   final String questionId;
+
+  /// お気に入り画面などから指定された場合に、初期表示時に位置を合わせる文の ID。
   final String? sentenceId;
+
+  /// 同一試験内の問題切り替えで引き継ぐ、表示・再生に必要な一時情報。
   final PracticeQuestionChange? questionChange;
 
+  /// この画面固有の初期化と、画面離脱時の進捗保存を担当する State を生成します。
   @override
   ConsumerState<PracticeDetailPage> createState() => _PracticeDetailPageState();
 }
 
+/// PracticeDetailPage の非同期初期化、音声完了時の遷移、進捗保存を管理する State。
+///
+/// Provider の値は build 中に監視し、dispose 後も保存処理を安全に開始できるよう、
+/// 必要な依存と最新の表示状態だけを保持します。
 class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
+  /// 同じ問題に対する初期化処理を重ねて開始しないためのフラグ。
   bool _initializing = false;
+
+  /// 初期化を完了した問題 ID。再 build 時の音声再読込を防ぎます。
   String? _initializedQuestionId;
+
+  /// dispose 時に最後の進捗を保存するため、build 中に取得して保持する Repository。
   LearningRepository? _learningRepository;
+
+  /// dispose 時に音声を停止するため、build 中に取得して保持する Controller。
   AudioPlayerController? _audioPlayerController;
+
+  /// dispose 時に参照する、最後に描画されたプレイヤー状態。
   AudioPlayerState _latestPlayerState = const AudioPlayerState();
+
+  /// dispose 時に進捗へ保存する、最後に選択されていた表示モード。
   ContentMode _latestContentMode = ContentMode.transcript;
+
+  /// 連続再生による問題自動遷移を重複して開始しないためのフラグ。
   bool _automaticAdvanceInProgress = false;
+
+  /// Route 置換中に dispose が旧問題の音声を停止しないようにするフラグ。
   bool _routeReplacementInProgress = false;
 
+  /// 同じ State に別問題が渡された場合、問題固有の初期化済み情報をリセットします。
   @override
   void didUpdateWidget(covariant PracticeDetailPage oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -59,6 +91,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     _automaticAdvanceInProgress = false;
   }
 
+  /// 画面離脱時に進捗を保存し、現在画面が所有する音声だけを停止します。
   @override
   void dispose() {
     // 詳細画面を離れる時点の位置と表示モードを保存し、次回の復元に使用します。
@@ -82,6 +115,10 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     super.dispose();
   }
 
+  /// 問題本文、学習状態、AudioPlayerBar を組み合わせて詳細画面を描画します。
+  ///
+  /// 同一試験内の切り替えでは [PracticeQuestionChange] の問題を優先することで、
+  /// Repository の再取得完了を待たずに次の問題本文を表示します。
   @override
   Widget build(BuildContext context) {
     // 教材・お気に入り・演習状態を watch し、各 State の変更を画面へ反映します。
@@ -154,9 +191,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
             // build 中に Provider の State を変更しないよう、初期化は描画後へ予約します。
             _scheduleInitialization(item);
             final canNavigateQuestions =
-                !detail.isChangingQuestion &&
-                !detail.loading &&
-                player.status != AudioPlayerStatus.loading;
+                !detail.isChangingQuestion && !detail.loading;
             return Column(
               children: [
                 // Expanded がスクロール可能な内容領域を確保し、操作部の重なりを防ぎます。
@@ -193,6 +228,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     );
   }
 
+  /// 選択された表示モードに応じて、本文・設問・解説のコンテンツを切り替えます。
   Widget _buildContent(Question question, ContentMode mode) {
     return switch (mode) {
       ContentMode.transcript => TranscriptList(question: question),
@@ -205,6 +241,10 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     };
   }
 
+  /// 描画完了後に、問題の学習状態と音声を一度だけ初期化します。
+  ///
+  /// build 中に Provider の状態を更新しないため、Post-frame callback から非同期処理を
+  /// 開始します。通常遷移では保存済み進捗を、問題切り替えでは Route の引継ぎ情報を使います。
   void _scheduleInitialization(Question question) {
     // 非同期初期化の多重実行を防ぎ、同じ問題の音声を再読み込みしません。
     if (_initializing || _initializedQuestionId == question.id) return;
@@ -292,6 +332,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     });
   }
 
+  /// 切り替え元問題の進捗を保存し、保存失敗時だけ画面上で通知します。
   Future<void> _savePreviousProgress(PracticeQuestionChange change) async {
     try {
       await ref
@@ -302,6 +343,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     }
   }
 
+  /// 現在の画面が有効な場合にだけ、ユーザーへ一時的なメッセージを表示します。
   void _showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(
@@ -309,6 +351,10 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
+  /// 現在位置から [offset] 問だけ移動するための情報を Controller に要求します。
+  ///
+  /// 問題切り替え時も現在の速度を保つため、音源が準備済みならプレイヤーの速度を、
+  /// そうでなければ設定の既定値を Route 引継ぎ情報へ渡します。
   Future<void> _changeQuestion(int offset) async {
     final player = ref.read(audioPlayerControllerProvider);
     final settings =
@@ -322,6 +368,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     await _replaceWithQuestion(change);
   }
 
+  /// 問題選択シートで指定された [questionId] への切り替えを Controller に要求します。
   Future<void> _changeToQuestion(String questionId) async {
     final player = ref.read(audioPlayerControllerProvider);
     final settings =
@@ -335,6 +382,10 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     await _replaceWithQuestion(change);
   }
 
+  /// 問題の再生完了を再生モードに応じて処理し、必要なら次の問題へ進みます。
+  ///
+  /// repeatCurrent は同じ問題を再生し、sequential は末尾で停止し、repeatAll は
+  /// 末尾から先頭へ戻ります。遷移中の完了通知は無視して競合を防ぎます。
   Future<void> _handlePlaybackCompleted(AudioPlayerState player) async {
     if (!mounted ||
         _automaticAdvanceInProgress ||
@@ -378,6 +429,9 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     }
   }
 
+  /// [change] の対象問題へ Route を置換し、戻る操作で旧問題へ戻らないようにします。
+  ///
+  /// Controller が対象を確定できなかった場合は、必要に応じて保持済みのエラーを表示します。
   Future<void> _replaceWithQuestion(
     PracticeQuestionChange? change, {
     bool showError = true,
@@ -400,6 +454,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     );
   }
 
+  /// 同一試験内の問題を選ぶ BottomSheet を開き、選択後に共通の切り替え処理へ渡します。
   Future<void> _showQuestionPicker(BuildContext context) async {
     // BottomSheet は同じ試験内の問題だけを表示し、選択時に現在 Route を置換します。
     final exam = await ref.read(examResourceProvider(widget.examId).future);
@@ -435,11 +490,15 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
   }
 }
 
+/// 問題モードで設問を単独スクロール表示するコンテンツ Widget。
 class _QuestionContent extends StatelessWidget {
+  /// 表示する [question] を受け取り、共通の設問セクションを単独表示用に包みます。
   const _QuestionContent({required this.question});
 
+  /// 単独表示する問題データ。
   final Question question;
 
+  /// 設問セクションを余白付きのスクロール可能な領域として構築します。
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -451,10 +510,13 @@ class _QuestionContent extends StatelessWidget {
 
 /// 問題文と回答選択肢を、単独表示と組み合わせ表示で共有するセクション。
 class _QuestionSection extends StatelessWidget {
+  /// 単独表示と本文併記で共有する設問セクションを構築します。
   const _QuestionSection({required this.question});
 
+  /// 見出し、問題文、選択肢を表示する問題データ。
   final Question question;
 
+  /// 問題種別、問題文、回答選択肢を縦方向に配置します。
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -481,10 +543,13 @@ class _QuestionSection extends StatelessWidget {
 
 /// 設定に応じて日本語解説と中国語訳を表示する内容 Widget。
 class _ExplanationContent extends ConsumerWidget {
+  /// 解説と、設定に応じた中国語訳を表示するコンテンツを構築します。
   const _ExplanationContent({required this.question});
 
+  /// 解説および正解情報の参照元となる問題データ。
   final Question question;
 
+  /// 解説の有無と中国語表示設定に応じて、適切な説明内容を描画します。
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final explanation = question.explanation;
@@ -557,11 +622,16 @@ class _ExplanationContent extends ConsumerWidget {
 
 /// 4 つの内容モードを切り替える詳細画面専用のセレクター。
 class _ModeSelector extends StatelessWidget {
+  /// 現在の [selected] モードと、選択変更を受け取る [onSelected] を設定します。
   const _ModeSelector({required this.selected, required this.onSelected});
 
+  /// 選択中として強調する内容モード。
   final ContentMode selected;
+
+  /// ユーザーが選んだ内容モードを親 Widget へ通知する callback。
   final ValueChanged<ContentMode> onSelected;
 
+  /// 4 種類の内容モードを切り替えるセレクターを描画します。
   @override
   Widget build(BuildContext context) {
     const labels = {

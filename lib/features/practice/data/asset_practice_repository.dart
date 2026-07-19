@@ -9,20 +9,34 @@ import '../domain/practice_repository.dart';
 ///
 /// 読み込んだ catalog と試験をメモリに保持し、同じ Asset の再デコードを避けます。
 class AssetPracticeRepository implements PracticeRepository {
+  /// Asset Bundleから教材を読み込むRepositoryを生成します。
+  ///
+  /// [bundle]を指定するとテスト用AssetBundleを注入できます。`null`の場合はFlutterの
+  /// [rootBundle]を使用します。生成時にJSONや音声Assetは読み込みません。
   AssetPracticeRepository({AssetBundle? bundle})
     : _bundle = bundle ?? rootBundle;
 
+  /// JSONと音声Assetの読み込みに使用するAssetBundleです。
   final AssetBundle _bundle;
+
+  /// 検証済みの教材一覧キャッシュです。未読込時は`null`です。
   ExamCatalog? _catalog;
+
+  /// 試験IDをキーとする検証済み詳細教材のメモリキャッシュです。
   final Map<String, ExamResource> _examCache = {};
 
   @override
+  /// catalogから利用可能な試験一覧を非同期で返します。
   Future<List<ExamSummary>> getExams() async {
     final catalog = await _loadCatalog();
     return catalog.exams;
   }
 
   @override
+  /// 指定試験のJSONと参照音声を検証して非同期で返します。
+  ///
+  /// [examId]が存在しない、JSON形式が不正、または音声Assetがない場合は
+  /// [ContentValidationException]を送出します。
   Future<ExamResource> getExam(String examId) async {
     // 画面間で同じ試験を参照する場合は、検証済みのキャッシュを再利用します。
     final cached = _examCache[examId];
@@ -54,6 +68,10 @@ class AssetPracticeRepository implements PracticeRepository {
   }
 
   @override
+  /// 全試験を走査して指定問題を非同期で返します。
+  ///
+  /// [questionId]が見つからない、または試験をまたいで重複する場合は
+  /// [ContentValidationException]を送出します。
   Future<Question> getQuestion(String questionId) async {
     final exams = await getExams();
     final matches = <Question>[];
@@ -71,6 +89,9 @@ class AssetPracticeRepository implements PracticeRepository {
   }
 
   @override
+  /// 現在問題から[offset]だけ移動した問題を返します。
+  ///
+  /// 範囲外の場合は`null`を返します。
   Future<Question?> getAdjacentQuestion(String questionId, int offset) async {
     final current = await getQuestion(questionId);
     final exam = await getExam(current.examId);
@@ -80,6 +101,9 @@ class AssetPracticeRepository implements PracticeRepository {
     return exam.questions[target];
   }
 
+  /// catalog.jsonを読み込み、schemaと試験一覧を検証してキャッシュします。
+  ///
+  /// キャッシュ済みの場合は同じinstanceを返し、不正な形式は[ContentValidationException]へ変換します。
   Future<ExamCatalog> _loadCatalog() async {
     if (_catalog case final catalog?) return catalog;
     try {
@@ -114,6 +138,10 @@ class AssetPracticeRepository implements PracticeRepository {
     }
   }
 
+  /// 試験詳細とcatalogメタデータのID、件数、選択肢、時間軸を検証します。
+  ///
+  /// [resource]は詳細JSON、[summary]はcatalogの同一試験情報です。不整合は
+  /// [ContentValidationException]として送出します。
   void _validateResource(ExamResource resource, ExamSummary summary) {
     if (resource.schemaVersion != 2) {
       throw ContentValidationException(
@@ -191,6 +219,9 @@ class AssetPracticeRepository implements PracticeRepository {
     }
   }
 
+  /// 試験内の各問題が参照する音声Assetの存在と非0-byteを検証します。
+  ///
+  /// [resource]内のいずれかのAssetを読めない場合は問題IDとpathを含む例外を送出します。
   Future<void> _validateAudioAssets(ExamResource resource) async {
     for (final question in resource.questions) {
       try {

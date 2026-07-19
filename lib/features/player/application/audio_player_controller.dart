@@ -9,17 +9,35 @@ import '../domain/question_playback_mode.dart';
 
 /// UI が表示する音声プレイヤーの状態。
 enum AudioPlayerStatus {
+  /// 音源未設定の初期状態です。
   idle,
+
+  /// Asset音源を読み込んでいる状態です。
   loading,
+
+  /// 音源の準備が完了し、まだ再生していない状態です。
   ready,
+
+  /// 音声を出力している状態です。
   playing,
+
+  /// 現在位置を保持して一時停止している状態です。
   paused,
+
+  /// 音源末尾まで再生した状態です。
   completed,
+
+  /// 読み込みまたは再生操作に失敗した状態です。
   error,
 }
 
 /// 音源、時間、速度、問題再生mode、活性文をまとめた immutable State。
 class AudioPlayerState {
+  /// UIへ公開する音声プレイヤーのimmutable Stateを生成します。
+  ///
+  /// すべて任意の引数で、未指定時は音源未設定・先頭位置・等速・順次再生の初期値を
+  /// 使用します。[questionId]と[activeSentenceId]が`null`の場合は、それぞれ音源と
+  /// 活性文が未確定であることを表します。生成時に音声操作の副作用はありません。
   const AudioPlayerState({
     this.status = AudioPlayerStatus.idle,
     this.questionId,
@@ -33,15 +51,34 @@ class AudioPlayerState {
     this.errorMessage,
   });
 
+  /// 現在の読み込み・再生・失敗状態です。
   final AudioPlayerStatus status;
+
+  /// 読み込み済み音源に対応する問題IDです。`null`は音源未設定を表します。
   final String? questionId;
+
+  /// 現在問題のTranscript文一覧です。位置同期に使用します。
   final List<TranscriptSentence> sentences;
+
+  /// 現在の再生位置です。
   final Duration position;
+
+  /// 読み込み済み音源の総再生時間です。未確定時は[Duration.zero]です。
   final Duration duration;
+
+  /// Native Playerがバッファ済みと通知した位置です。
   final Duration bufferedPosition;
+
+  /// 現在音源へ適用した再生倍率です。
   final double speed;
+
+  /// 問題完了時の連続再生ルールです。
   final QuestionPlaybackMode playbackMode;
+
+  /// 再生位置に対応するTranscript文IDです。該当文がない時は`null`です。
   final String? activeSentenceId;
+
+  /// 利用者へ表示する最後の音声エラーです。失敗していない時は`null`です。
   final String? errorMessage;
 
   /// 操作可能な音源が設定済みかを返します。
@@ -50,9 +87,11 @@ class AudioPlayerState {
   /// UI 上の再生状態が playing かを返します。
   bool get isPlaying => status == AudioPlayerStatus.playing;
 
-  /// 指定項目だけを更新した新しい State を返します。
+  /// 指定項目だけを更新した新しいStateを返します。
   ///
-  /// nullable 項目には明示的な clear フラグを設け、未指定と null への変更を区別します。
+  /// nullable項目には明示的なclearフラグを設け、未指定と`null`への変更を区別します。
+  /// [clearQuestionId]、[clearActiveSentence]、[clearError]が`true`の場合は対応する値を
+  /// `null`へ更新します。元のStateは変更しません。
   AudioPlayerState copyWith({
     AudioPlayerStatus? status,
     String? questionId,
@@ -90,13 +129,25 @@ class AudioPlayerState {
 /// AudioPlaybackService のイベントを [AudioPlayerState] へ変換し、Widget は
 /// ref.watch だけで現在位置や再生状態を描画できます。
 class AudioPlayerController extends Notifier<AudioPlayerState> {
+  /// Controllerが操作する音声サービスです。[build]でProviderから取得します。
   late final AudioPlaybackService _service;
+
+  /// AudioPlaybackServiceのStream購読一覧です。Provider破棄時にすべて解除します。
   final List<StreamSubscription<Object?>> _subscriptions = [];
+
+  /// 現在読み込み中または読み込み済みのAsset相対pathです。未設定時は`null`です。
   String? _currentAudioAssetPath;
+
+  /// 新旧の非同期load結果を区別するための単調増加する要求IDです。
   int _sourceRequestId = 0;
+
+  /// 問題切り替えで進行中のstop操作です。停止不要時は`null`です。
   Future<void>? _pendingStopOperation;
 
   @override
+  /// 音声サービスの購読を開始し、初期Stateを返します。
+  ///
+  /// Provider初回作成時に呼ばれ、破棄時は購読を解除して遅延イベントによるState更新を防ぎます。
   AudioPlayerState build() {
     _service = ref.watch(audioPlaybackServiceProvider);
     // 複数の Plugin Stream を単一 State へ集約し、UI 側の購読を簡潔にします。
@@ -127,6 +178,10 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   }
 
   /// 問題の音源と時間付き本文を読み込み、速度と保存位置を復元します。
+  ///
+  /// [question]は音源とTranscriptを持つ対象問題、[speed]は適用する再生倍率、
+  /// [restorePosition]は問題音声先頭からの復元位置、[playbackMode]は完了時の再生規則です。
+  /// 同一問題が正常に準備済みなら再読込せず、古い非同期要求はrequest IDにより破棄します。
   Future<void> loadQuestion(
     Question question, {
     double speed = 1,
@@ -190,6 +245,9 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   }
 
   /// 現在状態に応じて再生と一時停止を切り替えます。
+  ///
+  /// completed状態では先頭へ戻してから再生します。音源未設定または読み込み中の場合は何もせず、
+  /// Plugin例外はerror StateとしてUIへ公開します。
   Future<void> togglePlayPause() async {
     if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
     try {
@@ -210,7 +268,10 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     }
   }
 
-  /// 指定位置を音源範囲内へ補正して seek します。
+  /// 指定位置を音源範囲内へ補正してseekします。
+  ///
+  /// [position]は移動先のDurationです。範囲外は`0`から音源末尾へ丸め、読み込み中・失敗中・
+  /// 音源未設定時は何も行いません。completedからの移動後はpausedへ戻します。
   Future<void> seek(Duration position) async {
     if (!state.hasSource ||
         state.status == AudioPlayerStatus.idle ||
@@ -235,7 +296,10 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     }
   }
 
-  /// 指定文の開始時刻へ seek します。
+  /// 指定文の開始時刻へseekします。
+  ///
+  /// [sentence]が現在問題に属し、有効なmilliseconds時間と音源範囲を持つ場合だけ実行します。
+  /// 再生中にPlatform側で停止した時だけ再生を復帰し、無効な文ではStateを変更しません。
   Future<void> seekToSentence(TranscriptSentence sentence) async {
     final startMs = sentence.startMs;
     final endMs = sentence.endMs;
@@ -289,13 +353,17 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     );
   }
 
-  /// 音声サービスと表示 State の再生速度を同期して更新します。
+  /// 音声サービスと表示Stateの再生速度を同期して更新します。
+  ///
+  /// [speed]はPlayerへ渡す再生倍率で、成功後にUI Stateへも反映します。
   Future<void> setSpeed(double speed) async {
     await _service.setSpeed(speed);
     state = state.copyWith(speed: speed);
   }
 
   /// 単題ループ、順次再生、全題ループの順にmodeを切り替えます。
+  ///
+  /// 音源未設定または読み込み中は何もせず、単題ループだけをNative Playerへ設定します。
   Future<void> cycleQuestionPlaybackMode() async {
     if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
     final next = switch (state.playbackMode) {
@@ -310,6 +378,8 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   }
 
   /// 現在の問題を先頭から再生し、1問だけの全題ループにも使用します。
+  ///
+  /// 音源未設定または読み込み中は何も行いません。
   Future<void> replayCurrentQuestion() async {
     if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
     await seek(Duration.zero);
@@ -326,6 +396,10 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   /// 再生を停止し、画面へ公開する State を初期状態へ戻します。
   Future<void> stop() => _stop(preservePreferences: false);
 
+  /// 現在音源の停止を直列化します。
+  ///
+  /// [preservePreferences]が`true`なら速度と再生modeを保った空Stateへ更新します。`false`なら
+  /// 停止完了後に完全な初期Stateへ戻します。既に停止中なら同じFutureを返します。
   Future<void> _stop({required bool preservePreferences}) {
     final existing = _pendingStopOperation;
     if (existing != null) return existing;
@@ -366,6 +440,10 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     return operation;
   }
 
+  /// Debug buildで文seekの入力・出力を記録します。
+  ///
+  /// [sentence]、[before]、[after]、[wasPlaying]、[result]はseek判定の監査情報です。
+  /// release buildでは何も出力しません。
   void _debugSentenceSeek({
     required TranscriptSentence sentence,
     required Duration before,
@@ -385,6 +463,9 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     );
   }
 
+  /// Playerの位置StreamをUI Stateと活性文へ反映します。
+  ///
+  /// [position]は音源先頭からの現在位置です。idle・loading・error中の遅延イベントは無視します。
   void _onPosition(Duration position) {
     // setAsset中は旧音源のposition eventが届く可能性があるため、新問題のStateへ反映しません。
     if (state.status == AudioPlayerStatus.idle ||
@@ -400,6 +481,9 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     );
   }
 
+  /// Native音声エンジンの状態をアプリ用のAudioPlayerStatusへ変換します。
+  ///
+  /// [snapshot]のprocessingとplayingを組み合わせ、問題切り替えstop由来のidle通知は無視します。
   void _onEngineState(AudioEngineSnapshot snapshot) {
     // 問題切り替えのstop由来のidleは、新音源のloading表示へ変換しません。
     if (_pendingStopOperation != null &&
@@ -426,7 +510,9 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
 
 /// 再生位置に対応する文を二分探索で返します。
 ///
-/// 判定区間は startMs を含み endMs を含みません。文間の空白では null を返します。
+/// [sentences]の判定区間はstartMsを含みendMsを含みません。
+///
+/// [position]に該当する文を二分探索で返し、時間情報が欠ける場合や文間の空白では`null`を返します。
 TranscriptSentence? findActiveSentence(
   List<TranscriptSentence> sentences,
   Duration position,

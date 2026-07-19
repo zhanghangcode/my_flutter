@@ -7,6 +7,10 @@ import '../domain/test_models.dart';
 
 /// 実施中テストの問題位置、回答、再生済み問題を保持する immutable State。
 class TestSessionState {
+  /// 実施中テストのimmutable Stateを生成します。
+  ///
+  /// [sessionId]は永続化ID、[exam]は対象試験、[startedAtUtc]はUTC開始日時です。
+  /// [currentIndex]は0始まり、[answers]の未回答はキーなし、[playedQuestionIds]は再生済みID集合です。
   const TestSessionState({
     required this.sessionId,
     required this.exam,
@@ -16,17 +20,30 @@ class TestSessionState {
     this.playedQuestionIds = const {},
   });
 
+  /// Driftへ保存したテストセッションIDです。
   final int sessionId;
+
+  /// 問題と正解を持つ対象試験です。
   final ExamResource exam;
+
+  /// テストを開始したUTC日時です。
   final DateTime startedAtUtc;
+
+  /// 現在表示する問題の0始まりindexです。
   final int currentIndex;
+
+  /// 問題IDをキーとする選択肢IDのMapです。未回答はキーなしまたは`null`です。
   final Map<String, String?> answers;
+
+  /// 音声を一度再生した問題IDの集合です。
   final Set<String> playedQuestionIds;
 
   /// 現在のインデックスに対応する問題を返します。
   Question get currentQuestion => exam.questions[currentIndex];
 
-  /// 変更対象だけを置き換えた新しいセッション State を返します。
+  /// 変更対象だけを置き換えた新しいセッションStateを返します。
+  ///
+  /// 任意引数が`null`の場合は現在値を維持し、元のStateは変更しません。
   TestSessionState copyWith({
     int? currentIndex,
     Map<String, String?>? answers,
@@ -49,9 +66,13 @@ class TestSessionState {
 /// 回答や問題移動はこの Controller を通して更新します。
 class TestSessionController extends AsyncNotifier<TestSessionState?> {
   @override
+  /// 初期状態としてテスト未開始を表す`null`を非同期で返します。
   Future<TestSessionState?> build() async => null;
 
   /// 試験データと永続セッションを作成し、最初の問題の音声を再生します。
+  ///
+  /// [examId]が採点可能な教材を指す場合だけ開始します。例外はAsyncValue.guardにより
+  /// AsyncErrorへ変換され、開始中はAsyncLoadingをUIへ公開します。
   Future<void> start(String examId) async {
     state = const AsyncLoading();
     // AsyncValue.guard で例外を AsyncError に変換し、画面のエラー表示へ流します。
@@ -83,7 +104,9 @@ class TestSessionController extends AsyncNotifier<TestSessionState?> {
     });
   }
 
-  /// 現在問題の選択回答を immutable Map として更新します。
+  /// 現在問題の選択回答をimmutable Mapとして更新します。
+  ///
+  /// [optionId]は選択した選択肢IDです。セッション未開始時は何もしません。
   void select(String optionId) {
     final session = state.value;
     if (session == null) return;
@@ -94,7 +117,10 @@ class TestSessionController extends AsyncNotifier<TestSessionState?> {
     );
   }
 
-  /// 指定インデックスへ移動し、未再生の問題だけ音声を開始します。
+  /// 指定indexへ移動し、未再生の問題だけ音声を開始します。
+  ///
+  /// [index]が範囲外またはセッション未開始なら何もしません。移動前に旧音声を停止し、
+  /// 初めて開く問題だけ先頭から再生します。
   Future<void> goTo(int index) async {
     final session = state.value;
     if (session == null ||
@@ -116,6 +142,9 @@ class TestSessionController extends AsyncNotifier<TestSessionState?> {
   }
 
   /// 現在の回答を採点・保存し、結果画面へ渡すモデルを返します。
+  ///
+  /// セッション未開始時は`null`を返します。提出後はStateを`null`へ戻し、結果一覧Providerを
+  /// invalidateします。
   Future<TestResult?> submit() async {
     final session = state.value;
     if (session == null) return null;
@@ -134,6 +163,7 @@ class TestSessionController extends AsyncNotifier<TestSessionState?> {
     return result;
   }
 
+  /// [question]の音源を読み込み、Test用に一度だけ再生します。
   Future<void> _loadAudio(Question question) async {
     final controller = ref.read(audioPlayerControllerProvider.notifier);
     await controller.loadQuestion(question);

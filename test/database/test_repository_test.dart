@@ -4,6 +4,7 @@ import 'package:nihongo_listening/database/app_database.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/test/data/drift_test_repository.dart';
 
+/// DriftTestRepository の採点とテスト結果保存を検証するテスト群です。
 void main() {
   late AppDatabase database;
   late DriftTestRepository repository;

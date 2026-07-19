@@ -14,18 +14,26 @@ import '../application/test_session_controller.dart';
 /// State の初期化と音声停止を画面ライフサイクルに連動させるため、
 /// ConsumerStatefulWidget として実装しています。
 class TestSessionPage extends ConsumerStatefulWidget {
+  /// 原文を隠したテストセッション画面を生成します。
+  ///
+  /// [examId]は開始する採点可能な試験IDです。[key]は任意で、セッション開始はStateの
+  /// [initState]から非同期で行います。
   const TestSessionPage({super.key, required this.examId});
 
+  /// 開始する試験の一意なIDです。
   final String examId;
 
   @override
+  /// テスト開始と音声停止のライフサイクルを持つStateを生成します。
   ConsumerState<TestSessionPage> createState() => _TestSessionPageState();
 }
 
 class _TestSessionPageState extends ConsumerState<TestSessionPage> {
+  /// セッション開始処理を一度だけ実行したかを示します。
   bool _started = false;
 
   @override
+  /// 初回描画後に対象試験のテストセッションを開始します。
   void initState() {
     super.initState();
     // initState 中に Provider を更新せず、現在の同期処理が終わった後に開始します。
@@ -40,6 +48,7 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   }
 
   @override
+  /// テストRouteを離れる時に再生中の音声を停止します。
   void dispose() {
     // Route を離れた後もテスト音声が再生され続けないよう停止します。
     unawaited(ref.read(audioPlayerControllerProvider.notifier).stop());
@@ -47,6 +56,7 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   }
 
   @override
+  /// 現在問題、回答、進捗、提出操作を含むテスト画面を構築します。
   Widget build(BuildContext context) {
     // AsyncValue を watch し、開始処理の loading・error・data を切り替えます。
     final sessionAsync = ref.watch(testSessionControllerProvider);
@@ -171,6 +181,10 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
     );
   }
 
+  /// 現在の回答を提出し、保存済み結果Routeへ遷移します。
+  ///
+  /// [context]は提出完了後のGoRouter遷移に使用します。提出結果が`null`またはWidgetが
+  /// 破棄済みの場合は遷移しません。
   Future<void> _submit(BuildContext context) async {
     final result = await ref
         .read(testSessionControllerProvider.notifier)
@@ -181,6 +195,9 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
     }
   }
 
+  /// 未提出回答が失われることを確認し、同意時にテスト一覧へ戻ります。
+  ///
+  /// [context]は確認DialogとGoRouter遷移に使用します。キャンセル時は現在のセッションを維持します。
   Future<void> _confirmExit(BuildContext context) async {
     // 未提出回答が保存されないことを明示し、ユーザーの確認を得ます。
     final leave = await showDialog<bool>(

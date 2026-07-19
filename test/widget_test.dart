@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/app.dart';
 
+/// アプリ起動時の Splash 表示と練習画面への遷移を検証する Widget テスト群です。
 void main() {
   testWidgets('app shows splash before opening the practice destination', (
     tester,

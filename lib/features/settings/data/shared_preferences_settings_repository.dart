@@ -6,17 +6,32 @@ import '../domain/app_settings.dart';
 ///
 /// 回答や進捗のような構造化データは Drift に任せ、この実装では単純な設定だけを扱います。
 class SharedPreferencesSettingsRepository implements SettingsRepository {
+  /// SharedPreferencesを使用する設定Repositoryを生成します。
+  ///
+  /// [preferences]を指定するとテスト用のSharedPreferencesAsyncを注入できます。`null`の場合は
+  /// 新しいSharedPreferencesAsyncを生成します。生成時にI/Oは行いません。
   SharedPreferencesSettingsRepository({SharedPreferencesAsync? preferences})
     : _preferences = preferences ?? SharedPreferencesAsync();
 
+  /// 設定値を非同期で読み書きするSharedPreferences APIです。
   final SharedPreferencesAsync _preferences;
 
+  /// 既定再生速度を保存するKeyです。
   static const _speedKey = 'default_speed';
+
+  /// 自動スクロール設定を保存するKeyです。
   static const _autoScrollKey = 'auto_scroll';
+
+  /// 中国語表示設定を保存するKeyです。
   static const _showChineseKey = 'show_chinese';
+
+  /// 再生位置復元設定を保存するKeyです。
   static const _rememberPositionKey = 'remember_position';
 
   @override
+  /// SharedPreferencesから設定を非同期で読み込みます。
+  ///
+  /// 保存値がないKeyには[AppSettings]と同じ既定値を適用します。
   Future<AppSettings> load() async {
     return AppSettings(
       defaultSpeed: await _preferences.getDouble(_speedKey) ?? 1,
@@ -28,6 +43,9 @@ class SharedPreferencesSettingsRepository implements SettingsRepository {
   }
 
   @override
+  /// すべての設定値をSharedPreferencesへ非同期で保存します。
+  ///
+  /// [settings]の各項目は独立したKeyへ並列に書き込まれます。
   Future<void> save(AppSettings settings) async {
     // 各設定は独立しているため並列保存し、全書き込みの完了を呼び出し元へ通知します。
     await Future.wait([

@@ -3,14 +3,20 @@ import 'dart:io';
 
 import 'src/audio_duration_reader.dart';
 
+/// 検証対象となる教材カタログの Asset 相対 path。
 const _catalogPath = 'assets/data/catalog.json';
+
+/// 今回導入した問題と音声 Asset の確定対応表。
 const _expectedAudioByQuestionId = <String, String>{
   'n2_listening_problem1_q01': 'assets/audio/問題1_第01問.mp3',
   'n2_listening_problem1_q02': 'assets/audio/問題1_第02問.mp3',
   'n2_listening_problem1_q03': 'assets/audio/問題1_第03問.mp3',
 };
 
-/// Bundleへ登録する試験JSONと音声Assetの参照整合性を検証します。
+/// Bundle へ登録する試験 JSON と音声 Asset の参照整合性を検証します。
+///
+/// カタログからすべての試験を走査し、ID、問題数、選択肢、時間軸、音声ファイルを
+/// 検証します。エラーをまとめて標準エラー出力へ出し、終了コードを 1 に設定します。
 Future<void> main() async {
   final errors = <String>[];
   final globalQuestionIds = <String>{};
@@ -101,6 +107,7 @@ Future<void> main() async {
   );
 }
 
+/// 1 試験分の JSON を読み込み、カタログとの整合性と各問題を検証します。
 Future<void> _validateExam({
   required String examId,
   required String resourcePath,
@@ -159,6 +166,10 @@ Future<void> _validateExam({
   }
 }
 
+/// 問題 ID、音声、選択肢、正解、Transcript と時間軸の整合性を検証します。
+///
+/// 検出した問題は [errors] へ追加し、他問題のエラーも続けて収集できるよう例外では
+/// 中断しません。
 void _validateQuestion({
   required String examId,
   required String resourcePath,
@@ -316,6 +327,7 @@ void _validateQuestion({
   }
 }
 
+/// 時間軸エラーに必要な試験・問題・音声の識別情報を整形します。
 String _timelineDetails({
   required String examId,
   required String questionId,

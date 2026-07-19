@@ -12,21 +12,35 @@ import '../../domain/practice_models.dart';
 /// プレイヤーの活性文、お気に入り、表示設定を Riverpod から購読し、活性文が変わった
 /// ときだけ自動スクロールします。footer により組み合わせ表示でも同じ同期処理を共有します。
 class TranscriptList extends ConsumerStatefulWidget {
+  /// 音声同期するTranscript一覧を生成します。
+  ///
+  /// [question]は表示対象、[footer]はTranscript末尾へ追加する任意のWidgetです。`null`の場合は
+  /// footerを追加しません。生成時に音声seekやお気に入り変更は行いません。
   const TranscriptList({super.key, required this.question, this.footer});
 
+  /// 表示・同期対象となる問題です。
   final Question question;
+
+  /// 組み合わせ表示でTranscript末尾へ追加するWidgetです。`null`なら追加しません。
   final Widget? footer;
 
   @override
+  /// TranscriptのProvider購読を持つStateを生成します。
   ConsumerState<TranscriptList> createState() => _TranscriptListState();
 }
 
 class _TranscriptListState extends ConsumerState<TranscriptList> {
+  /// 文IDごとのWidget位置を保持し、自動スクロールの対象解決に使います。
   final Map<String, GlobalKey> _sentenceKeys = {};
+
+  /// 利用者が手動スクロール中かを示し、自動スクロールとの競合を防ぎます。
   bool _userScrolling = false;
+
+  /// 最後に自動スクロールした文IDです。未実行時は`null`です。
   String? _lastScrolledId;
 
   @override
+  /// 音声State、設定、お気に入りを購読してTranscript一覧を構築します。
   Widget build(BuildContext context) {
     final player = ref.watch(audioPlayerControllerProvider);
     final favoriteIds = ref.watch(favoriteSentenceIdsProvider).value ?? {};
@@ -102,6 +116,10 @@ class _TranscriptListState extends ConsumerState<TranscriptList> {
 /// 行タップは AudioPlayerController へ seek を依頼し、星アイコンは
 /// LearningRepository へ保存を依頼するため、Widget は各 Plugin を直接扱いません。
 class TranscriptSentenceTile extends ConsumerWidget {
+  /// 1文のTranscriptと同期・お気に入り操作を表示するWidgetを生成します。
+  ///
+  /// [questionId]と[sentence]は保存・seek対象、[active]は活性表示、[seekEnabled]は文tapの可否です。
+  /// [favorite]は星表示、[showChinese]は中国語訳の表示可否を制御します。
   const TranscriptSentenceTile({
     super.key,
     required this.questionId,
@@ -112,14 +130,26 @@ class TranscriptSentenceTile extends ConsumerWidget {
     required this.showChinese,
   });
 
+  /// 文が所属する問題の一意なIDです。お気に入り保存に使用します。
   final String questionId;
+
+  /// 表示・seek対象となるTranscriptの1文です。
   final TranscriptSentence sentence;
+
+  /// この文が現在の再生位置に対応するかを示します。
   final bool active;
+
+  /// 文タップで開始位置へseekできるかを示します。
   final bool seekEnabled;
+
+  /// この文がお気に入り登録済みかを示します。
   final bool favorite;
+
+  /// 中国語訳を表示するかを示します。訳が`null`の場合は常に表示しません。
   final bool showChinese;
 
   @override
+  /// 本文、任意の中国語訳、同期状態、星操作を含む文行を構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     final hasSentenceTime = sentence.startMs != null && sentence.endMs != null;
     return Semantics(

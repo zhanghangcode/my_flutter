@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 
+/// 問題モデルの JSON 変換と時間軸の扱いを検証する単体テスト群です。
 void main() {
   test('文時間を整数millisecondsとしてparseする', () {
     final sentence = TranscriptSentence.fromJson({

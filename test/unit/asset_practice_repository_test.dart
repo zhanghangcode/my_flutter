@@ -6,6 +6,7 @@ import 'package:nihongo_listening/features/practice/data/asset_practice_reposito
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_repository.dart';
 
+/// AssetPracticeRepository が教材 JSON と音声参照を検証することを確認するテスト群です。
 void main() {
   // AssetBundle を利用できるよう、テスト用の Flutter Binding を初期化します。
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -264,11 +265,15 @@ AssetBundle _bundleFor({
   return _MemoryAssetBundle(assets);
 }
 
+/// テストで指定した Asset だけを返し、欠落 Asset も再現できるインメモリ AssetBundle。
 class _MemoryAssetBundle extends CachingAssetBundle {
+  /// [assets] を読み取り専用のテスト用 Asset として公開します。
   _MemoryAssetBundle(this.assets);
 
+  /// Asset path とバイト列の対応表。
   final Map<String, List<int>> assets;
 
+  /// [key] に対応するバイト列を返し、未登録の場合は欠落を示すエラーを送出します。
   @override
   Future<ByteData> load(String key) async {
     final bytes = assets[key];

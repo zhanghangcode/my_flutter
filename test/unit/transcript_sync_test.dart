@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 
+/// 再生位置と Transcript 文の対応境界を検証する単体テスト群です。
 void main() {
   // Given: 1 秒から 1.2 秒の間に空白を持つ、時間順の本文を用意します。
   const sentences = [

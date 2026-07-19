@@ -4,11 +4,22 @@ import 'package:flutter/material.dart';
 ///
 /// 画面ごとに色値を重複させず、深色 UI と状態色の一貫性を保ちます。
 abstract final class AppColors {
+  /// アプリ全体で使用する最も暗い背景色です。
   static const background = Color(0xFF070707);
+
+  /// CardやBottomSheetに使用する標準のsurface色です。
   static const surface = Color(0xFF202124);
+
+  /// SnackBarなど強調したsurfaceに使用する色です。
   static const surfaceHigh = Color(0xFF2B2C2F);
+
+  /// 活性文やエラー表示に使用するアクセント色です。
   static const accent = Color(0xFFFF3B44);
+
+  /// 非選択テキストなど補助情報に使用する色です。
   static const muted = Color(0xFF9B9B9F);
+
+  /// 正答など成功状態に使用する色です。
   static const success = Color(0xFF43A047);
 }
 

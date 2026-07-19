@@ -4,6 +4,7 @@ import 'package:nihongo_listening/database/app_database.dart';
 import 'package:nihongo_listening/features/practice/data/drift_learning_repository.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 
+/// DriftLearningRepository の永続化規則をインメモリ DB で検証するテスト群です。
 void main() {
   late AppDatabase database;
   late DriftLearningRepository repository;

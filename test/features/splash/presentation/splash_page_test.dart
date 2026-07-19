@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/theme.dart';
 import 'package:nihongo_listening/features/splash/presentation/splash_page.dart';
 
+/// SplashPage の破棄安全性と Animation 低減時の表示を検証する Widget テスト群です。
 void main() {
   testWidgets('disposing splash before startup completion is safe', (
     tester,

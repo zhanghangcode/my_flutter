@@ -7,43 +7,85 @@ import 'package:nihongo_listening/features/practice/domain/practice_repository.d
 
 /// PlayerとControllerのテストで利用する、Pluginに依存しない音声サービス。
 class FakeAudioPlaybackService implements AudioPlaybackService {
+  /// 再生位置をテストから任意に通知する StreamController。
   final positionController = StreamController<Duration>.broadcast();
+
+  /// バッファ済み位置をテストから任意に通知する StreamController。
   final bufferedPositionController = StreamController<Duration>.broadcast();
+
+  /// 読み込んだ音源の長さを通知する StreamController。
   final durationController = StreamController<Duration?>.broadcast();
+
+  /// Plugin の処理状態を模擬するための StreamController。
   final stateController = StreamController<AudioEngineSnapshot>.broadcast();
 
+  /// Asset path ごとに返す再生時間。未指定時は 30 秒を使用します。
   final Map<String, Duration> durations = {};
+
+  /// 指定 Asset の load 完了をテストから遅延させるための Completer 一覧。
   final Map<String, Completer<Duration>> pendingLoads = {};
+
+  /// 指定 Asset の load で送出するエラー一覧。
   final Map<String, Object> loadErrors = {};
+
+  /// loadAsset に渡された Asset path の履歴。
   final List<String> loadedAssets = [];
+
+  /// stop と load の実行順を検証するための操作履歴。
   final List<String> operationLog = [];
+
+  /// stop の完了をテストから遅延させるための任意の Completer。
   Completer<void>? pendingStop;
+
+  /// 最後に seek された位置。
   Duration lastSeekPosition = Duration.zero;
+
+  /// seek の呼び出し回数。
   int seekCount = 0;
+
+  /// 最後に設定された再生速度。
   double lastSpeed = 1;
+
+  /// play の呼び出し回数。
   int playCount = 0;
+
+  /// pause の呼び出し回数。
   int pauseCount = 0;
+
+  /// stop の呼び出し回数。
   int stopCount = 0;
+
+  /// seek 時に一時停止状態を通知するかどうか。
   bool pauseOnSeek = false;
+
+  /// [playing] getter が返す現在の再生フラグ。
   bool _playing = false;
+
+  /// 問題全体のループ設定を検証するための保持値。
   bool questionLooping = false;
 
+  /// テスト用サービスが再生中かどうかを返します。
   @override
   bool get playing => _playing;
 
+  /// 再生位置の通知 Stream を公開します。
   @override
   Stream<Duration> get positionStream => positionController.stream;
 
+  /// バッファ済み位置の通知 Stream を公開します。
   @override
   Stream<Duration> get bufferedPositionStream =>
       bufferedPositionController.stream;
 
+  /// 音源の長さの通知 Stream を公開します。
   @override
   Stream<Duration?> get durationStream => durationController.stream;
 
+  /// エンジン状態の通知 Stream を公開します。
   @override
   Stream<AudioEngineSnapshot> get stateStream => stateController.stream;
 
+  /// Asset を読み込み、テスト設定に応じて再生時間またはエラーを返します。
   @override
   Future<Duration> loadAsset(String assetPath) async {
     operationLog.add('load:$assetPath');
@@ -58,6 +100,7 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
     return duration;
   }
 
+  /// 再生状態へ遷移したことを記録し、ready 状態を通知します。
   @override
   Future<void> play() async {
     playCount++;
@@ -70,6 +113,7 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
     );
   }
 
+  /// 一時停止状態へ遷移したことを記録し、ready 状態を通知します。
   @override
   Future<void> pause() async {
     pauseCount++;
@@ -82,6 +126,7 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
     );
   }
 
+  /// 停止の順序を記録し、必要に応じてテスト側の完了を待機します。
   @override
   Future<void> stop() async {
     stopCount++;
@@ -98,6 +143,7 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
     operationLog.add('stop:complete');
   }
 
+  /// 最後に seek された位置を記録し、位置 Stream へ通知します。
   @override
   Future<void> seek(Duration position) async {
     seekCount++;
@@ -114,14 +160,17 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
     }
   }
 
+  /// 最後に指定された再生速度を保持します。
   @override
   Future<void> setSpeed(double speed) async => lastSpeed = speed;
 
+  /// 問題全体のループ設定を保持します。
   @override
   Future<void> setQuestionLooping(bool enabled) async {
     questionLooping = enabled;
   }
 
+  /// テストで開いたすべての StreamController を閉じます。
   @override
   Future<void> dispose() async {
     await Future.wait([
@@ -135,11 +184,16 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
 
 /// 順序付きの試験データをそのまま返すテスト用Repository。
 class FakePracticeRepository implements PracticeRepository {
+  /// [exam] を固定で返すテスト用 Repository を構築します。
   FakePracticeRepository(this.exam, {this.supportsTest = true});
 
+  /// テスト対象として返す試験データ。
   final ExamResource exam;
+
+  /// 試験がテストモードに対応するかどうか。
   final bool supportsTest;
 
+  /// 固定試験からカタログ用の要約を生成します。
   @override
   Future<List<ExamSummary>> getExams() async => [
     ExamSummary(
@@ -154,16 +208,19 @@ class FakePracticeRepository implements PracticeRepository {
     ),
   ];
 
+  /// [examId] が一致する場合だけ固定試験を返します。
   @override
   Future<ExamResource> getExam(String examId) async {
     if (examId != exam.id) throw StateError('試験が見つかりません。');
     return exam;
   }
 
+  /// 固定試験内から [questionId] が一致する問題を返します。
   @override
   Future<Question> getQuestion(String questionId) async =>
       exam.questions.firstWhere((question) => question.id == questionId);
 
+  /// [questionId] を基準に [offset] だけ移動した問題を返します。
   @override
   Future<Question?> getAdjacentQuestion(String questionId, int offset) async {
     final index = exam.questions.indexWhere(
@@ -179,35 +236,48 @@ class FakePracticeRepository implements PracticeRepository {
 
 /// 永続化の呼び出し結果をメモリ上で確認するテスト用Repository。
 class FakeLearningRepository implements LearningRepository {
+  /// 問題 ID ごとの保存済み学習進捗。
   final Map<String, LearningProgress> progress = {};
+
+  /// 問題 ID ごとの保存済み回答。
   final Map<String, AnswerRecord> answers = {};
+
+  /// 問題を開いた順序を確認するための履歴。
   final List<String> openedQuestions = [];
 
+  /// お気に入り問題を持たない固定 Stream を返します。
   @override
   Stream<Set<String>> watchFavoriteQuestionIds() => Stream.value({});
 
+  /// お気に入り文を持たない固定 Stream を返します。
   @override
   Stream<Set<String>> watchFavoriteSentenceIds() => Stream.value({});
 
+  /// 誤答問題を持たない固定 Stream を返します。
   @override
   Stream<List<String>> watchWrongQuestionIds() => Stream.value([]);
 
+  /// 最近の問題を持たない固定 Stream を返します。
   @override
   Stream<List<String>> watchRecentQuestionIds() => Stream.value([]);
 
+  /// お気に入り状態は保存せず、インターフェースだけを満たします。
   @override
   Future<void> toggleQuestionFavorite(String questionId) async {}
 
+  /// 文のお気に入り状態は保存せず、インターフェースだけを満たします。
   @override
   Future<void> toggleSentenceFavorite(
     String sentenceId,
     String questionId,
   ) async {}
 
+  /// [questionId] の保存済み回答を返します。
   @override
   Future<AnswerRecord?> getAnswer(String questionId) async =>
       answers[questionId];
 
+  /// [questionId] の回答を保存し、再回答時は試行回数を増やします。
   @override
   Future<void> saveAnswer(
     String questionId,
@@ -223,15 +293,18 @@ class FakeLearningRepository implements LearningRepository {
     );
   }
 
+  /// [questionId] の保存済み進捗を返します。
   @override
   Future<LearningProgress?> getProgress(String questionId) async =>
       progress[questionId];
 
+  /// 開いた [questionId] を履歴へ追加します。
   @override
   Future<void> markQuestionOpened(String questionId) async {
     openedQuestions.add(questionId);
   }
 
+  /// 再生位置と表示モードを、問題ごとのメモリ上の進捗へ保存します。
   @override
   Future<void> saveProgress(
     String questionId, {
@@ -248,6 +321,7 @@ class FakeLearningRepository implements LearningRepository {
     );
   }
 
+  /// テストで保持した回答・進捗・履歴をすべて初期化します。
   @override
   Future<void> clearAll() async {
     progress.clear();
@@ -257,6 +331,8 @@ class FakeLearningRepository implements LearningRepository {
 }
 
 /// 問題切り替えテスト向けに、指定数の問題を持つ試験を生成します。
+///
+/// [questionCount] は順序・境界・音声パスの検証に必要な最小構成の問題数です。
 ExamResource buildTestExam({int questionCount = 3}) => ExamResource(
   schemaVersion: 2,
   id: 'exam-1',

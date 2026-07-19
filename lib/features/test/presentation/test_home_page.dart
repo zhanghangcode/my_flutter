@@ -10,9 +10,13 @@ import '../../../core/widgets/async_states.dart';
 /// Scaffold と AppBar の下に試験カードと履歴を並べ、選択した試験は
 /// GoRouter を通して全画面のテストセッションへ遷移します。
 class TestHomePage extends ConsumerWidget {
+  /// 模擬テスト教材と最近の結果を表示する画面を生成します。
+  ///
+  /// [key]は任意のWidget識別子です。テストセッションはカードのタップ時だけ開始します。
   const TestHomePage({super.key});
 
   @override
+  /// 教材一覧とテスト結果Providerを購読した入口画面を構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     // 教材と結果の Provider を watch し、追加・提出された内容を一覧へ反映します。
     final exams = ref.watch(examCatalogProvider);

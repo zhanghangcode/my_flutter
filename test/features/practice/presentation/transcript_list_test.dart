@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../helpers/practice_test_fakes.dart';
 
+/// Transcript のタップ seek とアクティブ文表示を検証する Widget テスト群です。
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -106,6 +107,7 @@ void main() {
   });
 }
 
+/// 文タップとアクティブ表示の検証に使う、時間情報を持つ最小問題を生成します。
 Question _timedQuestion() => const Question(
   id: 'q1',
   examId: 'exam',
