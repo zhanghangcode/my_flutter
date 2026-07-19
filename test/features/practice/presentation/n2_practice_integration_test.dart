@@ -12,6 +12,7 @@ import 'package:nihongo_listening/features/practice/data/asset_practice_reposito
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/practice/presentation/practice_detail_page.dart';
 import 'package:nihongo_listening/features/practice/presentation/practice_list_page.dart';
+import 'package:nihongo_listening/features/practice/presentation/question_list_page.dart';
 import 'package:nihongo_listening/features/test/presentation/test_home_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -34,6 +35,11 @@ void main() {
         GoRoute(
           path: '/practice',
           builder: (context, state) => const PracticeListPage(),
+        ),
+        GoRoute(
+          path: '/practice/:examId',
+          builder: (context, state) =>
+              QuestionListPage(examId: state.pathParameters['examId']!),
         ),
         GoRoute(
           path: '/practice/:examId/question/:questionId',
@@ -78,8 +84,18 @@ void main() {
     // Given: catalogから練習専用の3問教材を一覧表示します。
     expect(find.text('N2聴解・問題1（3問）'), findsOneWidget);
 
-    // When: 教材を開き、問題モードへ切り替えます。
+    // When: 教材をタップして問題一覧画面を開きます。
     await tester.tap(find.text('N2聴解・問題1（3問）'));
+    await tester.pumpAndSettle();
+
+    // Then: sectionごとの見出しと問題行を表示します。
+    expect(find.text('問題1 課題理解'), findsOneWidget);
+    expect(find.text('第1問'), findsOneWidget);
+    expect(find.text('第2問'), findsOneWidget);
+    expect(find.text('第3問'), findsOneWidget);
+
+    // When: 第1問をタップして練習詳細画面を開きます。
+    await tester.tap(find.text('第1問'));
     await tester.pumpAndSettle();
     expect(find.byTooltip('前の問題'), findsNothing);
     expect(audio.loadedAssets.last, 'assets/audio/問題1_第01問.mp3');

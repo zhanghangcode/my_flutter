@@ -5,6 +5,7 @@ import '../features/favorites/presentation/favorites_page.dart';
 import '../features/practice/application/practice_detail_controller.dart';
 import '../features/practice/presentation/practice_detail_page.dart';
 import '../features/practice/presentation/practice_list_page.dart';
+import '../features/practice/presentation/question_list_page.dart';
 import '../features/settings/presentation/settings_page.dart';
 import '../features/splash/presentation/splash_page.dart';
 import '../features/test/presentation/test_home_page.dart';
@@ -75,6 +76,13 @@ final appRouter = GoRouter(
           ],
         ),
       ],
+    ),
+    // 問題一覧はsection単位の内訳を表示し、Bottom Navigationを隠して全画面表示します。
+    GoRoute(
+      parentNavigatorKey: _rootNavigatorKey,
+      path: '/practice/:examId',
+      builder: (context, state) =>
+          QuestionListPage(examId: state.pathParameters['examId']!),
     ),
     // 練習詳細はルート Navigator へ積み、Bottom Navigation を隠して表示します。
     GoRoute(

@@ -54,22 +54,22 @@ class PracticeListPage extends ConsumerWidget {
 }
 
 /// 1 回分の試験情報とローカル利用状態を表示するカード。
-class _ExamCard extends ConsumerWidget {
+class _ExamCard extends StatelessWidget {
   /// 1件の試験教材を開くカードを生成します。
   ///
-  /// [exam]は表示する試験メタデータです。カードを生成しただけではRoute遷移や教材取得は行いません。
+  /// [exam]は表示する試験メタデータです。カードを生成しただけではRoute遷移は行いません。
   const _ExamCard({required this.exam});
 
-  /// カードへ表示し、詳細JSONを検索する試験メタデータです。
+  /// カードへ表示する試験メタデータです。
   final ExamSummary exam;
 
   @override
   /// 試験情報とタップ可能なカードUIを構築します。
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => _open(context, ref),
+        onTap: () => context.push('/practice/${exam.id}'),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
@@ -124,31 +124,5 @@ class _ExamCard extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  /// 試験詳細を読み込み、先頭問題の練習詳細Routeを開きます。
-  ///
-  /// [context]はSnackBarとGoRouter遷移、[ref]は教材Providerの読み込みに使用します。
-  /// 問題が空または読み込みに失敗した場合はRoute遷移せず、利用者へSnackBarで通知します。
-  Future<void> _open(BuildContext context, WidgetRef ref) async {
-    try {
-      // ユーザー操作時だけ ref.read で教材を取得し、一覧の不要な再 build を避けます。
-      final resource = await ref.read(examResourceProvider(exam.id).future);
-      // 非同期読み込み中に画面が破棄された場合は BuildContext を使用しません。
-      if (!context.mounted) return;
-      if (resource.questions.isEmpty) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('この教材には問題がありません。')));
-        return;
-      }
-      final first = resource.questions.first;
-      await context.push('/practice/${exam.id}/question/${first.id}');
-    } catch (error) {
-      if (!context.mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(error.toString())));
-    }
   }
 }
