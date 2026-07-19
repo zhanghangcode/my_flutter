@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
@@ -57,6 +59,8 @@ abstract interface class AudioPlaybackService {
   Future<Duration> loadAsset(String assetPath);
 
   /// 読み込み済み音源を再生します。
+  ///
+  /// 返却されるFutureは再生開始要求の完了を表し、再生完了までは待ちません。
   Future<void> play();
 
   /// 再生位置を維持したまま一時停止します。
@@ -144,8 +148,15 @@ class JustAudioPlaybackService implements AudioPlaybackService {
   }
 
   /// 読み込み済み音源の再生を開始または再開します。
+  ///
+  /// just_audioのplay()が返すFutureは再生開始ではなく、再生完了・一時停止・停止時に
+  /// 完了する仕様のため、そのままawaitすると呼び出し元が再生完了までブロックされます。
+  /// ここでは開始要求だけを行い、完了を待たずに即座に返します。
   @override
-  Future<void> play() => _player.play();
+  Future<void> play() {
+    unawaited(_player.play());
+    return Future<void>.value();
+  }
 
   /// 現在位置を保持したまま再生を一時停止します。
   @override
