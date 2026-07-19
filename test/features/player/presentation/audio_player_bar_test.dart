@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/theme.dart';
+import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
 import 'package:nihongo_listening/features/player/presentation/audio_player_bar.dart';
 
@@ -105,6 +108,85 @@ void main() {
     // Then: 見た目は維持してもcallbackは実行せず、多重切り替えを防ぎます。
     expect(operationCount, 0);
   });
+
+  testWidgets('問題切り替え中は読み込み表示を出さず、Player操作を無効化する', (tester) async {
+    final audio = FakeAudioPlaybackService();
+    addTearDown(audio.dispose);
+    final pending = Completer<Duration>();
+    final question = buildTestExam(questionCount: 1).questions.single;
+    audio.pendingLoads[question.audioAssetPath] = pending;
+    await _pumpBar(
+      tester,
+      audio: audio,
+      showPrevious: false,
+      showNext: false,
+      interactionEnabled: false,
+    );
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(AudioPlayerBar)),
+    );
+    final load = container
+        .read(audioPlayerControllerProvider.notifier)
+        .loadQuestion(question);
+    await tester.pump();
+
+    // Then: 全画面overlayに代わるSpinnerをPlayer内にも表示しません。
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+    expect(tester.widget<Slider>(find.byType(Slider)).onChanged, isNull);
+    expect(
+      tester
+          .widget<PopupMenuButton<double>>(find.byType(PopupMenuButton<double>))
+          .enabled,
+      isFalse,
+    );
+    expect(
+      tester
+          .widget<IconButton>(find.widgetWithIcon(IconButton, Icons.play_arrow))
+          .onPressed,
+      isNull,
+    );
+
+    pending.complete(const Duration(seconds: 30));
+    await load;
+  });
+
+  testWidgets('右下ボタンで順次再生・全問題ループ・単一問題ループを切り替える', (tester) async {
+    final audio = FakeAudioPlaybackService();
+    addTearDown(audio.dispose);
+    await _pumpBar(tester, audio: audio, showPrevious: false, showNext: false);
+    final container = ProviderScope.containerOf(
+      tester.element(find.byType(AudioPlayerBar)),
+    );
+    await container
+        .read(audioPlayerControllerProvider.notifier)
+        .loadQuestion(buildTestExam(questionCount: 1).questions.single);
+    await tester.pump();
+
+    // Given: 初期状態では、問題を順番に再生して末尾で停止します。
+    expect(find.byTooltip('問題を順番に再生'), findsOneWidget);
+    expect(find.byIcon(Icons.playlist_play), findsOneWidget);
+
+    // When / Then: 1回目で全問題ループへ切り替えます。
+    await tester.tap(find.byTooltip('問題を順番に再生'));
+    await tester.pump();
+    expect(find.byTooltip('すべての問題を繰り返す'), findsOneWidget);
+    expect(find.byIcon(Icons.repeat), findsOneWidget);
+    expect(audio.questionLooping, isFalse);
+
+    // When / Then: 2回目は現在の問題だけをPlugin側でループします。
+    await tester.tap(find.byTooltip('すべての問題を繰り返す'));
+    await tester.pump();
+    expect(find.byTooltip('現在の問題を繰り返す'), findsOneWidget);
+    expect(find.byIcon(Icons.repeat_one), findsOneWidget);
+    expect(audio.questionLooping, isTrue);
+
+    // When / Then: 3回目で順次再生へ戻り、単一音源のloopを解除します。
+    await tester.tap(find.byTooltip('現在の問題を繰り返す'));
+    await tester.pump();
+    expect(find.byTooltip('問題を順番に再生'), findsOneWidget);
+    expect(audio.questionLooping, isFalse);
+  });
 }
 
 Future<void> _pumpBar(
@@ -113,6 +195,7 @@ Future<void> _pumpBar(
   required bool showPrevious,
   required bool showNext,
   bool navigationEnabled = true,
+  bool interactionEnabled = true,
   VoidCallback? onPrevious,
   VoidCallback? onNext,
 }) {
@@ -128,6 +211,7 @@ Future<void> _pumpBar(
               showPreviousQuestion: showPrevious,
               showNextQuestion: showNext,
               questionNavigationEnabled: navigationEnabled,
+              interactionEnabled: interactionEnabled,
               onPreviousQuestion: onPrevious ?? () {},
               onNextQuestion: onNext ?? () {},
             ),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -18,7 +20,7 @@ import '../../../helpers/practice_test_fakes.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('N2練習教材を開き、questionIdに対応する本文と音声へ切り替える', (tester) async {
+  testWidgets('N2練習教材を開き、順次再生と全問題ループで本文と音声を切り替える', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final exam = await AssetPracticeRepository().getExam(
       'n2_listening_problem1',
@@ -34,16 +36,21 @@ void main() {
         ),
         GoRoute(
           path: '/practice/:examId/question/:questionId',
-          builder: (context, state) {
+          pageBuilder: (context, state) {
             final questionId = state.pathParameters['questionId']!;
+            final examId = state.pathParameters['examId']!;
             final change = state.extra is PracticeQuestionChange
                 ? state.extra! as PracticeQuestionChange
                 : null;
-            return PracticeDetailPage(
-              key: ValueKey(questionId),
-              examId: state.pathParameters['examId']!,
+            final page = PracticeDetailPage(
+              key: ValueKey('practice-detail-$examId'),
+              examId: examId,
               questionId: questionId,
               questionChange: change,
+            );
+            return MaterialPage<void>(
+              key: ValueKey('practice-detail-$examId'),
+              child: page,
             );
           },
         ),
@@ -82,23 +89,105 @@ void main() {
     expect(find.text('男の学生は、この後まず何をしますか'), findsOneWidget);
     expect(find.text('選択肢・正解は未収録です'), findsOneWidget);
 
-    // When / Then: q02へ移動すると同じQuestionの本文と音声pathへ切り替わります。
-    await tester.tap(find.byTooltip('次の問題'));
+    // When / Then: q01の完了時にq02へ進み、同じQuestionの本文と音声pathを表示します。
+    await tester.tap(find.byTooltip('再生'));
+    await tester.pump();
+    final playCountBeforeChange = audio.playCount;
+    final pendingQ02 = Completer<Duration>();
+    audio.pendingLoads['assets/audio/問題1_第02問.mp3'] = pendingQ02;
+    audio.stateController.add(
+      const AudioEngineSnapshot(
+        playing: false,
+        processing: AudioEngineProcessing.completed,
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    // 音源loadが未完了でも目標本文を即時表示し、画面とPlayerにSpinnerを出しません。
+    expect(find.text('女の店員はこの後まず、何をしますか。'), findsOneWidget);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+    expect(find.byIcon(Icons.play_arrow), findsOneWidget);
+    expect(audio.playCount, playCountBeforeChange);
+    expect(audio.loadedAssets.last, 'assets/audio/問題1_第02問.mp3');
+
+    pendingQ02.complete(const Duration(seconds: 30));
     await tester.pumpAndSettle();
     expect(find.text('女の店員はこの後まず、何をしますか。'), findsOneWidget);
     expect(audio.loadedAssets.last, 'assets/audio/問題1_第02問.mp3');
+    expect(audio.playCount, greaterThan(playCountBeforeChange));
 
-    // q03では末尾境界となり、右ボタンを生成しません。
-    await tester.tap(find.byTooltip('次の問題'));
+    // q02の完了時も順次再生し、q03では末尾境界の右ボタンを生成しません。
+    audio.stateController.add(
+      const AudioEngineSnapshot(
+        playing: false,
+        processing: AudioEngineProcessing.completed,
+      ),
+    );
     await tester.pumpAndSettle();
     expect(find.text('男の人は何の写真を撮らなければなりませんか。'), findsOneWidget);
     expect(audio.loadedAssets.last, 'assets/audio/問題1_第03問.mp3');
     expect(find.byTooltip('次の問題'), findsNothing);
 
+    // 順次再生は末尾で停止し、全問題ループへ変更した場合だけq01へ戻ります。
+    final loadCountAtLastQuestion = audio.loadedAssets.length;
+    audio.stateController.add(
+      const AudioEngineSnapshot(
+        playing: false,
+        processing: AudioEngineProcessing.completed,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(audio.loadedAssets.length, loadCountAtLastQuestion);
+    expect(find.text('男の人は何の写真を撮らなければなりませんか。'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('問題を順番に再生'));
+    await tester.pump();
+    await tester.tap(find.byTooltip('再生'));
+    await tester.pump();
+    audio.stateController.add(
+      const AudioEngineSnapshot(
+        playing: false,
+        processing: AudioEngineProcessing.completed,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('男の学生は、この後まず何をしますか'), findsOneWidget);
+    expect(audio.loadedAssets.last, 'assets/audio/問題1_第01問.mp3');
+
+    // 単一問題ループではRouteを置換せず、現在音源を先頭から再生します。
+    final loadCountBeforeSingleRepeat = audio.loadedAssets.length;
+    final playCountBeforeSingleRepeat = audio.playCount;
+    await tester.tap(find.byTooltip('すべての問題を繰り返す'));
+    await tester.pump();
+    audio.stateController.add(
+      const AudioEngineSnapshot(
+        playing: false,
+        processing: AudioEngineProcessing.completed,
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(audio.loadedAssets.length, loadCountBeforeSingleRepeat);
+    expect(audio.lastSeekPosition, Duration.zero);
+    expect(audio.playCount, greaterThan(playCountBeforeSingleRepeat));
+    expect(find.text('男の学生は、この後まず何をしますか'), findsOneWidget);
+
     // 解説がない教材は空欄や例外ではなく、明示的な案内を表示します。
     await tester.tap(find.text('説明文'));
     await tester.pumpAndSettle();
     expect(find.text('解説は未収録です'), findsOneWidget);
+
+    // 音源load失敗後も目標問題に留まり、SnackBar表示後は戻る操作を行えます。
+    await tester.tap(find.text('問題'));
+    await tester.pumpAndSettle();
+    audio.loadErrors['assets/audio/問題1_第02問.mp3'] = StateError('broken audio');
+    await tester.tap(find.byTooltip('次の問題'));
+    await tester.pumpAndSettle();
+    expect(find.text('女の店員はこの後まず、何をしますか。'), findsOneWidget);
+    expect(find.textContaining('音声を読み込めませんでした'), findsWidgets);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('N2聴解・問題1（3問）'), findsOneWidget);
 
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();

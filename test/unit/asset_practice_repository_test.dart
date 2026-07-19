@@ -56,8 +56,11 @@ void main() {
       expect(question.correctOptionId, isNull);
       expect(question.explanation, isNull);
       expect(question.isGradable, isFalse);
-      expect(question.hasCompleteTimeline, isFalse);
       expect(question.sentences, isNotEmpty);
+    }
+    // Bundleへ組み込む3問は、いずれも文単位の再生位置を利用できます。
+    for (final question in practice.questions) {
+      expect(question.hasCompleteTimeline, isTrue);
     }
   });
 

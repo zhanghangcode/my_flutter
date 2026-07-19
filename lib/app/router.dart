@@ -81,20 +81,26 @@ final appRouter = GoRouter(
       parentNavigatorKey: _rootNavigatorKey,
       path: '/practice/:examId/question/:questionId',
       // GoRouterState から path/query parameter を取り出し、画面の入力値へ変換します。
-      builder: (context, state) {
+      pageBuilder: (context, state) {
         final questionId = state.pathParameters['questionId']!;
+        final examId = state.pathParameters['examId']!;
         final questionChange = switch (state.extra) {
           final PracticeQuestionChange value
               when value.questionId == questionId =>
             value,
           _ => null,
         };
-        return PracticeDetailPage(
-          key: ValueKey(questionId),
-          examId: state.pathParameters['examId']!,
+        final page = PracticeDetailPage(
+          key: ValueKey('practice-detail-$examId'),
+          examId: examId,
           questionId: questionId,
           sentenceId: state.uri.queryParameters['sentenceId'],
           questionChange: questionChange,
+        );
+        // 同一試験の問題は同じPageとして更新し、初回表示だけ標準Route遷移を行います。
+        return MaterialPage<void>(
+          key: ValueKey('practice-detail-$examId'),
+          child: page,
         );
       },
     ),

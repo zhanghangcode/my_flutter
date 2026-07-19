@@ -15,57 +15,92 @@
       "audioAssetPath": "assets/audio/問題1_第01問.mp3",
       "sentences": [
         {
-          "id": "n2_listening_problem1_q01_s001",
+          "id": "n2_q01_s01",
           "order": 0,
-          "textJa": "大学で女の学生と男の学生が話しています。男の学生はこの後まず、何をしますか。"
+          "textJa": "大学で女の学生と男の学生が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6590
         },
         {
-          "id": "n2_listening_problem1_q01_s002",
+          "id": "n2_q01_s02",
           "order": 1,
-          "speaker": "女の学生",
-          "textJa": "中村くん。シンポジウムのポスター、掲示板に貼ってくれたんだね｡  ありがとう｡"
+          "textJa": "中村くん。シンポジウムのポスター、掲示板に貼ってくれたんだね｡  ありがとう｡",
+          "translationZh": null,
+          "startMs": 12910,
+          "endMs": 18650,
+          "speaker": "女の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s003",
+          "id": "n2_q01_s03",
           "order": 2,
-          "speaker": "男の学生",
-          "textJa": "えぇ､  他に僕がやっておくことってありますか？"
+          "textJa": "えぇ､  他に僕がやっておくことってありますか？",
+          "translationZh": null,
+          "startMs": 18650,
+          "endMs": 22730,
+          "speaker": "男の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s004",
+          "id": "n2_q01_s04",
           "order": 3,
-          "speaker": "女の学生",
-          "textJa": "マイクとか会場の準備は前日にすればいいし､  当日のスタッフ用のスケジュール表､  これないから欲しいな｡  今週中にお願いしていい？"
+          "textJa": "マイクとか会場の準備は前日にすればいいし､  当日のスタッフ用のスケジュール表､  これないから欲しいな｡  今週中にお願いしていい？",
+          "translationZh": null,
+          "startMs": 22730,
+          "endMs": 34980,
+          "speaker": "女の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s005",
+          "id": "n2_q01_s05",
           "order": 4,
-          "speaker": "男の学生",
-          "textJa": "あ、はい。"
+          "textJa": "あ、はい。",
+          "translationZh": null,
+          "startMs": 34980,
+          "endMs": 36080,
+          "speaker": "男の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s006",
+          "id": "n2_q01_s06",
           "order": 5,
-          "speaker": "女の学生",
-          "textJa": "それから１番大事な当日配る資料､  コピーまだなんじゃない？ 100 部だよね？"
+          "textJa": "それから１番大事な当日配る資料､  コピーまだなんじゃない？ 100 部だよね？",
+          "translationZh": null,
+          "startMs": 36260,
+          "endMs": 44030,
+          "speaker": "女の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s007",
+          "id": "n2_q01_s07",
           "order": 6,
-          "speaker": "男の学生",
-          "textJa": "あ､  それなんですけど､  発表者の方からの資料まだ全部集まってないんですよ。"
+          "textJa": "あ､  それなんですけど､  発表者の方からの資料まだ全部集まってないんですよ。",
+          "translationZh": null,
+          "startMs": 44030,
+          "endMs": 50710,
+          "speaker": "男の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s008",
+          "id": "n2_q01_s08",
           "order": 7,
-          "speaker": "女の学生",
-          "textJa": "そう､  みなさんお忙しい方ばかりだから・・・私から発表者に資料を送ってもらうようにすぐに連絡をするから､集まり次第コピーしよう｡  週明けには出してもらうようにするね｡"
+          "textJa": "そう､  みなさんお忙しい方ばかりだから・・・私から発表者に資料を送ってもらうようにすぐに連絡をするから､集まり次第コピーしよう｡  週明けには出してもらうようにするね｡",
+          "translationZh": null,
+          "startMs": 50790,
+          "endMs": 65590,
+          "speaker": "女の学生"
         },
         {
-          "id": "n2_listening_problem1_q01_s009",
+          "id": "n2_q01_s09",
           "order": 8,
-          "speaker": "男の学生",
-          "textJa": "はい､  わかりました｡"
+          "textJa": "はい､  わかりました｡",
+          "translationZh": null,
+          "startMs": 65700,
+          "endMs": 67120,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q01_s10",
+          "order": 9,
+          "textJa": "男の学生は、この後まず何をしますか",
+          "translationZh": null,
+          "startMs": 67120,
+          "endMs": 77520
         }
       ],
       "explanation": null
@@ -82,51 +117,83 @@
       "audioAssetPath": "assets/audio/問題1_第02問.mp3",
       "sentences": [
         {
-          "id": "n2_listening_problem1_q02_s001",
+          "id": "n2_q02_s01",
           "order": 0,
-          "textJa": "スーパーで男の店長と女の店員が話しています。女の店員はこの後まず、何をしますか。"
+          "textJa": "スーパーで男の店長と女の店員が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6490
         },
         {
-          "id": "n2_listening_problem1_q02_s002",
+          "id": "n2_q02_s02",
           "order": 1,
-          "speaker": "店長",
-          "textJa": "おはようございます、森田さん｡  今日は一部の商品に値引きシールを付ける作業をやってくれることになってたね｡"
+          "textJa": "おはようございます、森田さん｡  今日は一部の商品に値引きシールを付ける作業をやってくれることになってたね｡",
+          "translationZh": null,
+          "startMs": 11090,
+          "endMs": 19990,
+          "speaker": "店長"
         },
         {
-          "id": "n2_listening_problem1_q02_s003",
+          "id": "n2_q02_s03",
           "order": 2,
-          "speaker": "女の店員",
-          "textJa": "あ､  はい。準備してます｡"
+          "textJa": "あ､  はい。準備してます｡",
+          "translationZh": null,
+          "startMs": 19990,
+          "endMs": 22570,
+          "speaker": "女の店員"
         },
         {
-          "id": "n2_listening_problem1_q02_s004",
+          "id": "n2_q02_s04",
           "order": 3,
-          "speaker": "店長",
-          "textJa": "えっと､  忙しい時に悪いんだけど､  倉庫に行って南コーヒーの豆､  何袋あるか数えてきてくれる？数が少なかったら今日中に注文しないといけないんだ。"
+          "textJa": "えっと､  忙しい時に悪いんだけど､  倉庫に行って南コーヒーの豆､  何袋あるか数えてきてくれる？数が少なかったら今日中に注文しないといけないんだ。",
+          "translationZh": null,
+          "startMs": 22580,
+          "endMs": 34600,
+          "speaker": "店長"
         },
         {
-          "id": "n2_listening_problem1_q02_s005",
+          "id": "n2_q02_s05",
           "order": 4,
-          "speaker": "女の店員",
-          "textJa": "あ､  わかりました。急ぎですか？"
+          "textJa": "あ､  わかりました。急ぎですか？",
+          "translationZh": null,
+          "startMs": 34600,
+          "endMs": 37570,
+          "speaker": "女の店員"
         },
         {
-          "id": "n2_listening_problem1_q02_s006",
+          "id": "n2_q02_s06",
           "order": 5,
-          "speaker": "店長",
-          "textJa": "あー､  そのシールを貼る作業が終わってからでいいから。袋の数を数えたらメモを私の机の上に置いといて｡"
+          "textJa": "あー､  そのシールを貼る作業が終わってからでいいから。袋の数を数えたらメモを私の机の上に置いといて｡",
+          "translationZh": null,
+          "startMs": 38470,
+          "endMs": 46240,
+          "speaker": "店長"
         },
         {
-          "id": "n2_listening_problem1_q02_s007",
+          "id": "n2_q02_s07",
           "order": 6,
-          "speaker": "女の店員",
-          "textJa": "わかりました｡"
+          "textJa": "わかりました｡",
+          "translationZh": null,
+          "startMs": 46240,
+          "endMs": 47250,
+          "speaker": "女の店員"
         },
         {
-          "id": "n2_listening_problem1_q02_s008",
+          "id": "n2_q02_s08",
           "order": 7,
-          "speaker": "店長",
-          "textJa": "お客さんがレジにたくさん並んでるから､私もすぐレジを手伝わなきゃいけなくて｡  値引きシールを付けた商品をレジの横の棚に並べるのは明日の開店前にみんなですればいいから｡  じゃ、よろしくね。"
+          "textJa": "お客さんがレジにたくさん並んでるから､私もすぐレジを手伝わなきゃいけなくて｡  値引きシールを付けた商品をレジの横の棚に並べるのは明日の開店前にみんなですればいいから｡  じゃ、よろしくね。",
+          "translationZh": null,
+          "startMs": 47250,
+          "endMs": 62410,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q02_s09",
+          "order": 8,
+          "textJa": "女の店員はこの後まず、何をしますか。",
+          "translationZh": null,
+          "startMs": 68020,
+          "endMs": 72380
         }
       ],
       "explanation": null
@@ -143,57 +210,92 @@
       "audioAssetPath": "assets/audio/問題1_第03問.mp3",
       "sentences": [
         {
-          "id": "n2_listening_problem1_q03_s001",
+          "id": "n2_q03_s01",
           "order": 0,
-          "textJa": "出版社で女の人と男の人が話しています。男の人は何の写真を撮らなければなりませんか。"
+          "textJa": "出版社で女の人と男の人が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6050
         },
         {
-          "id": "n2_listening_problem1_q03_s002",
+          "id": "n2_q03_s02",
           "order": 1,
-          "speaker": "女",
-          "textJa": "すみません､  雑誌に載せる蕎麦屋の写真を私の代わりに撮りに行ってくれるそうでありがとうございます｡"
+          "textJa": "すみません､  雑誌に載せる蕎麦屋の写真を私の代わりに撮りに行ってくれるそうでありがとうございます｡",
+          "translationZh": null,
+          "startMs": 11100,
+          "endMs": 20650,
+          "speaker": "女"
         },
         {
-          "id": "n2_listening_problem1_q03_s003",
+          "id": "n2_q03_s03",
           "order": 2,
-          "speaker": "男",
-          "textJa": "あ､  はい｡  緑駅前の蕎麦屋さんですよね？"
+          "textJa": "あ､  はい｡  緑駅前の蕎麦屋さんですよね？",
+          "translationZh": null,
+          "startMs": 20650,
+          "endMs": 24300,
+          "speaker": "男"
         },
         {
-          "id": "n2_listening_problem1_q03_s004",
+          "id": "n2_q03_s04",
           "order": 3,
-          "speaker": "女",
-          "textJa": "はい。えっと､  説明しますね｡  この雑誌では通常はお店で 1 番の人気料理の写真を撮らせてもらうんですが、今回この写真はお店から提供していただくことになっています｡"
+          "textJa": "はい。えっと､  説明しますね｡  この雑誌では通常はお店で 1 番の人気料理の写真を撮らせてもらうんですが、今回この写真はお店から提供していただくことになっています｡",
+          "translationZh": null,
+          "startMs": 24300,
+          "endMs": 38680,
+          "speaker": "女"
         },
         {
-          "id": "n2_listening_problem1_q03_s005",
+          "id": "n2_q03_s05",
           "order": 4,
-          "speaker": "男",
-          "textJa": "はい､  わかりました｡"
+          "textJa": "はい､  わかりました｡",
+          "translationZh": null,
+          "startMs": 38680,
+          "endMs": 40160,
+          "speaker": "男"
         },
         {
-          "id": "n2_listening_problem1_q03_s006",
+          "id": "n2_q03_s06",
           "order": 5,
-          "speaker": "女",
-          "textJa": "それから店内の様子の撮影についてはお店に許可をいただいています｡  お客様が写り込まないように撮影をお願いしますね｡調理する人の写真は店によっては掲載しますが、こちらは掲載不可とのことです｡"
+          "textJa": "それから店内の様子の撮影についてはお店に許可をいただいています｡  お客様が写り込まないように撮影をお願いしますね｡調理する人の写真は店によっては掲載しますが、こちらは掲載不可とのことです｡",
+          "translationZh": null,
+          "startMs": 40160,
+          "endMs": 57570,
+          "speaker": "女"
         },
         {
-          "id": "n2_listening_problem1_q03_s007",
+          "id": "n2_q03_s07",
           "order": 6,
-          "speaker": "男",
-          "textJa": "はい。"
+          "textJa": "はい。",
+          "translationZh": null,
+          "startMs": 57650,
+          "endMs": 58250,
+          "speaker": "男"
         },
         {
-          "id": "n2_listening_problem1_q03_s008",
+          "id": "n2_q03_s08",
           "order": 7,
-          "speaker": "女",
-          "textJa": "外から見た入口の写真は天候に左右されるから先日、天気が良い日に済ませてきましたので結構です｡よろしくお願いします｡"
+          "textJa": "外から見た入口の写真は天候に左右されるから先日、天気が良い日に済ませてきましたので結構です｡よろしくお願いします｡",
+          "translationZh": null,
+          "startMs": 58520,
+          "endMs": 68830,
+          "speaker": "女"
         },
         {
-          "id": "n2_listening_problem1_q03_s009",
+          "id": "n2_q03_s09",
           "order": 8,
-          "speaker": "男",
-          "textJa": "わかりました｡"
+          "textJa": "わかりました｡",
+          "translationZh": null,
+          "startMs": 68830,
+          "endMs": 69930,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q03_s10",
+          "order": 9,
+          "textJa": "男の人は何の写真を撮らなければなりませんか。",
+          "translationZh": null,
+          "startMs": 69930,
+          "endMs": 80380
         }
       ],
       "explanation": null

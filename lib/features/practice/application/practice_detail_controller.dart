@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../player/application/audio_player_controller.dart';
+import '../../player/domain/question_playback_mode.dart';
 import '../domain/learning_repository.dart';
 import '../domain/practice_models.dart';
 import '../domain/practice_repository.dart';
@@ -9,16 +12,26 @@ import '../domain/practice_repository.dart';
 /// 問題切り替え後のRouteへ引き継ぐ一時的な情報。
 class PracticeQuestionChange {
   const PracticeQuestionChange({
-    required this.examId,
-    required this.questionId,
+    required this.question,
+    required this.previousQuestionId,
+    required this.previousPositionMs,
     required this.mode,
     required this.resumePlayback,
+    required this.speed,
+    required this.playbackMode,
   });
 
-  final String examId;
-  final String questionId;
+  final Question question;
+  final String previousQuestionId;
+  final int previousPositionMs;
   final ContentMode mode;
   final bool resumePlayback;
+  final double speed;
+  final QuestionPlaybackMode playbackMode;
+
+  String get examId => question.examId;
+
+  String get questionId => question.id;
 }
 
 /// 練習詳細画面で保持する表示モード、選択回答、提出状態。
@@ -148,6 +161,12 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
     } catch (error) {
       state = PracticeDetailState(
         questionId: questionId,
+        mode: preferredMode ?? state.mode,
+        currentQuestionIndex: continuingChange
+            ? state.currentQuestionIndex
+            : -1,
+        questionCount: continuingChange ? state.questionCount : 0,
+        isChangingQuestion: continuingChange,
         errorMessage: '学習記録を読み込めませんでした。\n$error',
       );
     }
@@ -198,6 +217,35 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
     return _changeToIndex(targetIndex, speed: speed);
   }
 
+  /// 音声完了後に次問題へ進み、全題ループ時だけ末尾から先頭へ戻します。
+  Future<PracticeQuestionChange?> advanceAfterCompletion({
+    required bool wrap,
+    required double speed,
+  }) {
+    if (_questions.isEmpty || state.currentQuestionIndex < 0) {
+      return Future<PracticeQuestionChange?>.value();
+    }
+    var targetIndex = state.currentQuestionIndex + 1;
+    if (targetIndex >= _questions.length) {
+      if (!wrap) return Future<PracticeQuestionChange?>.value();
+      targetIndex = 0;
+    }
+    return _changeToIndex(
+      targetIndex,
+      speed: speed,
+      resumePlaybackOverride: true,
+    );
+  }
+
+  /// Route置換後に、切り替え元問題の位置と表示モードを保存します。
+  Future<void> savePreviousProgress(PracticeQuestionChange change) {
+    return _learningRepository.saveProgress(
+      change.previousQuestionId,
+      positionMs: change.previousPositionMs,
+      contentMode: change.mode,
+    );
+  }
+
   /// 新しい画面の学習状態と音声準備が完了した時点で操作ロックを解除します。
   void completeQuestionChange(String questionId) {
     if (state.questionId != questionId) return;
@@ -207,7 +255,8 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
   Future<PracticeQuestionChange?> _changeToIndex(
     int targetIndex, {
     required double speed,
-  }) async {
+    bool? resumePlaybackOverride,
+  }) {
     if (state.isChangingQuestion ||
         state.loading ||
         state.questionId == null ||
@@ -215,55 +264,38 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
         targetIndex < 0 ||
         targetIndex >= _questions.length ||
         targetIndex == state.currentQuestionIndex) {
-      return null;
+      return Future<PracticeQuestionChange?>.value();
     }
 
-    final previousState = state;
     final currentPlayer = ref.read(audioPlayerControllerProvider);
-    final resumePlayback = currentPlayer.isPlaying;
+    final resumePlayback = resumePlaybackOverride ?? currentPlayer.isPlaying;
+    final playbackMode = currentPlayer.playbackMode;
     final currentQuestionId = state.questionId!;
     final mode = state.mode;
     final targetQuestion = _questions[targetIndex];
-    state = state.copyWith(isChangingQuestion: true, clearError: true);
+    // 目標問題の本文を先に描画できるよう、音源loadと進捗保存は新Routeへ移します。
+    state = PracticeDetailState(
+      questionId: targetQuestion.id,
+      mode: mode,
+      loading: true,
+      currentQuestionIndex: targetIndex,
+      questionCount: _questions.length,
+      isChangingQuestion: true,
+    );
+    final audioController = ref.read(audioPlayerControllerProvider.notifier);
+    unawaited(audioController.beginQuestionChange());
 
-    try {
-      // 切り替え前の再生状態と位置を先に保存し、停止後も正しく引き継げるようにします。
-      await _learningRepository.saveProgress(
-        currentQuestionId,
-        positionMs: currentPlayer.position.inMilliseconds,
-        contentMode: mode,
-      );
-      final audioController = ref.read(audioPlayerControllerProvider.notifier);
-      await audioController.stop();
-
-      // 前問題の回答表示を残さず、音源を先頭から読み込む間は操作をロックします。
-      state = PracticeDetailState(
-        questionId: targetQuestion.id,
-        mode: mode,
-        loading: true,
-        currentQuestionIndex: targetIndex,
-        questionCount: _questions.length,
-        isChangingQuestion: true,
-      );
-      await audioController.loadQuestion(targetQuestion, speed: speed);
-      final loadedPlayer = ref.read(audioPlayerControllerProvider);
-      if (loadedPlayer.questionId != targetQuestion.id ||
-          loadedPlayer.status == AudioPlayerStatus.error) {
-        throw StateError('切り替え先の音声を読み込めませんでした。');
-      }
-      return PracticeQuestionChange(
-        examId: targetQuestion.examId,
-        questionId: targetQuestion.id,
+    return Future<PracticeQuestionChange?>.value(
+      PracticeQuestionChange(
+        question: targetQuestion,
+        previousQuestionId: currentQuestionId,
+        previousPositionMs: currentPlayer.position.inMilliseconds,
         mode: mode,
         resumePlayback: resumePlayback,
-      );
-    } catch (error) {
-      state = previousState.copyWith(
-        isChangingQuestion: false,
-        errorMessage: '問題を切り替えられませんでした。\n$error',
-      );
-      return null;
-    }
+        speed: speed,
+        playbackMode: playbackMode,
+      ),
+    );
   }
 }
 

@@ -16,6 +16,8 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
   final Map<String, Completer<Duration>> pendingLoads = {};
   final Map<String, Object> loadErrors = {};
   final List<String> loadedAssets = [];
+  final List<String> operationLog = [];
+  Completer<void>? pendingStop;
   Duration lastSeekPosition = Duration.zero;
   int seekCount = 0;
   double lastSpeed = 1;
@@ -44,6 +46,7 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
 
   @override
   Future<Duration> loadAsset(String assetPath) async {
+    operationLog.add('load:$assetPath');
     loadedAssets.add(assetPath);
     final error = loadErrors[assetPath];
     if (error != null) throw error;
@@ -82,13 +85,17 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
   @override
   Future<void> stop() async {
     stopCount++;
+    operationLog.add('stop:start');
     _playing = false;
+    final pending = pendingStop;
+    if (pending != null) await pending.future;
     stateController.add(
       const AudioEngineSnapshot(
         playing: false,
         processing: AudioEngineProcessing.idle,
       ),
     );
+    operationLog.add('stop:complete');
   }
 
   @override

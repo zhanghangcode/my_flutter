@@ -8,6 +8,7 @@ import '../../../app/providers.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../player/application/audio_player_controller.dart';
+import '../../player/domain/question_playback_mode.dart';
 import '../../player/presentation/audio_player_bar.dart';
 import '../../settings/domain/app_settings.dart';
 import '../application/practice_detail_controller.dart';
@@ -45,13 +46,26 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
   AudioPlayerController? _audioPlayerController;
   AudioPlayerState _latestPlayerState = const AudioPlayerState();
   ContentMode _latestContentMode = ContentMode.transcript;
+  bool _automaticAdvanceInProgress = false;
+  bool _routeReplacementInProgress = false;
+
+  @override
+  void didUpdateWidget(covariant PracticeDetailPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.questionId == widget.questionId) return;
+    // 同一PageでRoute情報だけを更新し、本文はquestionId付きKeyで先頭から再生成します。
+    _initializedQuestionId = null;
+    _routeReplacementInProgress = false;
+    _automaticAdvanceInProgress = false;
+  }
 
   @override
   void dispose() {
     // 詳細画面を離れる時点の位置と表示モードを保存し、次回の復元に使用します。
     // dispose では ref を参照できないため、描画中に保持した依存と最新 State を使用します。
     final player = _latestPlayerState;
-    if (player.questionId == widget.questionId) {
+    if (!_routeReplacementInProgress &&
+        player.questionId == widget.questionId) {
       final repository = _learningRepository;
       if (repository != null) {
         unawaited(
@@ -71,10 +85,28 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
   @override
   Widget build(BuildContext context) {
     // 教材・お気に入り・演習状態を watch し、各 State の変更を画面へ反映します。
-    final question = ref.watch(questionProvider(widget.questionId));
+    final providedQuestion =
+        widget.questionChange?.questionId == widget.questionId
+        ? widget.questionChange?.question
+        : null;
+    final providerQuestion = ref.watch(questionProvider(widget.questionId));
+    final AsyncValue<Question> question = providedQuestion == null
+        ? providerQuestion
+        : AsyncData(providedQuestion);
     final favoriteIds = ref.watch(favoriteQuestionIdsProvider).value ?? {};
     final detail = ref.watch(practiceDetailControllerProvider);
     final player = ref.watch(audioPlayerControllerProvider);
+    ref.listen<AudioPlayerState>(audioPlayerControllerProvider, (
+      previous,
+      next,
+    ) {
+      // completed へ変化した瞬間だけ処理し、同一イベントでの多重遷移を防ぎます。
+      if (previous?.status != AudioPlayerStatus.completed &&
+          next.status == AudioPlayerStatus.completed &&
+          next.questionId == widget.questionId) {
+        unawaited(_handlePlaybackCompleted(next));
+      }
+    });
     // Route の破棄時は ref.read を使えないため、必要な依存と State を事前に保持します。
     _learningRepository = ref.read(learningRepositoryProvider);
     _audioPlayerController = ref.read(audioPlayerControllerProvider.notifier);
@@ -125,45 +157,34 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
                 !detail.isChangingQuestion &&
                 !detail.loading &&
                 player.status != AudioPlayerStatus.loading;
-            return Stack(
+            return Column(
               children: [
-                Column(
-                  children: [
-                    // Expanded がスクロール可能な内容領域を確保し、操作部の重なりを防ぎます。
-                    Expanded(
-                      child: KeyedSubtree(
-                        key: ValueKey('${item.id}-${detail.mode.name}'),
-                        child: _buildContent(item, detail.mode),
-                      ),
-                    ),
-                    _ModeSelector(
-                      selected: detail.mode,
-                      onSelected: detail.isChangingQuestion
-                          ? (_) {}
-                          : (mode) {
-                              ref
-                                  .read(
-                                    practiceDetailControllerProvider.notifier,
-                                  )
-                                  .setMode(mode);
-                            },
-                    ),
-                    AudioPlayerBar(
-                      showPreviousQuestion: detail.hasPreviousQuestion,
-                      showNextQuestion: detail.hasNextQuestion,
-                      questionNavigationEnabled: canNavigateQuestions,
-                      onPreviousQuestion: () => _changeQuestion(-1),
-                      onNextQuestion: () => _changeQuestion(1),
-                    ),
-                  ],
-                ),
-                if (detail.isChangingQuestion)
-                  const Positioned.fill(
-                    child: ColoredBox(
-                      color: Color(0x99070707),
-                      child: Center(child: CircularProgressIndicator()),
-                    ),
+                // Expanded がスクロール可能な内容領域を確保し、操作部の重なりを防ぎます。
+                Expanded(
+                  child: KeyedSubtree(
+                    key: ValueKey('${item.id}-${detail.mode.name}'),
+                    child: _buildContent(item, detail.mode),
                   ),
+                ),
+                _ModeSelector(
+                  selected: detail.mode,
+                  onSelected: detail.isChangingQuestion
+                      ? (_) {}
+                      : (mode) {
+                          ref
+                              .read(practiceDetailControllerProvider.notifier)
+                              .setMode(mode);
+                        },
+                ),
+                AudioPlayerBar(
+                  showPreviousQuestion: detail.hasPreviousQuestion,
+                  showNextQuestion: detail.hasNextQuestion,
+                  questionNavigationEnabled: canNavigateQuestions,
+                  interactionEnabled:
+                      !detail.isChangingQuestion && !detail.loading,
+                  onPreviousQuestion: () => _changeQuestion(-1),
+                  onNextQuestion: () => _changeQuestion(1),
+                ),
               ],
             );
           },
@@ -193,28 +214,41 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
           ? widget.questionChange
           : null;
       try {
-        // 学習状態、設定、再生位置の順で復元してから音声を準備します。
-        await ref
-            .read(practiceDetailControllerProvider.notifier)
-            .open(question.id, preferredMode: change?.mode);
-        if (!mounted) return;
-        final settings =
-            ref.read(settingsControllerProvider).value ?? const AppSettings();
-        final progress = change == null
-            ? await ref
-                  .read(learningRepositoryProvider)
-                  .getProgress(question.id)
-            : null;
-        if (!mounted) return;
-        await ref
-            .read(audioPlayerControllerProvider.notifier)
-            .loadQuestion(
+        final detailController = ref.read(
+          practiceDetailControllerProvider.notifier,
+        );
+        final audioController = ref.read(
+          audioPlayerControllerProvider.notifier,
+        );
+        if (change != null) {
+          // Route置換を待たせず、旧進捗保存と新問題の状態・音源準備を並行して進めます。
+          unawaited(_savePreviousProgress(change));
+          await Future.wait([
+            detailController.open(question.id, preferredMode: change.mode),
+            audioController.loadQuestion(
               question,
-              speed: settings.defaultSpeed,
-              restorePosition: change == null && settings.rememberPosition
-                  ? Duration(milliseconds: progress?.lastPositionMs ?? 0)
-                  : Duration.zero,
-            );
+              speed: change.speed,
+              playbackMode: change.playbackMode,
+            ),
+          ]);
+        } else {
+          // 通常遷移では保存済みの表示モードと再生位置を復元します。
+          await detailController.open(question.id);
+          if (!mounted) return;
+          final settings =
+              ref.read(settingsControllerProvider).value ?? const AppSettings();
+          final progress = await ref
+              .read(learningRepositoryProvider)
+              .getProgress(question.id);
+          if (!mounted) return;
+          await audioController.loadQuestion(
+            question,
+            speed: settings.defaultSpeed,
+            restorePosition: settings.rememberPosition
+                ? Duration(milliseconds: progress?.lastPositionMs ?? 0)
+                : Duration.zero,
+          );
+        }
         if (!mounted) return;
         final targetSentence = question.sentences
             .where((sentence) => sentence.id == widget.sentenceId)
@@ -236,6 +270,16 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
                 .togglePlayPause();
           }
         }
+        if (change != null) {
+          final currentPlayer = ref.read(audioPlayerControllerProvider);
+          if (currentPlayer.status == AudioPlayerStatus.error) {
+            _showMessage(currentPlayer.errorMessage ?? '音声を読み込めませんでした。');
+          }
+          final detailError = ref
+              .read(practiceDetailControllerProvider)
+              .errorMessage;
+          if (detailError != null) _showMessage(detailError);
+        }
         _initializedQuestionId = question.id;
       } finally {
         if (mounted) {
@@ -246,6 +290,23 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
         _initializing = false;
       }
     });
+  }
+
+  Future<void> _savePreviousProgress(PracticeQuestionChange change) async {
+    try {
+      await ref
+          .read(practiceDetailControllerProvider.notifier)
+          .savePreviousProgress(change);
+    } catch (error) {
+      if (mounted) _showMessage('学習記録を保存できませんでした。\n$error');
+    }
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _changeQuestion(int offset) async {
@@ -274,17 +335,65 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     await _replaceWithQuestion(change);
   }
 
-  Future<void> _replaceWithQuestion(PracticeQuestionChange? change) async {
+  Future<void> _handlePlaybackCompleted(AudioPlayerState player) async {
+    if (!mounted ||
+        _automaticAdvanceInProgress ||
+        _initializing ||
+        player.questionId != widget.questionId) {
+      return;
+    }
+
+    final detail = ref.read(practiceDetailControllerProvider);
+    if (detail.loading || detail.isChangingQuestion) return;
+    final controller = ref.read(audioPlayerControllerProvider.notifier);
+
+    if (player.playbackMode == QuestionPlaybackMode.repeatCurrent) {
+      // 通常はjust_audioのLoopMode.oneで完結しますが、Platform差によって
+      // completedが通知された場合も同じ問題を確実に先頭から再生します。
+      await controller.replayCurrentQuestion();
+      return;
+    }
+    if (player.playbackMode == QuestionPlaybackMode.sequential &&
+        !detail.hasNextQuestion) {
+      // 順次再生の末尾ではcompletedを維持し、ユーザー操作で再開できる状態にします。
+      return;
+    }
+    if (player.playbackMode == QuestionPlaybackMode.repeatAll &&
+        detail.questionCount == 1) {
+      await controller.replayCurrentQuestion();
+      return;
+    }
+
+    _automaticAdvanceInProgress = true;
+    try {
+      final change = await ref
+          .read(practiceDetailControllerProvider.notifier)
+          .advanceAfterCompletion(
+            wrap: player.playbackMode == QuestionPlaybackMode.repeatAll,
+            speed: player.speed,
+          );
+      await _replaceWithQuestion(change, showError: true);
+    } finally {
+      if (mounted) _automaticAdvanceInProgress = false;
+    }
+  }
+
+  Future<void> _replaceWithQuestion(
+    PracticeQuestionChange? change, {
+    bool showError = true,
+  }) async {
     if (!mounted) return;
     if (change == null) {
       final error = ref.read(practiceDetailControllerProvider).errorMessage;
-      if (error != null) {
+      if (showError && error != null) {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(SnackBar(content: Text(error)));
       }
       return;
     }
+    // pushReplacement後に旧Pageのdisposeが新音源を停止しないよう、先に所有権を手放します。
+    _routeReplacementInProgress = true;
     context.pushReplacement(
       '/practice/${change.examId}/question/${change.questionId}',
       extra: change,

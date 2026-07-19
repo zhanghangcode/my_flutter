@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../practice/domain/practice_models.dart';
 import '../data/audio_playback_service.dart';
+import '../domain/question_playback_mode.dart';
 
 /// UI が表示する音声プレイヤーの状態。
 enum AudioPlayerStatus {
@@ -17,7 +18,7 @@ enum AudioPlayerStatus {
   error,
 }
 
-/// 音源、時間、速度、繰り返し、活性文をまとめた immutable State。
+/// 音源、時間、速度、問題再生mode、活性文をまとめた immutable State。
 class AudioPlayerState {
   const AudioPlayerState({
     this.status = AudioPlayerStatus.idle,
@@ -27,7 +28,7 @@ class AudioPlayerState {
     this.duration = Duration.zero,
     this.bufferedPosition = Duration.zero,
     this.speed = 1,
-    this.repeatMode = RepeatMode.none,
+    this.playbackMode = QuestionPlaybackMode.sequential,
     this.activeSentenceId,
     this.errorMessage,
   });
@@ -39,7 +40,7 @@ class AudioPlayerState {
   final Duration duration;
   final Duration bufferedPosition;
   final double speed;
-  final RepeatMode repeatMode;
+  final QuestionPlaybackMode playbackMode;
   final String? activeSentenceId;
   final String? errorMessage;
 
@@ -61,7 +62,7 @@ class AudioPlayerState {
     Duration? duration,
     Duration? bufferedPosition,
     double? speed,
-    RepeatMode? repeatMode,
+    QuestionPlaybackMode? playbackMode,
     String? activeSentenceId,
     bool clearActiveSentence = false,
     String? errorMessage,
@@ -75,7 +76,7 @@ class AudioPlayerState {
       duration: duration ?? this.duration,
       bufferedPosition: bufferedPosition ?? this.bufferedPosition,
       speed: speed ?? this.speed,
-      repeatMode: repeatMode ?? this.repeatMode,
+      playbackMode: playbackMode ?? this.playbackMode,
       activeSentenceId: clearActiveSentence
           ? null
           : activeSentenceId ?? this.activeSentenceId,
@@ -91,10 +92,9 @@ class AudioPlayerState {
 class AudioPlayerController extends Notifier<AudioPlayerState> {
   late final AudioPlaybackService _service;
   final List<StreamSubscription<Object?>> _subscriptions = [];
-  bool _loopSeekInProgress = false;
-  String? _sentenceLoopTargetId;
   String? _currentAudioAssetPath;
   int _sourceRequestId = 0;
+  Future<void>? _pendingStopOperation;
 
   @override
   AudioPlayerState build() {
@@ -131,12 +131,14 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     Question question, {
     double speed = 1,
     Duration restorePosition = Duration.zero,
+    QuestionPlaybackMode playbackMode = QuestionPlaybackMode.sequential,
   }) async {
     // 同じ問題が正常に読み込み済みなら、不要な音源再設定を行いません。
     if (state.questionId == question.id &&
         state.status != AudioPlayerStatus.error) {
       return;
     }
+    final pendingStop = _pendingStopOperation;
     final requestId = ++_sourceRequestId;
     _currentAudioAssetPath = question.audioAssetPath;
     state = AudioPlayerState(
@@ -144,11 +146,16 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
       questionId: question.id,
       sentences: question.sentences,
       speed: speed,
+      playbackMode: playbackMode,
     );
-    _sentenceLoopTargetId = null;
     try {
-      // 前の問題のループ設定を解除してから、新しい Asset を読み込みます。
-      await _service.setQuestionLooping(false);
+      // 切り替え開始時のstopを待ってから新音源を設定し、Plugin操作の前後関係を保証します。
+      if (pendingStop != null) await pendingStop;
+      if (requestId != _sourceRequestId) return;
+      // 問題単位のmodeだけをjust_audioへ反映し、問題間の連続再生は画面側で管理します。
+      await _service.setQuestionLooping(
+        playbackMode == QuestionPlaybackMode.repeatCurrent,
+      );
       if (requestId != _sourceRequestId) return;
       final duration = await _service.loadAsset(question.audioAssetPath);
       if (requestId != _sourceRequestId) return;
@@ -234,7 +241,8 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     final endMs = sentence.endMs;
     final before = state.position;
     final wasPlaying = state.isPlaying;
-    final sourceReady = state.hasSource &&
+    final sourceReady =
+        state.hasSource &&
         state.status != AudioPlayerStatus.idle &&
         state.status != AudioPlayerStatus.loading &&
         state.status != AudioPlayerStatus.error;
@@ -287,35 +295,75 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     state = state.copyWith(speed: speed);
   }
 
-  /// リピートなし、現在文、現在問題の順にモードを切り替えます。
-  Future<void> cycleRepeatMode() async {
-    final hasTimeline =
-        state.sentences.isNotEmpty &&
-        state.sentences.every(
-          (sentence) => sentence.startMs != null && sentence.endMs != null,
-        );
-    // 文時間がない教材では文repeatを飛ばし、問題全体repeatだけを提供します。
-    final next = switch (state.repeatMode) {
-      RepeatMode.none =>
-        hasTimeline ? RepeatMode.sentence : RepeatMode.question,
-      RepeatMode.sentence => RepeatMode.question,
-      RepeatMode.question => RepeatMode.none,
+  /// 単題ループ、順次再生、全題ループの順にmodeを切り替えます。
+  Future<void> cycleQuestionPlaybackMode() async {
+    if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
+    final next = switch (state.playbackMode) {
+      QuestionPlaybackMode.repeatCurrent => QuestionPlaybackMode.sequential,
+      QuestionPlaybackMode.sequential => QuestionPlaybackMode.repeatAll,
+      QuestionPlaybackMode.repeatAll => QuestionPlaybackMode.repeatCurrent,
     };
-    await _service.setQuestionLooping(next == RepeatMode.question);
-    _sentenceLoopTargetId = next == RepeatMode.sentence
-        ? state.activeSentenceId
-        : null;
-    state = state.copyWith(repeatMode: next);
+    await _service.setQuestionLooping(
+      next == QuestionPlaybackMode.repeatCurrent,
+    );
+    state = state.copyWith(playbackMode: next);
   }
 
+  /// 現在の問題を先頭から再生し、1問だけの全題ループにも使用します。
+  Future<void> replayCurrentQuestion() async {
+    if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
+    await seek(Duration.zero);
+    // completed時のplaying flagはPlatform実装ごとに異なるため、明示的に再生を要求します。
+    await _service.play();
+  }
+
+  /// 問題切り替え用に旧音源の停止を開始し、速度と再生modeだけを表示用に維持します。
+  ///
+  /// 呼び出し元は完了を待たずにRouteを置換できます。次の[loadQuestion]が内部で
+  /// stop完了を待つため、遅れて完了したstopが新音源を停止する競合を防ぎます。
+  Future<void> beginQuestionChange() => _stop(preservePreferences: true);
+
   /// 再生を停止し、画面へ公開する State を初期状態へ戻します。
-  Future<void> stop() async {
+  Future<void> stop() => _stop(preservePreferences: false);
+
+  Future<void> _stop({required bool preservePreferences}) {
+    final existing = _pendingStopOperation;
+    if (existing != null) return existing;
+
+    final previous = state;
     final requestId = ++_sourceRequestId;
-    await _service.stop();
-    if (requestId != _sourceRequestId) return;
-    _sentenceLoopTargetId = null;
     _currentAudioAssetPath = null;
-    state = const AudioPlayerState();
+    if (preservePreferences) {
+      // 問題切り替えだけはPlatformのstop完了を待たず、Route置換前に操作を無効化します。
+      state = AudioPlayerState(
+        speed: previous.speed,
+        playbackMode: previous.playbackMode,
+      );
+    }
+
+    late final Future<void> operation;
+    operation = (() async {
+      try {
+        await _service.stop();
+        // 通常の画面破棄ではunmount中の同期通知を避け、stop完了後に初期化します。
+        if (!preservePreferences && requestId == _sourceRequestId) {
+          state = const AudioPlayerState();
+        }
+      } catch (error) {
+        if (requestId == _sourceRequestId) {
+          state = state.copyWith(
+            status: AudioPlayerStatus.error,
+            errorMessage: '音声を停止できませんでした。\n$error',
+          );
+        }
+      } finally {
+        if (identical(_pendingStopOperation, operation)) {
+          _pendingStopOperation = null;
+        }
+      }
+    })();
+    _pendingStopOperation = operation;
+    return operation;
   }
 
   void _debugSentenceSeek({
@@ -345,38 +393,19 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
       return;
     }
     final active = findActiveSentence(state.sentences, position);
-    if (state.repeatMode == RepeatMode.sentence && active != null) {
-      _sentenceLoopTargetId = active.id;
-    }
     state = state.copyWith(
       position: position,
       activeSentenceId: active?.id,
       clearActiveSentence: active == null,
     );
-    final loopTarget = _sentenceLoopTargetId == null
-        ? null
-        : state.sentences
-              .where((sentence) => sentence.id == _sentenceLoopTargetId)
-              .firstOrNull;
-    // 文の終了後は active が null になるため、直前の対象 ID を保持して開始位置へ戻します。
-    // 非同期 seek の重複発行は _loopSeekInProgress で防ぎます。
-    if (state.repeatMode == RepeatMode.sentence &&
-        loopTarget != null &&
-        loopTarget.startMs != null &&
-        loopTarget.endMs != null &&
-        position.inMilliseconds >= loopTarget.endMs! &&
-        position.inMilliseconds <= loopTarget.endMs! + 1000 &&
-        !_loopSeekInProgress) {
-      _loopSeekInProgress = true;
-      unawaited(
-        _service
-            .seek(Duration(milliseconds: loopTarget.startMs!))
-            .whenComplete(() => _loopSeekInProgress = false),
-      );
-    }
   }
 
   void _onEngineState(AudioEngineSnapshot snapshot) {
+    // 問題切り替えのstop由来のidleは、新音源のloading表示へ変換しません。
+    if (_pendingStopOperation != null &&
+        snapshot.processing == AudioEngineProcessing.idle) {
+      return;
+    }
     // Plugin の processing と playing を組み合わせ、UI 向けの一意な状態へ変換します。
     final status = switch (snapshot.processing) {
       AudioEngineProcessing.idle =>

@@ -12,9 +12,6 @@ int? _nullableMillisecondsFromJson(Object? value) {
 /// 練習詳細で切り替えられる 4 種類の表示モード。
 enum ContentMode { transcript, question, combined, explanation }
 
-/// 音声プレイヤーの繰り返し範囲。
-enum RepeatMode { none, sentence, question }
-
 /// 教材一覧 JSON のルートモデル。
 ///
 /// schemaVersion により、アプリが対応できる教材形式かを読み込み時に判定します。
@@ -106,10 +103,8 @@ abstract class TranscriptSentence with _$TranscriptSentence {
     String? speaker,
     required String textJa,
     String? translationZh,
-    @JsonKey(fromJson: _nullableMillisecondsFromJson)
-    int? startMs,
-    @JsonKey(fromJson: _nullableMillisecondsFromJson)
-    int? endMs,
+    @JsonKey(fromJson: _nullableMillisecondsFromJson) int? startMs,
+    @JsonKey(fromJson: _nullableMillisecondsFromJson) int? endMs,
   }) = _TranscriptSentence;
 
   factory TranscriptSentence.fromJson(Map<String, dynamic> json) =>

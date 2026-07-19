@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/providers.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
+import 'package:nihongo_listening/features/player/domain/question_playback_mode.dart';
 import 'package:nihongo_listening/features/practice/application/practice_detail_controller.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 
@@ -97,7 +98,7 @@ void main() {
       await audio.dispose();
     });
 
-    test('次問題を先頭位置で読み込み、表示モードと再生意図だけを引き継ぐ', () async {
+    test('次問題の表示情報を即時返し、音源loadと進捗保存をRoute置換後へ委譲する', () async {
       final detail = container.read(practiceDetailControllerProvider.notifier);
       final player = container.read(audioPlayerControllerProvider.notifier);
       await detail.open('q1');
@@ -105,31 +106,36 @@ void main() {
       detail.selectOption('a');
       await detail.submit(exam.questions.first);
       await player.loadQuestion(exam.questions.first, speed: 1.25);
-      await player.cycleRepeatMode();
+      await player.cycleQuestionPlaybackMode();
       await player.togglePlayPause();
+      await player.seek(const Duration(seconds: 3));
       await Future<void>.delayed(Duration.zero);
 
       // When: 再生中の1問目から次の問題へ切り替えます。
       final change = await detail.changeQuestion(1, speed: 1.25);
 
-      // Then: q2を先頭で準備し、前問題の回答・repeat・活性文を残しません。
+      // Then: 音源loadを待たず、目標本文と再生条件をRoute入力として返します。
       expect(change?.questionId, 'q2');
+      expect(change?.question, exam.questions[1]);
+      expect(change?.previousQuestionId, 'q1');
+      expect(change?.previousPositionMs, 3000);
       expect(change?.mode, ContentMode.combined);
       expect(change?.resumePlayback, isTrue);
-      expect(audio.loadedAssets.last, 'audio/q2.mp3');
-      expect(audio.lastSpeed, 1.25);
-      expect(learning.progress['q1']?.lastContentMode, ContentMode.combined);
+      expect(change?.speed, 1.25);
+      expect(change?.playbackMode, QuestionPlaybackMode.repeatAll);
+      expect(audio.loadedAssets, ['audio/q1.mp3']);
+      expect(learning.progress['q1'], isNull);
       expect(
         container.read(audioPlayerControllerProvider).position,
         Duration.zero,
       );
       expect(
-        container.read(audioPlayerControllerProvider).repeatMode,
-        RepeatMode.none,
+        container.read(audioPlayerControllerProvider).playbackMode,
+        QuestionPlaybackMode.repeatAll,
       );
       expect(
         container.read(audioPlayerControllerProvider).activeSentenceId,
-        'q2-s1',
+        isNull,
       );
       expect(container.read(practiceDetailControllerProvider).questionId, 'q2');
       expect(
@@ -147,6 +153,21 @@ void main() {
       expect(
         container.read(practiceDetailControllerProvider).isChangingQuestion,
         isTrue,
+      );
+
+      // When / Then: 新Route側の処理で初めて進捗保存とq2音源loadを行います。
+      await detail.savePreviousProgress(change!);
+      await player.loadQuestion(
+        change.question,
+        speed: change.speed,
+        playbackMode: change.playbackMode,
+      );
+      expect(learning.progress['q1']?.lastContentMode, ContentMode.combined);
+      expect(audio.loadedAssets.last, 'audio/q2.mp3');
+      expect(audio.lastSpeed, 1.25);
+      expect(
+        container.read(audioPlayerControllerProvider).activeSentenceId,
+        'q2-s1',
       );
     });
 
@@ -173,7 +194,7 @@ void main() {
         container.read(practiceDetailControllerProvider).currentQuestionIndex,
         0,
       );
-      expect(container.read(audioPlayerControllerProvider).questionId, 'q1');
+      expect(container.read(audioPlayerControllerProvider).questionId, isNull);
       expect(
         container.read(audioPlayerControllerProvider).position,
         Duration.zero,
@@ -196,13 +217,43 @@ void main() {
       // When: completed状態から次問題へ切り替えます。
       final change = await detail.changeQuestion(1, speed: 1);
 
-      // Then: 先頭readyで準備しますが、再生再開の意図は渡しません。
+      // Then: 音源はまだ読み込まず、再生再開の意図だけをfalseで渡します。
       expect(change?.resumePlayback, isFalse);
       expect(audio.playCount, 0);
       expect(
         container.read(audioPlayerControllerProvider).status,
-        AudioPlayerStatus.ready,
+        AudioPlayerStatus.idle,
       );
+    });
+
+    test('完了イベント用の切り替えは再生再開を要求し、末尾を必要に応じて折り返す', () async {
+      final detail = container.read(practiceDetailControllerProvider.notifier);
+      final player = container.read(audioPlayerControllerProvider.notifier);
+      await detail.open('q2');
+      await player.loadQuestion(exam.questions[1]);
+
+      // When: 順次再生として次問題へ進みます。
+      final next = await detail.advanceAfterCompletion(wrap: false, speed: 1);
+
+      // Then: q3を先頭から自動再生する意図をRouteへ渡します。
+      expect(next?.questionId, 'q3');
+      expect(next?.resumePlayback, isTrue);
+      expect(next?.question.audioAssetPath, 'audio/q3.mp3');
+      expect(
+        container.read(audioPlayerControllerProvider).position,
+        Duration.zero,
+      );
+
+      detail.completeQuestionChange('q3');
+      // When / Then: 末尾では順次再生は停止し、全題ループだけq1へ戻ります。
+      expect(
+        await detail.advanceAfterCompletion(wrap: false, speed: 1),
+        isNull,
+      );
+      final wrapped = await detail.advanceAfterCompletion(wrap: true, speed: 1);
+      expect(wrapped?.questionId, 'q1');
+      expect(wrapped?.resumePlayback, isTrue);
+      expect(wrapped?.question.audioAssetPath, 'audio/q1.mp3');
     });
 
     test('範囲外または同じ問題への移動では状態と音源を変更しない', () async {
@@ -242,30 +293,31 @@ void main() {
       expect(audio.loadedAssets, isEmpty);
     });
 
-    test('切り替え先の音源読込に失敗した場合は元問題へ戻す', () async {
+    test('切り替え先の音源読込に失敗しても目標問題に留まり、操作lockを解除できる', () async {
       final detail = container.read(practiceDetailControllerProvider.notifier);
       final player = container.read(audioPlayerControllerProvider.notifier);
       await detail.open('q1');
       await player.loadQuestion(exam.questions.first);
       audio.loadErrors['audio/q2.mp3'] = StateError('broken audio');
 
-      // When: 次問題の音源読込が失敗します。
+      // When: Route入力を取得した後、新画面側で次問題の音源読込に失敗します。
       final change = await detail.changeQuestion(1, speed: 1);
+      await player.loadQuestion(
+        change!.question,
+        speed: change.speed,
+        playbackMode: change.playbackMode,
+      );
+      detail.completeQuestionChange(change.questionId);
 
-      // Then: Route入力を返さず、元問題のStateと操作可能状態を復元します。
-      expect(change, isNull);
-      expect(container.read(practiceDetailControllerProvider).questionId, 'q1');
+      // Then: q2本文を保持したままPlayer errorを公開し、戻る操作を再許可します。
+      expect(container.read(practiceDetailControllerProvider).questionId, 'q2');
       expect(
         container.read(practiceDetailControllerProvider).currentQuestionIndex,
-        0,
+        1,
       );
       expect(
         container.read(practiceDetailControllerProvider).isChangingQuestion,
         isFalse,
-      );
-      expect(
-        container.read(practiceDetailControllerProvider).errorMessage,
-        isNotNull,
       );
       expect(
         container.read(audioPlayerControllerProvider).status,
@@ -273,22 +325,19 @@ void main() {
       );
     });
 
-    test('読み込み中の連打でも問題indexを飛ばさない', () async {
+    test('stop完了待ちでもRoute入力を即時返し、連打で問題indexを飛ばさない', () async {
       final detail = container.read(practiceDetailControllerProvider.notifier);
       final player = container.read(audioPlayerControllerProvider.notifier);
       await detail.open('q1');
       await player.loadQuestion(exam.questions.first);
-      final pending = Completer<Duration>();
-      audio.pendingLoads['audio/q2.mp3'] = pending;
+      final pendingStop = Completer<void>();
+      audio.pendingStop = pendingStop;
 
-      // When: 最初の切り替えが音源待機中に、もう一度「次」を要求します。
-      final firstChange = detail.changeQuestion(1, speed: 1);
-      await Future<void>.delayed(Duration.zero);
+      // When: 旧音源のstop完了前に、もう一度「次」を要求します。
+      final result = await detail.changeQuestion(1, speed: 1);
       final repeatedChange = await detail.changeQuestion(1, speed: 1);
-      pending.complete(const Duration(seconds: 12));
-      final result = await firstChange;
 
-      // Then: 2問目で止まり、q2のloadは1回だけ実行されます。
+      // Then: stopを待たずq2を返し、q2のloadは新Routeが開始するまで発生しません。
       expect(repeatedChange, isNull);
       expect(result?.questionId, 'q2');
       expect(
@@ -297,12 +346,54 @@ void main() {
       );
       expect(
         audio.loadedAssets.where((asset) => asset == 'audio/q2.mp3').length,
-        1,
+        0,
       );
+      pendingStop.complete();
+      await Future<void>.delayed(Duration.zero);
     });
   });
 
   group('AudioPlayerControllerの非同期load', () {
+    test('問題切り替えのstop完了後にだけ新音源をloadする', () async {
+      final audio = FakeAudioPlaybackService();
+      final container = ProviderContainer(
+        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+      );
+      final controller = container.read(audioPlayerControllerProvider.notifier);
+      final questions = buildTestExam(questionCount: 2).questions;
+      await controller.loadQuestion(questions[0]);
+      await controller.cycleQuestionPlaybackMode();
+      final pendingStop = Completer<void>();
+      audio.pendingStop = pendingStop;
+
+      // When: stopを開始した直後に、次問題のloadも要求します。
+      final stop = controller.beginQuestionChange();
+      final load = controller.loadQuestion(
+        questions[1],
+        playbackMode: QuestionPlaybackMode.repeatAll,
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      // Then: 表示Stateは即時に操作不可となり、Pluginのloadはstop完了まで始まりません。
+      expect(audio.loadedAssets, ['audio/q1.mp3']);
+      expect(audio.operationLog, contains('stop:start'));
+      expect(audio.operationLog, isNot(contains('load:audio/q2.mp3')));
+
+      pendingStop.complete();
+      await Future.wait([stop, load]);
+      expect(
+        audio.operationLog.indexOf('stop:complete'),
+        lessThan(audio.operationLog.indexOf('load:audio/q2.mp3')),
+      );
+      expect(container.read(audioPlayerControllerProvider).questionId, 'q2');
+      expect(
+        container.read(audioPlayerControllerProvider).playbackMode,
+        QuestionPlaybackMode.repeatAll,
+      );
+      container.dispose();
+      await audio.dispose();
+    });
+
     test('文の4200msへseekし、再生中の状態とactive文を維持する', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
@@ -411,8 +502,9 @@ void main() {
           endMs: 32000,
         ),
       ];
-      final question = buildTestExam(questionCount: 1).questions.single
-          .copyWith(sentences: currentQuestionSentences);
+      final question = buildTestExam(
+        questionCount: 1,
+      ).questions.single.copyWith(sentences: currentQuestionSentences);
       await controller.loadQuestion(question);
       for (final sentence in currentQuestionSentences) {
         await controller.seekToSentence(sentence);
@@ -453,7 +545,7 @@ void main() {
       await audio.dispose();
     });
 
-    test('文時間がない問題では文seekと文repeatを無効にする', () async {
+    test('文時間がない問題でも問題単位の3つの再生modeを切り替えられる', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
         overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
@@ -467,26 +559,33 @@ void main() {
           );
       await controller.loadQuestion(question);
 
-      // When: 時刻を持たない文のseekとrepeat切り替えを要求します。
+      // When: 時刻を持たない文のseekと問題単位のmode切り替えを要求します。
       await controller.seekToSentence(question.sentences.single);
-      await controller.cycleRepeatMode();
+      await controller.cycleQuestionPlaybackMode();
 
-      // Then: 文seekは発生せず、文repeatを飛ばして問題repeatになります。
+      // Then: 文seekは発生せず、順次再生から全題ループへ切り替わります。
       expect(audio.seekCount, 0);
       expect(
         container.read(audioPlayerControllerProvider).activeSentenceId,
         isNull,
       );
       expect(
-        container.read(audioPlayerControllerProvider).repeatMode,
-        RepeatMode.question,
+        container.read(audioPlayerControllerProvider).playbackMode,
+        QuestionPlaybackMode.repeatAll,
+      );
+      expect(audio.questionLooping, isFalse);
+
+      await controller.cycleQuestionPlaybackMode();
+      expect(
+        container.read(audioPlayerControllerProvider).playbackMode,
+        QuestionPlaybackMode.repeatCurrent,
       );
       expect(audio.questionLooping, isTrue);
 
-      await controller.cycleRepeatMode();
+      await controller.cycleQuestionPlaybackMode();
       expect(
-        container.read(audioPlayerControllerProvider).repeatMode,
-        RepeatMode.none,
+        container.read(audioPlayerControllerProvider).playbackMode,
+        QuestionPlaybackMode.sequential,
       );
       expect(audio.questionLooping, isFalse);
       container.dispose();

@@ -1,0 +1,2537 @@
+{
+  "schemaVersion": 2,
+  "id": "n2_listening",
+  "titleJa": "JLPT N2聴解",
+  "questions": [
+    {
+      "id": "n2_q01",
+      "examId": "n2_listening",
+      "section": 1,
+      "number": 1,
+      "type": "課題理解",
+      "audioAssetPath": "output/audio/問題1_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q01_s01",
+          "order": 0,
+          "textJa": "大学で女の学生と男の学生が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6590
+        },
+        {
+          "id": "n2_q01_s02",
+          "order": 1,
+          "textJa": "中村くん。シンポジウムのポスター、掲示板に貼ってくれたんだね｡  ありがとう｡",
+          "translationZh": null,
+          "startMs": 12910,
+          "endMs": 18650,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q01_s03",
+          "order": 2,
+          "textJa": "えぇ､  他に僕がやっておくことってありますか？",
+          "translationZh": null,
+          "startMs": 18650,
+          "endMs": 22730,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q01_s04",
+          "order": 3,
+          "textJa": "マイクとか会場の準備は前日にすればいいし､  当日のスタッフ用のスケジュール表､  これないから欲しいな｡  今週中にお願いしていい？",
+          "translationZh": null,
+          "startMs": 22730,
+          "endMs": 34980,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q01_s05",
+          "order": 4,
+          "textJa": "あ、はい。",
+          "translationZh": null,
+          "startMs": 34980,
+          "endMs": 36080,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q01_s06",
+          "order": 5,
+          "textJa": "それから１番大事な当日配る資料､  コピーまだなんじゃない？ 100 部だよね？",
+          "translationZh": null,
+          "startMs": 36260,
+          "endMs": 44030,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q01_s07",
+          "order": 6,
+          "textJa": "あ､  それなんですけど､  発表者の方からの資料まだ全部集まってないんですよ。",
+          "translationZh": null,
+          "startMs": 44030,
+          "endMs": 50710,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q01_s08",
+          "order": 7,
+          "textJa": "そう､  みなさんお忙しい方ばかりだから・・・私から発表者に資料を送ってもらうようにすぐに連絡をするから､集まり次第コピーしよう｡  週明けには出してもらうようにするね｡",
+          "translationZh": null,
+          "startMs": 50790,
+          "endMs": 65590,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q01_s09",
+          "order": 8,
+          "textJa": "はい､  わかりました｡",
+          "translationZh": null,
+          "startMs": 65700,
+          "endMs": 67120,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q01_s10",
+          "order": 9,
+          "textJa": "男の学生は、この後まず何をしますか",
+          "translationZh": null,
+          "startMs": 67120,
+          "endMs": 77520
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q02",
+      "examId": "n2_listening",
+      "section": 1,
+      "number": 2,
+      "type": "課題理解",
+      "audioAssetPath": "output/audio/問題1_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q02_s01",
+          "order": 0,
+          "textJa": "スーパーで男の店長と女の店員が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6490
+        },
+        {
+          "id": "n2_q02_s02",
+          "order": 1,
+          "textJa": "おはようございます、森田さん｡  今日は一部の商品に値引きシールを付ける作業をやってくれることになってたね｡",
+          "translationZh": null,
+          "startMs": 11090,
+          "endMs": 19990,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q02_s03",
+          "order": 2,
+          "textJa": "あ､  はい。準備してます｡",
+          "translationZh": null,
+          "startMs": 19990,
+          "endMs": 22570,
+          "speaker": "女の店員"
+        },
+        {
+          "id": "n2_q02_s04",
+          "order": 3,
+          "textJa": "えっと､  忙しい時に悪いんだけど､  倉庫に行って南コーヒーの豆､  何袋あるか数えてきてくれる？数が少なかったら今日中に注文しないといけないんだ。",
+          "translationZh": null,
+          "startMs": 22580,
+          "endMs": 34600,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q02_s05",
+          "order": 4,
+          "textJa": "あ､  わかりました。急ぎですか？",
+          "translationZh": null,
+          "startMs": 34600,
+          "endMs": 37570,
+          "speaker": "女の店員"
+        },
+        {
+          "id": "n2_q02_s06",
+          "order": 5,
+          "textJa": "あー､  そのシールを貼る作業が終わってからでいいから。袋の数を数えたらメモを私の机の上に置いといて｡",
+          "translationZh": null,
+          "startMs": 38470,
+          "endMs": 46240,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q02_s07",
+          "order": 6,
+          "textJa": "わかりました｡",
+          "translationZh": null,
+          "startMs": 46240,
+          "endMs": 47250,
+          "speaker": "女の店員"
+        },
+        {
+          "id": "n2_q02_s08",
+          "order": 7,
+          "textJa": "お客さんがレジにたくさん並んでるから､私もすぐレジを手伝わなきゃいけなくて｡  値引きシールを付けた商品をレジの横の棚に並べるのは明日の開店前にみんなですればいいから｡  じゃ、よろしくね。",
+          "translationZh": null,
+          "startMs": 47250,
+          "endMs": 62410,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q02_s09",
+          "order": 8,
+          "textJa": "女の店員はこの後まず、何をしますか。",
+          "translationZh": null,
+          "startMs": 68020,
+          "endMs": 72380
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q03",
+      "examId": "n2_listening",
+      "section": 1,
+      "number": 3,
+      "type": "課題理解",
+      "audioAssetPath": "output/audio/問題1_第03問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q03_s01",
+          "order": 0,
+          "textJa": "出版社で女の人と男の人が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6050
+        },
+        {
+          "id": "n2_q03_s02",
+          "order": 1,
+          "textJa": "すみません､  雑誌に載せる蕎麦屋の写真を私の代わりに撮りに行ってくれるそうでありがとうございます｡",
+          "translationZh": null,
+          "startMs": 11100,
+          "endMs": 20650,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q03_s03",
+          "order": 2,
+          "textJa": "あ､  はい｡  緑駅前の蕎麦屋さんですよね？",
+          "translationZh": null,
+          "startMs": 20650,
+          "endMs": 24300,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q03_s04",
+          "order": 3,
+          "textJa": "はい。えっと､  説明しますね｡  この雑誌では通常はお店で 1 番の人気料理の写真を撮らせてもらうんですが、今回この写真はお店から提供していただくことになっています｡",
+          "translationZh": null,
+          "startMs": 24300,
+          "endMs": 38680,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q03_s05",
+          "order": 4,
+          "textJa": "はい､  わかりました｡",
+          "translationZh": null,
+          "startMs": 38680,
+          "endMs": 40160,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q03_s06",
+          "order": 5,
+          "textJa": "それから店内の様子の撮影についてはお店に許可をいただいています｡  お客様が写り込まないように撮影をお願いしますね｡調理する人の写真は店によっては掲載しますが、こちらは掲載不可とのことです｡",
+          "translationZh": null,
+          "startMs": 40160,
+          "endMs": 57570,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q03_s07",
+          "order": 6,
+          "textJa": "はい。",
+          "translationZh": null,
+          "startMs": 57650,
+          "endMs": 58250,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q03_s08",
+          "order": 7,
+          "textJa": "外から見た入口の写真は天候に左右されるから先日、天気が良い日に済ませてきましたので結構です｡よろしくお願いします｡",
+          "translationZh": null,
+          "startMs": 58520,
+          "endMs": 68830,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q03_s09",
+          "order": 8,
+          "textJa": "わかりました｡",
+          "translationZh": null,
+          "startMs": 68830,
+          "endMs": 69930,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q03_s10",
+          "order": 9,
+          "textJa": "男の人は何の写真を撮らなければなりませんか。",
+          "translationZh": null,
+          "startMs": 69930,
+          "endMs": 80380
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q04",
+      "examId": "n2_listening",
+      "section": 1,
+      "number": 4,
+      "type": "課題理解",
+      "audioAssetPath": "output/audio/問題1_第04問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q04_s01",
+          "order": 0,
+          "textJa": "日本語学校で女の職員と男の課長が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7020
+        },
+        {
+          "id": "n2_q04_s02",
+          "order": 1,
+          "textJa": "課長､  明日の卒業パーティについてですけど､  あとは何をしましょうか｡",
+          "translationZh": null,
+          "startMs": 11920,
+          "endMs": 19580,
+          "speaker": "女の職員"
+        },
+        {
+          "id": "n2_q04_s03",
+          "order": 2,
+          "textJa": "卒業生の皆さんに渡す記念品は袋に入れてくれた？",
+          "translationZh": null,
+          "startMs": 20210,
+          "endMs": 23930,
+          "speaker": "課長"
+        },
+        {
+          "id": "n2_q04_s04",
+          "order": 3,
+          "textJa": "まだ届いていないんですよ｡",
+          "translationZh": null,
+          "startMs": 23980,
+          "endMs": 26300,
+          "speaker": "女の職員"
+        },
+        {
+          "id": "n2_q04_s05",
+          "order": 4,
+          "textJa": "あ､  記念品の納品は 3 時だったね｡  あと 1 時間か・・・それじゃ、会場の入り口の花瓶､  あれをステージの上に運んでくれる？",
+          "translationZh": null,
+          "startMs": 26380,
+          "endMs": 37620,
+          "speaker": "課長"
+        },
+        {
+          "id": "n2_q04_s06",
+          "order": 5,
+          "textJa": "はい､  花瓶ですね｡",
+          "translationZh": null,
+          "startMs": 37620,
+          "endMs": 39670,
+          "speaker": "女の職員"
+        },
+        {
+          "id": "n2_q04_s07",
+          "order": 6,
+          "textJa": "それと記念品の到着を待ってる間､  出席者の名前を書いた紙を椅子に貼ってくれない？そうだ､  忘れないうちに言っとくけど明日の朝一番に卒業生代表のグエンさんと挨拶のリハーサルをお願いね｡",
+          "translationZh": null,
+          "startMs": 40190,
+          "endMs": 57130,
+          "speaker": "課長"
+        },
+        {
+          "id": "n2_q04_s08",
+          "order": 7,
+          "textJa": "はい､  わかりました｡",
+          "translationZh": null,
+          "startMs": 57130,
+          "endMs": 58710,
+          "speaker": "女の職員"
+        },
+        {
+          "id": "n2_q04_s09",
+          "order": 8,
+          "textJa": "あ､  花瓶の移動なんだけど､  落とすといけないから記念品の準備の後で私と一緒にやりましょうか。",
+          "translationZh": null,
+          "startMs": 58710,
+          "endMs": 66710,
+          "speaker": "課長"
+        },
+        {
+          "id": "n2_q04_s10",
+          "order": 9,
+          "textJa": "はい。",
+          "translationZh": null,
+          "startMs": 66730,
+          "endMs": 67450,
+          "speaker": "女の職員"
+        },
+        {
+          "id": "n2_q04_s11",
+          "order": 10,
+          "textJa": "女の職員はこの後まず、何をしますか。",
+          "translationZh": null,
+          "startMs": 73060,
+          "endMs": 77780
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q05",
+      "examId": "n2_listening",
+      "section": 1,
+      "number": 5,
+      "type": "課題理解",
+      "audioAssetPath": "output/audio/問題1_第05問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q05_s01",
+          "order": 0,
+          "textJa": "大学で女の学生と男の学生が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6160
+        },
+        {
+          "id": "n2_q05_s02",
+          "order": 1,
+          "textJa": "田中くん､  聞いて｡  昨日自転車、駅前に止めてたんだけど､  乗って帰ろうとしたら自転車がなくて・・・。置いといた場所の地面に「駐輪禁止区域のため移動しました」って紙が貼られてたんだよ。",
+          "translationZh": null,
+          "startMs": 10620,
+          "endMs": 29400,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q05_s03",
+          "order": 2,
+          "textJa": "駅前は駐輪場以外には停めちゃいけないんだよ｡",
+          "translationZh": null,
+          "startMs": 30060,
+          "endMs": 33880,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q05_s04",
+          "order": 3,
+          "textJa": "そうなんだ｡  どうすればいいの？自転車、警察に取りに行くの？",
+          "translationZh": null,
+          "startMs": 34940,
+          "endMs": 40570,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q05_s05",
+          "order": 4,
+          "textJa": "警察じゃないと思うけど・・・貼られてた紙に預かり場所、書いてなかった？",
+          "translationZh": null,
+          "startMs": 40570,
+          "endMs": 47050,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q05_s06",
+          "order": 5,
+          "textJa": "よく読まなかった。",
+          "translationZh": null,
+          "startMs": 47890,
+          "endMs": 49210,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q05_s07",
+          "order": 6,
+          "textJa": "えーっと､  そしたら市役所のホームページに書いてあるから確認して｡  取りに行くならそれからだよ｡",
+          "translationZh": null,
+          "startMs": 49210,
+          "endMs": 57560,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q05_s08",
+          "order": 7,
+          "textJa": "わかった。",
+          "translationZh": null,
+          "startMs": 57560,
+          "endMs": 58520,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q05_s09",
+          "order": 8,
+          "textJa": "確か身分証明書がいるよ。あ､  あとお金もいる｡  自転車受け取る時払うよ｡",
+          "translationZh": null,
+          "startMs": 58520,
+          "endMs": 66830,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q05_s10",
+          "order": 9,
+          "textJa": "お金払うの？",
+          "translationZh": null,
+          "startMs": 66830,
+          "endMs": 68540,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q05_s11",
+          "order": 10,
+          "textJa": "うん､  自転車の預かり料だよ｡",
+          "translationZh": null,
+          "startMs": 69020,
+          "endMs": 71440,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q05_s12",
+          "order": 11,
+          "textJa": "女の学生はこの後、何をしますか。",
+          "translationZh": null,
+          "startMs": 77190,
+          "endMs": 81240
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q06",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 1,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q06_s01",
+          "order": 0,
+          "textJa": "テレビでアナウンサーの女の人がパン屋の店長にインタビューをしています｡",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7470
+        },
+        {
+          "id": "n2_q06_s02",
+          "order": 1,
+          "textJa": "店長の山本さんです｡  こちらのお店の手作りのパン､  大変人気ですが山本さんご自身は以前、会社員をなさっていたんですよね？",
+          "translationZh": null,
+          "startMs": 12190,
+          "endMs": 46800,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q06_s03",
+          "order": 2,
+          "textJa": "はい。この店はもともとパン作りが好きな母がやる予定だったんですが､  店を出す準備をしている途中で母が病気になってしまいました｡  母はずっとパン屋をやりたかったので店を諦めることをとても残念がっていたんですよ｡  それで「やってくれ」と言われたわけじゃないんですが､  僕が何とか形にしたいと思いました｡",
+          "translationZh": null,
+          "startMs": 51620,
+          "endMs": 71590,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q06_s04",
+          "order": 3,
+          "textJa": "それまでパン作りのご経験はあったんですか？",
+          "translationZh": null,
+          "startMs": 72490,
+          "endMs": 75650,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q06_s05",
+          "order": 4,
+          "textJa": "いえ､  全くなくて・・・。パン作りは専門学校で一から勉強しました｡  卒業する前に母は亡くなりました｡",
+          "translationZh": null,
+          "startMs": 75650,
+          "endMs": 84920,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q06_s06",
+          "order": 5,
+          "textJa": "そうでしたか｡",
+          "translationZh": null,
+          "startMs": 85990,
+          "endMs": 87030,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q06_s07",
+          "order": 6,
+          "textJa": "母のレベルにはまだまだなんですが、おいしいパンを地元の方に食べてもらえるように頑張っています｡",
+          "translationZh": null,
+          "startMs": 87340,
+          "endMs": 93760,
+          "speaker": "店長"
+        },
+        {
+          "id": "n2_q06_s08",
+          "order": 7,
+          "textJa": "店長はどうしてパン屋を始めたと言っていますか。",
+          "translationZh": null,
+          "startMs": 93760,
+          "endMs": 103990
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q07",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 2,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q07_s01",
+          "order": 0,
+          "textJa": "うちで女の人と男の人が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 5190
+        },
+        {
+          "id": "n2_q07_s02",
+          "order": 1,
+          "textJa": "引っ越し会社に引越しの見積もりを出してもらったけど予算よりかなり高かったよ｡  今の時期はどこの会社も高いんだね｡  荷物の量と移動距離で料金を計算するから荷物を減らせば安くなるって｡",
+          "translationZh": null,
+          "startMs": 11290,
+          "endMs": 52220,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q07_s03",
+          "order": 2,
+          "textJa": "そう、んー｡  大きい荷物を減らそうか｡  えーっと、大きいものって言ったらソファー、冷蔵庫、本棚だね｡",
+          "translationZh": null,
+          "startMs": 52950,
+          "endMs": 64970,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q07_s04",
+          "order": 3,
+          "textJa": "本棚は分解できるよ｡  ソファーはあまり使ってないし、欲しい人にあげてもいいかもしれないね｡",
+          "translationZh": null,
+          "startMs": 64970,
+          "endMs": 72620,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q07_s05",
+          "order": 4,
+          "textJa": "それもそうだね｡あ、冷蔵庫は古いし、この際、売って向こうで新しいの買う？",
+          "translationZh": null,
+          "startMs": 72620,
+          "endMs": 79810,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q07_s06",
+          "order": 5,
+          "textJa": "えー？冷蔵庫はまだ使うよ！あ､  そうだ｡  親戚のおじさんがトラックを持ってるからおじさんに手伝ってもらって、自分たちで荷物を運ぶ？",
+          "translationZh": null,
+          "startMs": 79810,
+          "endMs": 91450,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q07_s07",
+          "order": 6,
+          "textJa": "荷物の積み降ろしって結構大変だよ｡  やっぱり引っ越し会社に頼んだ方がいいんじゃないかな？",
+          "translationZh": null,
+          "startMs": 91860,
+          "endMs": 98780,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q07_s08",
+          "order": 7,
+          "textJa": "うーん、そうだね｡  安い引っ越し会社は見つからないだろうし、費用を抑えられるようにあんまり使ってない大きい家具のもらい手を探そうか｡",
+          "translationZh": null,
+          "startMs": 99520,
+          "endMs": 111050,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q07_s09",
+          "order": 8,
+          "textJa": "うん、そうだね。",
+          "translationZh": null,
+          "startMs": 111070,
+          "endMs": 112650,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q07_s10",
+          "order": 9,
+          "textJa": "２人は引っ越しの値段を安くするため、どうすることにしましたか。",
+          "translationZh": null,
+          "startMs": 112650,
+          "endMs": 124550
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q08",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 3,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第03問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q08_s01",
+          "order": 0,
+          "textJa": "会社で男の人と女の人がアンケートについて話しています。女の人はアンケートに何を書くと言っていますか。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 12210
+        },
+        {
+          "id": "n2_q08_s02",
+          "order": 1,
+          "textJa": "女の人です。",
+          "translationZh": null,
+          "startMs": 12480,
+          "endMs": 13960
+        },
+        {
+          "id": "n2_q08_s03",
+          "order": 2,
+          "textJa": "働き方の改善の社内アンケート調査、もう書いた？「改善すべきことがあるか」って聞かれてもすぐ思い浮かばなくて・・・。",
+          "translationZh": null,
+          "startMs": 37620,
+          "endMs": 47220,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q08_s04",
+          "order": 3,
+          "textJa": "そう、残業代のアップも私たち社員が声を上げたから実現したし､  言うべきことは言ったほうがいいんじゃない？私は有給とかの休暇の取得申請､  もっと簡単に申請できるように改善してほしいんだよね｡",
+          "translationZh": null,
+          "startMs": 48300,
+          "endMs": 64730,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q08_s05",
+          "order": 4,
+          "textJa": "あー、そう言うことを書けばいいんだね。",
+          "translationZh": null,
+          "startMs": 65880,
+          "endMs": 67980,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q08_s06",
+          "order": 5,
+          "textJa": "そうそう｡  私はそうしようと思ってる｡  あ、そういえば、この間、在宅での勤務を今、週 2 日可能だけどもっと増やしてほしいって言ってなかった？",
+          "translationZh": null,
+          "startMs": 69040,
+          "endMs": 81240,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q08_s07",
+          "order": 6,
+          "textJa": "そうだ、それを書こう｡  あと社内のパソコンを新しくしてほしいんだよね｡  今の古くって｡",
+          "translationZh": null,
+          "startMs": 82030,
+          "endMs": 89190,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q08_s08",
+          "order": 7,
+          "textJa": "パソコン､  今年度中には買い換えるって聞いたよ。",
+          "translationZh": null,
+          "startMs": 89190,
+          "endMs": 93680,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q08_s09",
+          "order": 8,
+          "textJa": "あ、じゃ、いいね。",
+          "translationZh": null,
+          "startMs": 93820,
+          "endMs": 95500,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q08_s10",
+          "order": 9,
+          "textJa": "女の人はアンケートに何を書くと言っていますか。",
+          "translationZh": null,
+          "startMs": 101120,
+          "endMs": 106440
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q09",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 4,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第04問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q09_s01",
+          "order": 0,
+          "textJa": "女の学生と男の学生が毎日着る服について話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7110
+        },
+        {
+          "id": "n2_q09_s02",
+          "order": 1,
+          "textJa": "岡田くん、ファッションの勉強をしているから教えてほしいんだけど・・・私、毎日どんな服を着たらいいのかわからなくて・・・。ファッション雑誌を見ても自分に似合うかわからないし｡",
+          "translationZh": null,
+          "startMs": 37060,
+          "endMs": 50050,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q09_s03",
+          "order": 2,
+          "textJa": "雑誌は参考になると思うけど、そうだね・・・あ､  インターネットで毎月、洋服を送ってくれるサービスって知ってる？プロがその人に似合いそうな服を選んで送ってくれるんだよ｡  気に入ればそのまま買い取れるし､  気に入らなければ返せばいいし｡",
+          "translationZh": null,
+          "startMs": 50320,
+          "endMs": 68580,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q09_s04",
+          "order": 3,
+          "textJa": "あぁ､  それ友達がやってた｡  でも私は送り返すのも面倒だなと思って。",
+          "translationZh": null,
+          "startMs": 68920,
+          "endMs": 75900,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q09_s05",
+          "order": 4,
+          "textJa": "うーん､  僕は毎日シンプルな服を着てるよ｡  制服化って言うの？白いシャツに黒いズボンっていうスタイル｡",
+          "translationZh": null,
+          "startMs": 75900,
+          "endMs": 85550,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q09_s06",
+          "order": 5,
+          "textJa": "そういえば岡田くんって大体いつもそうだね。でも学校の制服みたいに単調にならないのは小物を上手く取り入れてるからなんだね｡",
+          "translationZh": null,
+          "startMs": 85980,
+          "endMs": 98320,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q09_s07",
+          "order": 6,
+          "textJa": "そうかな｡  あ､  佐藤さん、リサイクルショップに行ったことある？種類がたくさんあってデザインもいろいろ選べるし、気に入るものがあるかもしれないよ｡",
+          "translationZh": null,
+          "startMs": 98860,
+          "endMs": 109640,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q09_s08",
+          "order": 7,
+          "textJa": "中古か・・・ちょっと抵抗あるなぁ｡",
+          "translationZh": null,
+          "startMs": 110040,
+          "endMs": 113810,
+          "speaker": "女の学生"
+        },
+        {
+          "id": "n2_q09_s09",
+          "order": 8,
+          "textJa": "そう。じゃ、佐藤さんにはやっぱり僕と同じ方法がお勧めだね。",
+          "translationZh": null,
+          "startMs": 113810,
+          "endMs": 119710,
+          "speaker": "男の学生"
+        },
+        {
+          "id": "n2_q09_s10",
+          "order": 9,
+          "textJa": "男の学生は女の学生にどうしたら１番いいと言っていますか。",
+          "translationZh": null,
+          "startMs": 125330,
+          "endMs": 131410
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q10",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 5,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第05問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q10_s01",
+          "order": 0,
+          "textJa": "テレビでアナウンサーの男の人が女の人にインタビューしています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7110
+        },
+        {
+          "id": "n2_q10_s02",
+          "order": 1,
+          "textJa": "今日は転職を経験されている会社員の内田さんにお話を伺います｡",
+          "translationZh": null,
+          "startMs": 38150,
+          "endMs": 43950,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q10_s03",
+          "order": 2,
+          "textJa": "あ､  はい｡  私は 2 回転職経験があります｡  転職というと経験を積んでそれを活かし、より給料の良いところに移っていく人もいますけど、どちらかというと現状に不満や不足を感じて居心地のいい場所を求める人が多いように感じます｡  私の最初の転職がそうでした｡",
+          "translationZh": null,
+          "startMs": 47480,
+          "endMs": 69600,
+          "speaker": "会社員"
+        },
+        {
+          "id": "n2_q10_s04",
+          "order": 3,
+          "textJa": "そうですか｡",
+          "translationZh": null,
+          "startMs": 69600,
+          "endMs": 70720,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q10_s05",
+          "order": 4,
+          "textJa": "現在は友人が新しく作った会社に入れてもらったんです｡  前に勤めてた会社に何か不満があったわけじゃなく、新たな世界を見てみたいと思っていた時だったので。分野は全然違うんですけど､  やり甲斐があります｡",
+          "translationZh": null,
+          "startMs": 71480,
+          "endMs": 88600,
+          "speaker": "会社員"
+        },
+        {
+          "id": "n2_q10_s06",
+          "order": 5,
+          "textJa": "そういう理由もあるんですね｡",
+          "translationZh": null,
+          "startMs": 88740,
+          "endMs": 90840,
+          "speaker": "アナウンサー"
+        },
+        {
+          "id": "n2_q10_s07",
+          "order": 6,
+          "textJa": "女の人が今の会社に転職した理由は何ですか。",
+          "translationZh": null,
+          "startMs": 96970,
+          "endMs": 101810
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q11",
+      "examId": "n2_listening",
+      "section": 2,
+      "number": 6,
+      "type": "ポイント理解",
+      "audioAssetPath": "output/audio/問題2_第06問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q11_s01",
+          "order": 0,
+          "textJa": "子供のサッカークラブのコーチがクラブの紹介をしています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6190
+        },
+        {
+          "id": "n2_q11_s02",
+          "order": 1,
+          "textJa": "サッカーで勝つためには、ボールを正確に蹴る高い技術力や足の速さなどの高い身体能力はもちろん､  精神力の強さも求められます｡また､  いつ、どのようにプレーするかを正しく選択する判断力も不可欠です｡個人個人に高い技術力や身体能力､  精神力があっても適切な判断ができないとチームの勝ちには繋がりません｡ですから、このクラブでは特に、この力が身に付くよう選手を育てることに力を入れています｡",
+          "translationZh": null,
+          "startMs": 14530,
+          "endMs": 59130,
+          "speaker": "コーチ"
+        },
+        {
+          "id": "n2_q11_s03",
+          "order": 2,
+          "textJa": "コーチはこのサッカークラブでは特にどのような力を持った選手に育てたいと言っていますか。",
+          "translationZh": null,
+          "startMs": 73450,
+          "endMs": 91270
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    },
+    {
+      "id": "n2_q12",
+      "examId": "n2_listening",
+      "section": 3,
+      "number": 1,
+      "type": "概要理解",
+      "audioAssetPath": "output/audio/問題3_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q12_s01",
+          "order": 0,
+          "textJa": "ラジオで歯医者が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 4560
+        },
+        {
+          "id": "n2_q12_s02",
+          "order": 1,
+          "textJa": "歯は毎日の生活と関わっています。歯が健康でものが良く噛めれば、消化を助け、全身に栄養を届けることができます。また、歯があるおかげで発音ができ、会話ができます。この他、体の姿勢やバランスを保ったり、豊かな表情を作ったりなど食べること以外の面でも歯の存在は不可欠ですね。",
+          "translationZh": null,
+          "startMs": 12850,
+          "endMs": 34240,
+          "speaker": "歯医者"
+        },
+        {
+          "id": "n2_q12_s03",
+          "order": 2,
+          "textJa": "歯医者は何について話していますか。",
+          "translationZh": null,
+          "startMs": 34240,
+          "endMs": 43280
+        },
+        {
+          "id": "n2_q12_s04",
+          "order": 3,
+          "textJa": "1. 歯の構造",
+          "translationZh": null,
+          "startMs": 44860,
+          "endMs": 47520
+        },
+        {
+          "id": "n2_q12_s05",
+          "order": 4,
+          "textJa": "2. 歯の役割",
+          "translationZh": null,
+          "startMs": 47520,
+          "endMs": 52840
+        },
+        {
+          "id": "n2_q12_s06",
+          "order": 5,
+          "textJa": "3. 歯の正しいケアの仕方",
+          "translationZh": null,
+          "startMs": 52840,
+          "endMs": 59190
+        },
+        {
+          "id": "n2_q12_s07",
+          "order": 6,
+          "textJa": "4. 歯の病気の原因",
+          "translationZh": null,
+          "startMs": 61800,
+          "endMs": 65520
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "歯の構造"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "歯の役割"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "歯の正しいケアの仕方"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "歯の病気の原因"
+        }
+      ]
+    },
+    {
+      "id": "n2_q13",
+      "examId": "n2_listening",
+      "section": 3,
+      "number": 2,
+      "type": "概要理解",
+      "audioAssetPath": "output/audio/問題3_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q13_s01",
+          "order": 0,
+          "textJa": "講演会で鉄道の写真家が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 5100
+        },
+        {
+          "id": "n2_q13_s02",
+          "order": 1,
+          "textJa": "私は鉄道の写真を撮るためにいろいろなところへ行きます。行く先々で鉄道ファンの方に会うと「どうやったらうまく撮れますか？」と聞かれるんですが、私は反対に「写真で何を伝えたいですか？」と尋ねるんです。シャッターを押すタイミングとか列車と風景をどんなバランスで撮るかとか、上手に撮影するテクニックはいろいろあります。けど、少しぐらい下手でも構わないんです。 1 枚の写真の中に季節感や感動的な風景など何を表現したいかを意識して撮ることで全く違った写真になると思うんです。",
+          "translationZh": null,
+          "startMs": 18780,
+          "endMs": 40410,
+          "speaker": "鉄道写真家"
+        },
+        {
+          "id": "n2_q13_s03",
+          "order": 2,
+          "textJa": "鉄道の写真家が伝えたいことは何ですか。",
+          "translationZh": null,
+          "startMs": 58050,
+          "endMs": 61630
+        },
+        {
+          "id": "n2_q13_s04",
+          "order": 3,
+          "textJa": "1. 鉄道の写真を撮る時に大切なこと",
+          "translationZh": null,
+          "startMs": 63210,
+          "endMs": 67920
+        },
+        {
+          "id": "n2_q13_s05",
+          "order": 4,
+          "textJa": "2. 鉄道の写真を撮るのに良い場所",
+          "translationZh": null,
+          "startMs": 70520,
+          "endMs": 74670
+        },
+        {
+          "id": "n2_q13_s06",
+          "order": 5,
+          "textJa": "3. 鉄道の美しさを表現する楽しさ",
+          "translationZh": null,
+          "startMs": 77340,
+          "endMs": 81800
+        },
+        {
+          "id": "n2_q13_s07",
+          "order": 6,
+          "textJa": "4. 鉄道の写真を上手に撮るテクニック",
+          "translationZh": null,
+          "startMs": 84410,
+          "endMs": 89420
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "鉄道の写真を撮る時に大切なこと"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "鉄道の写真を撮るのに良い場所"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "鉄道の美しさを表現する楽しさ"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "鉄道の写真を上手に撮るテクニック"
+        }
+      ]
+    },
+    {
+      "id": "n2_q14",
+      "examId": "n2_listening",
+      "section": 3,
+      "number": 3,
+      "type": "概要理解",
+      "audioAssetPath": "output/audio/問題3_第03問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q14_s01",
+          "order": 0,
+          "textJa": "テレビで工業デザイナーが話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 5270
+        },
+        {
+          "id": "n2_q14_s02",
+          "order": 1,
+          "textJa": "中学 1 年の時、視力が悪くなり、メガネが必要になりました。メガネ屋さんに行ったのですが、気に入るメガネが見つかりませんでした。仕方なく 1 つ買ったんですが、自分の気に入らないメガネをかけるのは耐えられませんでした。同じ頃、友達の家で出されたジュースのコップがすごくきれいな形で感激しました。有名なデザイナーがデザインしたコップだったのですが、ちょっと形を変えるだけでこんなにおしゃれになるんだと驚きました。今思えば、デザインということに初めて興味を持ったのがこの頃でした。",
+          "translationZh": null,
+          "startMs": 20190,
+          "endMs": 41610,
+          "speaker": "工業デザイナー"
+        },
+        {
+          "id": "n2_q14_s03",
+          "order": 2,
+          "textJa": "工業デザイナーは何について話していますか。",
+          "translationZh": null,
+          "startMs": 50590,
+          "endMs": 60270
+        },
+        {
+          "id": "n2_q14_s04",
+          "order": 3,
+          "textJa": "1. メガネを買う人へのアドバイス",
+          "translationZh": null,
+          "startMs": 61850,
+          "endMs": 65790
+        },
+        {
+          "id": "n2_q14_s05",
+          "order": 4,
+          "textJa": "2. 人気があるメガネのデザイン",
+          "translationZh": null,
+          "startMs": 65790,
+          "endMs": 72180
+        },
+        {
+          "id": "n2_q14_s06",
+          "order": 5,
+          "textJa": "3. おしゃれなデザインのポイント",
+          "translationZh": null,
+          "startMs": 74850,
+          "endMs": 78490
+        },
+        {
+          "id": "n2_q14_s07",
+          "order": 6,
+          "textJa": "4. デザインを意識し始めたきっかけ",
+          "translationZh": null,
+          "startMs": 81070,
+          "endMs": 86130
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "メガネを買う人へのアドバイス"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "人気があるメガネのデザイン"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "おしゃれなデザインのポイント"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "デザインを意識し始めたきっかけ"
+        }
+      ]
+    },
+    {
+      "id": "n2_q15",
+      "examId": "n2_listening",
+      "section": 3,
+      "number": 4,
+      "type": "概要理解",
+      "audioAssetPath": "output/audio/問題3_第04問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q15_s01",
+          "order": 0,
+          "textJa": "ラジオでタレントが話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 4530
+        },
+        {
+          "id": "n2_q15_s02",
+          "order": 1,
+          "textJa": "タレントの仕事を始めて３０年が経ちました。ありがたいことにいろんな仕事をいただき、充実した日々を送っています。ただ、仕事が多すぎて、時間管理の必要性を感じます。限られた時間の中でやりたい仕事を全部はできないのだから何をするかの優先順位をつけて、できることを確実に進め、できないことは諦めるということを意識して生活しています。",
+          "translationZh": null,
+          "startMs": 13960,
+          "endMs": 36180,
+          "speaker": "タレント"
+        },
+        {
+          "id": "n2_q15_s03",
+          "order": 2,
+          "textJa": "タレントは何について話していますか。",
+          "translationZh": null,
+          "startMs": 42140,
+          "endMs": 45100
+        },
+        {
+          "id": "n2_q15_s04",
+          "order": 3,
+          "textJa": "1. 時間を上手に使う工夫",
+          "translationZh": null,
+          "startMs": 46690,
+          "endMs": 50530
+        },
+        {
+          "id": "n2_q15_s05",
+          "order": 4,
+          "textJa": "2. 仕事の楽しみ方",
+          "translationZh": null,
+          "startMs": 50530,
+          "endMs": 56430
+        },
+        {
+          "id": "n2_q15_s06",
+          "order": 5,
+          "textJa": "3. 自分の仕事の内容",
+          "translationZh": null,
+          "startMs": 56430,
+          "endMs": 62570
+        },
+        {
+          "id": "n2_q15_s07",
+          "order": 6,
+          "textJa": "4. 自分の計画性のなさ",
+          "translationZh": null,
+          "startMs": 62570,
+          "endMs": 69461
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "時間を上手に使う工夫"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "仕事の楽しみ方"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "自分の仕事の内容"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "自分の計画性のなさ"
+        }
+      ]
+    },
+    {
+      "id": "n2_q16",
+      "examId": "n2_listening",
+      "section": 3,
+      "number": 5,
+      "type": "概要理解",
+      "audioAssetPath": "output/audio/問題3_第05問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q16_s01",
+          "order": 0,
+          "textJa": "ラジオで俳優が話しています。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 4560
+        },
+        {
+          "id": "n2_q16_s02",
+          "order": 1,
+          "textJa": "みなさんは旅が好きですか。旅といえば、遠いところに行くことだと思う人もいるかもしれませんが、僕は例えば、電車で一駅手前で降りて、いつもと違う道を歩いて帰るのも旅だと思うんです。距離ではなく、移動そのものが重要なんです。目的地に到達するまでのいつもと違った過程を楽しむ。そういうのも旅だと言えるのではないでしょうか。",
+          "translationZh": null,
+          "startMs": 12200,
+          "endMs": 38010,
+          "speaker": "俳優"
+        },
+        {
+          "id": "n2_q16_s03",
+          "order": 2,
+          "textJa": "俳優は何について話していますか。",
+          "translationZh": null,
+          "startMs": 46370,
+          "endMs": 49650
+        },
+        {
+          "id": "n2_q16_s04",
+          "order": 3,
+          "textJa": "1. 旅の思い出",
+          "translationZh": null,
+          "startMs": 51240,
+          "endMs": 54010
+        },
+        {
+          "id": "n2_q16_s05",
+          "order": 4,
+          "textJa": "2. 1 人で行く旅の計画",
+          "translationZh": null,
+          "startMs": 56620,
+          "endMs": 60330
+        },
+        {
+          "id": "n2_q16_s06",
+          "order": 5,
+          "textJa": "3. 旅をすることの重要性",
+          "translationZh": null,
+          "startMs": 60330,
+          "endMs": 66810
+        },
+        {
+          "id": "n2_q16_s07",
+          "order": 6,
+          "textJa": "4. 自分が考える旅というもの",
+          "translationZh": null,
+          "startMs": 69380,
+          "endMs": 73960
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "旅の思い出"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "1 人で行く旅の計画"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "旅をすることの重要性"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "自分が考える旅というもの"
+        }
+      ]
+    },
+    {
+      "id": "n2_q17",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 1,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q17_s01",
+          "order": 0,
+          "textJa": "今日中に漢字２０個覚えるなんて、無理に決まってるよ。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6680,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q17_s02",
+          "order": 1,
+          "textJa": "1. 頑張ればできるんじゃない？",
+          "translationZh": null,
+          "startMs": 8300,
+          "endMs": 11500
+        },
+        {
+          "id": "n2_q17_s03",
+          "order": 2,
+          "textJa": "2. 楽にできるって思ってるんだね",
+          "translationZh": null,
+          "startMs": 11500,
+          "endMs": 17060
+        },
+        {
+          "id": "n2_q17_s04",
+          "order": 3,
+          "textJa": "3. 簡単に覚えられてすごいね",
+          "translationZh": null,
+          "startMs": 17060,
+          "endMs": 23100
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "頑張ればできるんじゃない？"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "楽にできるって思ってるんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "簡単に覚えられてすごいね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q18",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 2,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q18_s01",
+          "order": 0,
+          "textJa": "課長、明日の会議の資料ですが、ご覧いただけないでしょうか？",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6190,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q18_s02",
+          "order": 1,
+          "textJa": "1. 資料、見てくれるんですね",
+          "translationZh": null,
+          "startMs": 7780,
+          "endMs": 11430
+        },
+        {
+          "id": "n2_q18_s03",
+          "order": 2,
+          "textJa": "2. 資料は私が作っておきますね",
+          "translationZh": null,
+          "startMs": 13040,
+          "endMs": 16980
+        },
+        {
+          "id": "n2_q18_s04",
+          "order": 3,
+          "textJa": "3. 資料、見ておきます",
+          "translationZh": null,
+          "startMs": 18690,
+          "endMs": 22510
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "資料、見てくれるんですね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "資料は私が作っておきますね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "資料、見ておきます"
+        }
+      ]
+    },
+    {
+      "id": "n2_q19",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 3,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第03問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q19_s01",
+          "order": 0,
+          "textJa": "この会社、経験者に限らず応募できるって。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 5820,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q19_s02",
+          "order": 1,
+          "textJa": "1. 募集は経験が無い人だけなんだ",
+          "translationZh": null,
+          "startMs": 7430,
+          "endMs": 11490
+        },
+        {
+          "id": "n2_q19_s03",
+          "order": 2,
+          "textJa": "2. 経験がなくてもいいんだね",
+          "translationZh": null,
+          "startMs": 11490,
+          "endMs": 16450
+        },
+        {
+          "id": "n2_q19_s04",
+          "order": 3,
+          "textJa": "3. やっぱり経験が無いといけないのか",
+          "translationZh": null,
+          "startMs": 16450,
+          "endMs": 22700
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "募集は経験が無い人だけなんだ"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "経験がなくてもいいんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "やっぱり経験が無いといけないのか"
+        }
+      ]
+    },
+    {
+      "id": "n2_q20",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 4,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第04問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q20_s01",
+          "order": 0,
+          "textJa": "僕が出張の間、庭の花の水やり、毎日欠かさないでね。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6920,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q20_s02",
+          "order": 1,
+          "textJa": "1. じゃ、やらないでおくね",
+          "translationZh": null,
+          "startMs": 9220,
+          "endMs": 11880
+        },
+        {
+          "id": "n2_q20_s03",
+          "order": 2,
+          "textJa": "2. 忘れないようにするね",
+          "translationZh": null,
+          "startMs": 13500,
+          "endMs": 16630
+        },
+        {
+          "id": "n2_q20_s04",
+          "order": 3,
+          "textJa": "3. 水、毎日やっちゃだめなんだね",
+          "translationZh": null,
+          "startMs": 18310,
+          "endMs": 22940
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "じゃ、やらないでおくね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "忘れないようにするね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "水、毎日やっちゃだめなんだね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q21",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 5,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第05問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q21_s01",
+          "order": 0,
+          "textJa": "履歴書の提出、もう少しで締め切りに遅れるところだったよ。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 6470,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q21_s02",
+          "order": 1,
+          "textJa": "1. 間に合ってよかったね",
+          "translationZh": null,
+          "startMs": 8060,
+          "endMs": 11110
+        },
+        {
+          "id": "n2_q21_s03",
+          "order": 2,
+          "textJa": "2. 遅れちゃったんだ",
+          "translationZh": null,
+          "startMs": 12720,
+          "endMs": 15370
+        },
+        {
+          "id": "n2_q21_s04",
+          "order": 3,
+          "textJa": "3. あと少しだったのにね",
+          "translationZh": null,
+          "startMs": 15370,
+          "endMs": 20900
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "間に合ってよかったね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "遅れちゃったんだ"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "あと少しだったのにね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q22",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 6,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第06問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q22_s01",
+          "order": 0,
+          "textJa": "前田さん、お客さまへの商品説明はこのパンフレットに沿って話してください。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7200,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q22_s02",
+          "order": 1,
+          "textJa": "1. 自由に話していいんですね",
+          "translationZh": null,
+          "startMs": 8850,
+          "endMs": 12600
+        },
+        {
+          "id": "n2_q22_s03",
+          "order": 2,
+          "textJa": "2. ここに書いてあるように話すんですね",
+          "translationZh": null,
+          "startMs": 12600,
+          "endMs": 18380
+        },
+        {
+          "id": "n2_q22_s04",
+          "order": 3,
+          "textJa": "3. パンフレットに関係なく話すんですね",
+          "translationZh": null,
+          "startMs": 20060,
+          "endMs": 25010
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "自由に話していいんですね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "ここに書いてあるように話すんですね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "パンフレットに関係なく話すんですね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q23",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 7,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第07問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q23_s01",
+          "order": 0,
+          "textJa": "今日の午後、商品発表会で話すんだけど緊張のあまり食欲もないよ。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 8190,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q23_s02",
+          "order": 1,
+          "textJa": "1. 随分落ち着いてるんだね",
+          "translationZh": null,
+          "startMs": 12350,
+          "endMs": 13690
+        },
+        {
+          "id": "n2_q23_s03",
+          "order": 2,
+          "textJa": "2. そんなに緊張しなくても大丈夫だよ",
+          "translationZh": null,
+          "startMs": 15300,
+          "endMs": 19630
+        },
+        {
+          "id": "n2_q23_s04",
+          "order": 3,
+          "textJa": "3. 少しは緊張感持たないとだめだよ",
+          "translationZh": null,
+          "startMs": 21340,
+          "endMs": 26010
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "随分落ち着いてるんだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "そんなに緊張しなくても大丈夫だよ"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "少しは緊張感持たないとだめだよ"
+        }
+      ]
+    },
+    {
+      "id": "n2_q24",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 8,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第08問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q24_s01",
+          "order": 0,
+          "textJa": "今日の会議でのプレゼン、先輩が休みだから私がやらざるを得なくなって・・・。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7490,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q24_s02",
+          "order": 1,
+          "textJa": "1. プレゼン、やらなくてよくなったの？",
+          "translationZh": null,
+          "startMs": 9110,
+          "endMs": 12990
+        },
+        {
+          "id": "n2_q24_s03",
+          "order": 2,
+          "textJa": "2. プレゼンできてうれしいんだね",
+          "translationZh": null,
+          "startMs": 15050,
+          "endMs": 18380
+        },
+        {
+          "id": "n2_q24_s04",
+          "order": 3,
+          "textJa": "3. そういうことなら、仕方ないね",
+          "translationZh": null,
+          "startMs": 18380,
+          "endMs": 24060
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "プレゼン、やらなくてよくなったの？"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "プレゼンできてうれしいんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "そういうことなら、仕方ないね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q25",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 9,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第09問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q25_s01",
+          "order": 0,
+          "textJa": "今日のお昼の定食、食べ応えあったよね。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 13270,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q25_s02",
+          "order": 1,
+          "textJa": "1. 本当、お腹いっぱいになったね",
+          "translationZh": null,
+          "startMs": 15330,
+          "endMs": 19260
+        },
+        {
+          "id": "n2_q25_s03",
+          "order": 2,
+          "textJa": "2. そうそう、あれじゃ足りない人多いよね",
+          "translationZh": null,
+          "startMs": 19260,
+          "endMs": 25670
+        },
+        {
+          "id": "n2_q25_s04",
+          "order": 3,
+          "textJa": "3. 確かに、量が少なめでちょうどよかったね",
+          "translationZh": null,
+          "startMs": 25670,
+          "endMs": 32680
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "本当、お腹いっぱいになったね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "そうそう、あれじゃ足りない人多いよね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "確かに、量が少なめでちょうどよかったね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q26",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 10,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第10問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q26_s01",
+          "order": 0,
+          "textJa": "店長、山田さん、配達の仕事、頼まれたらやらないこともないって言ってました。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 8370,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q26_s02",
+          "order": 1,
+          "textJa": "1. 他の人を探さないとだめだね",
+          "translationZh": null,
+          "startMs": 8370,
+          "endMs": 13970
+        },
+        {
+          "id": "n2_q26_s03",
+          "order": 2,
+          "textJa": "2. 山田さんに断られたか",
+          "translationZh": null,
+          "startMs": 13970,
+          "endMs": 19350
+        },
+        {
+          "id": "n2_q26_s04",
+          "order": 3,
+          "textJa": "3. じゃ、お願いしてみようかな",
+          "translationZh": null,
+          "startMs": 21030,
+          "endMs": 25280
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "他の人を探さないとだめだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "山田さんに断られたか"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "じゃ、お願いしてみようかな"
+        }
+      ]
+    },
+    {
+      "id": "n2_q27",
+      "examId": "n2_listening",
+      "section": 4,
+      "number": 11,
+      "type": "即時応答",
+      "audioAssetPath": "output/audio/問題4_第11問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q27_s01",
+          "order": 0,
+          "textJa": "来年からの留学先、迷った挙句（あげく）、初めに思ってたとこにしたよ",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 7270,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q27_s02",
+          "order": 1,
+          "textJa": "1. いろいろ悩んだんだね",
+          "translationZh": null,
+          "startMs": 8880,
+          "endMs": 12160
+        },
+        {
+          "id": "n2_q27_s03",
+          "order": 2,
+          "textJa": "2. すぐに決められたんだね",
+          "translationZh": null,
+          "startMs": 12160,
+          "endMs": 17190
+        },
+        {
+          "id": "n2_q27_s04",
+          "order": 3,
+          "textJa": "3. 少しは迷ったんだね",
+          "translationZh": null,
+          "startMs": 17190,
+          "endMs": 22800
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "いろいろ悩んだんだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "すぐに決められたんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "少しは迷ったんだね"
+        }
+      ]
+    },
+    {
+      "id": "n2_q28",
+      "examId": "n2_listening",
+      "section": 5,
+      "number": 1,
+      "type": "統合理解",
+      "audioAssetPath": "output/audio/問題5_第01問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q28_s01",
+          "order": 0,
+          "textJa": "問題用紙に何も印刷されていません。まず、話を聞いてください。それから、質問と選択肢を聞いて、１から４の中から、最も良いものを１つ選んでください。では、始めます。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 22440
+        },
+        {
+          "id": "n2_q28_s02",
+          "order": 1,
+          "textJa": "地域のボランティアグループのリーダーとメンバー２人が話しています。",
+          "translationZh": null,
+          "startMs": 22440,
+          "endMs": 30260
+        },
+        {
+          "id": "n2_q28_s03",
+          "order": 2,
+          "textJa": "僕たちが市と協力して定期的にゴミ拾いをしている東公園、ゴミを置いていっちゃう人が多いよね。何か対策を考えて市役所に提案しようと思うんだ。",
+          "translationZh": null,
+          "startMs": 31880,
+          "endMs": 44780,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s04",
+          "order": 3,
+          "textJa": "お菓子の袋とかペットボトルとか、置いていっちゃう人がいるんですよね。",
+          "translationZh": null,
+          "startMs": 44780,
+          "endMs": 49850,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q28_s05",
+          "order": 4,
+          "textJa": "市の方針でゴミ箱は置かないことになってるからね。",
+          "translationZh": null,
+          "startMs": 49850,
+          "endMs": 54250,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s06",
+          "order": 5,
+          "textJa": "特にゴミが多いところから対策を考えた方がいいんじゃないですか？ゴミが目立つところに花壇を作るとか。他の公園で花壇を作ったら、その周りはゴミが減ったそうですよ。",
+          "translationZh": null,
+          "startMs": 55110,
+          "endMs": 68440,
+          "speaker": "男２"
+        },
+        {
+          "id": "n2_q28_s07",
+          "order": 6,
+          "textJa": "ゴミが多いのはベンチの周りだよね？あそこに花壇を作るのは難しいんじゃないかな。",
+          "translationZh": null,
+          "startMs": 68440,
+          "endMs": 75560,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s08",
+          "order": 7,
+          "textJa": "じゃ、代わりにベンチをもっと明るい色にして花の絵も描いたらどうですか？きれいでちゃんと手入れされている印象があるとゴミを置いていきにくいと思います。",
+          "translationZh": null,
+          "startMs": 76580,
+          "endMs": 87520,
+          "speaker": "男２"
+        },
+        {
+          "id": "n2_q28_s09",
+          "order": 8,
+          "textJa": "なるほど。",
+          "translationZh": null,
+          "startMs": 88310,
+          "endMs": 88630,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s10",
+          "order": 9,
+          "textJa": "私は公園全体を考えた方がいいと思うんですが・・・。「ゴミを持ち帰りましょう」って書いた看板を増やすのはどうですか？",
+          "translationZh": null,
+          "startMs": 89720,
+          "endMs": 98240,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q28_s11",
+          "order": 10,
+          "textJa": "うーん、既にいくつか立ててあるから今以上に増やす必要ないんじゃないかな？",
+          "translationZh": null,
+          "startMs": 98780,
+          "endMs": 104910,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s12",
+          "order": 11,
+          "textJa": "あと私たちボランティアが見回って、ゴミを持って帰ってもらうように直接声をかけるのも効果があると思いますけど。",
+          "translationZh": null,
+          "startMs": 106260,
+          "endMs": 114080,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q28_s13",
+          "order": 12,
+          "textJa": "ボランティアの負担が大きくなるのはちょっとね。うーん、まず、ゴミが多いところからなんとかしよう。花壇を作る代わりにっていうアイディアが良さそうだね。市役所の担当者に早速提案してみよう。",
+          "translationZh": null,
+          "startMs": 114080,
+          "endMs": 130510,
+          "speaker": "男１"
+        },
+        {
+          "id": "n2_q28_s14",
+          "order": 13,
+          "textJa": "公園のゴミを減らすため、何を市役所に提案することにしましたか。",
+          "translationZh": null,
+          "startMs": 136160,
+          "endMs": 141840
+        },
+        {
+          "id": "n2_q28_s15",
+          "order": 14,
+          "textJa": "1. ベンチの近くに花壇を作ること",
+          "translationZh": null,
+          "startMs": 143940,
+          "endMs": 147610
+        },
+        {
+          "id": "n2_q28_s16",
+          "order": 15,
+          "textJa": "2. ベンチを塗り直してきれいにすること",
+          "translationZh": null,
+          "startMs": 147610,
+          "endMs": 154560
+        },
+        {
+          "id": "n2_q28_s17",
+          "order": 16,
+          "textJa": "3. 看板を立てること",
+          "translationZh": null,
+          "startMs": 154560,
+          "endMs": 160340
+        },
+        {
+          "id": "n2_q28_s18",
+          "order": 17,
+          "textJa": "4. 公園を見回ること",
+          "translationZh": null,
+          "startMs": 160340,
+          "endMs": 166800
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      },
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "ベンチの近くに花壇を作ること"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "ベンチを塗り直してきれいにすること"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "看板を立てること"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "公園を見回ること"
+        }
+      ]
+    },
+    {
+      "id": "n2_q29",
+      "examId": "n2_listening",
+      "section": 5,
+      "number": 2,
+      "type": "統合理解",
+      "audioAssetPath": "output/audio/問題5_第02問.mp3",
+      "sentences": [
+        {
+          "id": "n2_q29_s01",
+          "order": 0,
+          "textJa": "まず、話を聞いてください。それから、２つの質問を聞いて、それぞれ問題用紙の１から４の中から、最も良いものを１つ選んでください。では、始めます。",
+          "translationZh": null,
+          "startMs": 0,
+          "endMs": 19640
+        },
+        {
+          "id": "n2_q29_s02",
+          "order": 1,
+          "textJa": "港で行われているイベントでアナウンスを聞いた後、女の人と男の人が話しています。",
+          "translationZh": null,
+          "startMs": 22380,
+          "endMs": 29900
+        },
+        {
+          "id": "n2_q29_s03",
+          "order": 2,
+          "textJa": "本日は桜港祭りにお越しいただき、ありがとうございます。会場は４つに分かれています。各会場についてご案内いたします。中央会場では、今朝捕れた魚や貝をその場で焼いてお召し上がりいただけます。こちらは、なくなり次第終了いたします。南会場では、初心者向けの釣り教室を開催しています。道具の貸し出しはもちろん、餌の付け方などもお教えいたします。東会場では、海の生き物が観察できます。地元の海の生き物を間近で見ることができ、お子様も大人の方もお楽しみいただけます。西会場では、新鮮な魚介類を販売しております。是非、お買い求めください。",
+          "translationZh": null,
+          "startMs": 34500,
+          "endMs": 61820,
+          "speaker": "アナウンス"
+        },
+        {
+          "id": "n2_q29_s04",
+          "order": 3,
+          "textJa": "新鮮な魚、おいしそう。なくなる前に早く行かない？",
+          "translationZh": null,
+          "startMs": 78470,
+          "endMs": 99490,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q29_s05",
+          "order": 4,
+          "textJa": "え？早速買い物？先に買っちゃうと持って歩くの大変じゃない？",
+          "translationZh": null,
+          "startMs": 99970,
+          "endMs": 104650,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q29_s06",
+          "order": 5,
+          "textJa": "あ、そっちじゃなくて自分たちで焼いて食べられるって方。買い物は最後にしようよ。",
+          "translationZh": null,
+          "startMs": 104650,
+          "endMs": 111760,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q29_s07",
+          "order": 6,
+          "textJa": "あぁ、じゃ、まずはそこに行こう。それから近くで生き物を観察できるっていうのに行かない？",
+          "translationZh": null,
+          "startMs": 111800,
+          "endMs": 119610,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q29_s08",
+          "order": 7,
+          "textJa": "いいよ。釣りはいいの？好きでしょ？今日もやりたいんじゃない？",
+          "translationZh": null,
+          "startMs": 119610,
+          "endMs": 125140,
+          "speaker": "女"
+        },
+        {
+          "id": "n2_q29_s09",
+          "order": 8,
+          "textJa": "うーん、初心者向けって言ってたから今日はしなくていいかな。",
+          "translationZh": null,
+          "startMs": 125140,
+          "endMs": 130330,
+          "speaker": "男"
+        },
+        {
+          "id": "n2_q29_s10",
+          "order": 9,
+          "textJa": "質問１：２人は最初にどの会場に行きますか。",
+          "translationZh": null,
+          "startMs": 130330,
+          "endMs": 141930
+        },
+        {
+          "id": "n2_q29_s11",
+          "order": 10,
+          "textJa": "質問２：２人は２番目にどの会場に行きますか。",
+          "translationZh": null,
+          "startMs": 141930,
+          "endMs": 161440
+        }
+      ],
+      "explanation": {
+        "ja": null,
+        "zh": null,
+        "optionReasonsZh": {}
+      }
+    }
+  ]
+}
+

@@ -1,10 +1,10 @@
-import 'package:flutter/material.dart' hide RepeatMode;
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../../app/theme.dart';
-import '../../practice/domain/practice_models.dart';
 import '../application/audio_player_controller.dart';
+import '../domain/question_playback_mode.dart';
 
 /// 練習詳細の下部に固定表示する音声操作バー。
 ///
@@ -16,6 +16,7 @@ class AudioPlayerBar extends ConsumerWidget {
     required this.showPreviousQuestion,
     required this.showNextQuestion,
     required this.questionNavigationEnabled,
+    required this.interactionEnabled,
     required this.onPreviousQuestion,
     required this.onNextQuestion,
   });
@@ -25,6 +26,7 @@ class AudioPlayerBar extends ConsumerWidget {
   final bool showPreviousQuestion;
   final bool showNextQuestion;
   final bool questionNavigationEnabled;
+  final bool interactionEnabled;
   final VoidCallback onPreviousQuestion;
   final VoidCallback onNextQuestion;
 
@@ -39,6 +41,12 @@ class AudioPlayerBar extends ConsumerWidget {
     final value = player.position.inMilliseconds
         .clamp(0, maxMilliseconds.toInt())
         .toDouble();
+    final sourceReady =
+        interactionEnabled &&
+        player.hasSource &&
+        player.status != AudioPlayerStatus.idle &&
+        player.status != AudioPlayerStatus.loading &&
+        player.status != AudioPlayerStatus.error;
     return Material(
       color: AppColors.background,
       elevation: 12,
@@ -73,7 +81,7 @@ class AudioPlayerBar extends ConsumerWidget {
                       child: Slider(
                         value: value,
                         max: maxMilliseconds,
-                        onChanged: player.hasSource
+                        onChanged: sourceReady
                             ? (next) => controller.seek(
                                 Duration(milliseconds: next.round()),
                               )
@@ -96,6 +104,7 @@ class AudioPlayerBar extends ConsumerWidget {
                       PopupMenuButton<double>(
                         tooltip: '再生速度',
                         initialValue: player.speed,
+                        enabled: sourceReady,
                         onSelected: (speed) async {
                           await controller.setSpeed(speed);
                           await ref
@@ -148,11 +157,13 @@ class AudioPlayerBar extends ConsumerWidget {
                       ),
                       IconButton.filled(
                         tooltip: player.isPlaying ? '一時停止' : '再生',
-                        onPressed: player.hasSource
+                        onPressed: sourceReady
                             ? controller.togglePlayPause
                             : null,
                         iconSize: 36,
-                        icon: player.status == AudioPlayerStatus.loading
+                        icon:
+                            interactionEnabled &&
+                                player.status == AudioPlayerStatus.loading
                             ? const SizedBox(
                                 width: 24,
                                 height: 24,
@@ -179,32 +190,38 @@ class AudioPlayerBar extends ConsumerWidget {
                             : null,
                       ),
                       IconButton(
-                        tooltip: _repeatLabel(player.repeatMode),
-                        onPressed: player.hasSource
-                            ? controller.cycleRepeatMode
+                        tooltip: _playbackModeLabel(player.playbackMode),
+                        onPressed: sourceReady
+                            ? controller.cycleQuestionPlaybackMode
                             : null,
-                        color: player.repeatMode == RepeatMode.none
+                        color:
+                            player.playbackMode ==
+                                QuestionPlaybackMode.sequential
                             ? Colors.white
                             : AppColors.accent,
                         icon: Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            const Icon(Icons.repeat, size: 30),
-                            if (player.repeatMode != RepeatMode.none)
-                              Positioned(
-                                right: -5,
-                                bottom: -6,
-                                child: Text(
-                                  player.repeatMode == RepeatMode.sentence
-                                      ? '文'
-                                      : '問',
-                                  style: const TextStyle(
-                                    color: AppColors.accent,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                            Icon(
+                              _playbackModeIcon(player.playbackMode),
+                              size: 30,
+                            ),
+                            Positioned(
+                              right: -7,
+                              bottom: -7,
+                              child: Text(
+                                _playbackModeBadge(player.playbackMode),
+                                style: TextStyle(
+                                  color:
+                                      player.playbackMode ==
+                                          QuestionPlaybackMode.sequential
+                                      ? Colors.white
+                                      : AppColors.accent,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
                                 ),
                               ),
+                            ),
                           ],
                         ),
                       ),
@@ -226,8 +243,20 @@ String _format(Duration duration) {
   return '$minutes:${seconds.toString().padLeft(2, '0')}';
 }
 
-String _repeatLabel(RepeatMode mode) => switch (mode) {
-  RepeatMode.none => 'リピートなし',
-  RepeatMode.sentence => '現在の文をリピート',
-  RepeatMode.question => '現在の問題をリピート',
+String _playbackModeLabel(QuestionPlaybackMode mode) => switch (mode) {
+  QuestionPlaybackMode.repeatCurrent => '現在の問題を繰り返す',
+  QuestionPlaybackMode.sequential => '問題を順番に再生',
+  QuestionPlaybackMode.repeatAll => 'すべての問題を繰り返す',
+};
+
+IconData _playbackModeIcon(QuestionPlaybackMode mode) => switch (mode) {
+  QuestionPlaybackMode.repeatCurrent => Icons.repeat_one,
+  QuestionPlaybackMode.sequential => Icons.playlist_play,
+  QuestionPlaybackMode.repeatAll => Icons.repeat,
+};
+
+String _playbackModeBadge(QuestionPlaybackMode mode) => switch (mode) {
+  QuestionPlaybackMode.repeatCurrent => '1問',
+  QuestionPlaybackMode.sequential => '順',
+  QuestionPlaybackMode.repeatAll => '全',
 };
