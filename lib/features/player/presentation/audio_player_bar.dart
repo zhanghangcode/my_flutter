@@ -10,7 +10,7 @@ import '../domain/question_playback_mode.dart';
 ///
 /// Slider と再生操作は AudioPlayerController へ委譲し、速度変更だけは次回起動時にも
 /// 復元できるよう SettingsController にも保存します。SafeArea で端末下端を保護します。
-class AudioPlayerBar extends ConsumerWidget {
+class AudioPlayerBar extends ConsumerStatefulWidget {
   /// 問題の境界と切り替え中の操作可否を受け取り、固定プレイヤーを構築します。
   ///
   /// 音声の状態は Provider から監視し、問題切り替えの判断は呼び出し元の
@@ -46,31 +46,55 @@ class AudioPlayerBar extends ConsumerWidget {
   /// 次の問題への移動を PracticeDetailPage に要求する callback。
   final VoidCallback onNextQuestion;
 
+  @override
+  ConsumerState<AudioPlayerBar> createState() => _AudioPlayerBarState();
+}
+
+/// SeekBarのドラッグ状態を保持し、実際のseek要求を1回にまとめる State。
+///
+/// ドラッグ中は Provider の再生位置を待たずローカル値だけを表示し、指を離した瞬間に
+/// AudioPlayerController.seek を1回だけ呼びます。onChanged 毎にseekすると、ドラッグ中の
+/// 複数seek要求が競合し、最終位置と異なる文がactiveになる恐れがあるためです。
+class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
+  /// ドラッグ中にだけ使う表示用のプレビュー位置(ミリ秒)。ドラッグ外は`null`。
+  double? _dragValueMs;
+
   /// Provider のプレイヤー状態を表示し、各操作を AudioPlayerController へ委譲します。
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     // ref.watch は表示更新に使用し、ref.read で取得した Controller は操作時だけ呼びます。
     final player = ref.watch(audioPlayerControllerProvider);
     final controller = ref.read(audioPlayerControllerProvider.notifier);
     final maxMilliseconds = player.duration.inMilliseconds <= 0
         ? 1.0
         : player.duration.inMilliseconds.toDouble();
-    final value = player.position.inMilliseconds
-        .clamp(0, maxMilliseconds.toInt())
-        .toDouble();
+    final value =
+        (_dragValueMs ??
+                player.position.inMilliseconds
+                    .clamp(0, maxMilliseconds.toInt())
+                    .toDouble())
+            .clamp(0, maxMilliseconds)
+            .toDouble();
     final sourceReady =
-        interactionEnabled &&
+        widget.interactionEnabled &&
         player.hasSource &&
         player.status != AudioPlayerStatus.idle &&
         player.status != AudioPlayerStatus.loading &&
         player.status != AudioPlayerStatus.error;
+    // ドラッグ中に音源切り替えなどで操作不可へ変わった場合、プレビュー値を残さず
+    // 実位置の表示へ戻します。
+    if (!sourceReady && _dragValueMs != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() => _dragValueMs = null);
+      });
+    }
     return Material(
       color: AppColors.background,
       elevation: 12,
       child: SafeArea(
         top: false,
         child: SizedBox(
-          height: height,
+          height: AudioPlayerBar.height,
           child: Padding(
             padding: const EdgeInsets.fromLTRB(12, 6, 12, 8),
             child: Column(
@@ -99,9 +123,20 @@ class AudioPlayerBar extends ConsumerWidget {
                         value: value,
                         max: maxMilliseconds,
                         onChanged: sourceReady
-                            ? (next) => controller.seek(
-                                Duration(milliseconds: next.round()),
-                              )
+                            ? (next) => setState(() => _dragValueMs = next)
+                            : null,
+                        onChangeEnd: sourceReady
+                            ? (next) {
+                                // ドラッグ終了時にだけ実際のseekを発行します。
+                                // seek完了時にController側でactiveSentenceIdが
+                                // 再計算され、Transcriptの文字色・左線・自動
+                                // スクロールへ同期し、再生/一時停止状態は
+                                // seek前のまま維持されます。
+                                controller.seek(
+                                  Duration(milliseconds: next.round()),
+                                );
+                                setState(() => _dragValueMs = null);
+                              }
                             : null,
                       ),
                     ),
@@ -162,11 +197,11 @@ class AudioPlayerBar extends ConsumerWidget {
                       ),
                       SizedBox(
                         width: 48,
-                        child: showPreviousQuestion
+                        child: widget.showPreviousQuestion
                             ? IconButton(
                                 tooltip: '前の問題',
-                                onPressed: questionNavigationEnabled
-                                    ? onPreviousQuestion
+                                onPressed: widget.questionNavigationEnabled
+                                    ? widget.onPreviousQuestion
                                     : null,
                                 icon: const Icon(Icons.skip_previous, size: 34),
                               )
@@ -179,7 +214,7 @@ class AudioPlayerBar extends ConsumerWidget {
                             : null,
                         iconSize: 36,
                         icon:
-                            interactionEnabled &&
+                            widget.interactionEnabled &&
                                 player.status == AudioPlayerStatus.loading
                             ? const SizedBox(
                                 width: 24,
@@ -196,11 +231,11 @@ class AudioPlayerBar extends ConsumerWidget {
                       ),
                       SizedBox(
                         width: 48,
-                        child: showNextQuestion
+                        child: widget.showNextQuestion
                             ? IconButton(
                                 tooltip: '次の問題',
-                                onPressed: questionNavigationEnabled
-                                    ? onNextQuestion
+                                onPressed: widget.questionNavigationEnabled
+                                    ? widget.onNextQuestion
                                     : null,
                                 icon: const Icon(Icons.skip_next, size: 34),
                               )
