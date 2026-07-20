@@ -4,21 +4,18 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/providers.dart';
 import '../../../core/widgets/async_states.dart';
+import '../../downloads/application/download_controller.dart';
+import '../../downloads/domain/download_state.dart';
+import '../../downloads/presentation/download_confirmation_dialog.dart';
+import '../../practice/domain/practice_models.dart';
 
 /// 模擬テストの教材一覧と最近の提出結果を表示する入口画面。
-///
-/// Scaffold と AppBar の下に試験カードと履歴を並べ、選択した試験は
-/// GoRouter を通して全画面のテストセッションへ遷移します。
 class TestHomePage extends ConsumerWidget {
   /// 模擬テスト教材と最近の結果を表示する画面を生成します。
-  ///
-  /// [key]は任意のWidget識別子です。テストセッションはカードのタップ時だけ開始します。
   const TestHomePage({super.key});
 
   @override
-  /// 教材一覧とテスト結果Providerを購読した入口画面を構築します。
   Widget build(BuildContext context, WidgetRef ref) {
-    // 教材と結果の Provider を watch し、追加・提出された内容を一覧へ反映します。
     final exams = ref.watch(examCatalogProvider);
     final results = ref.watch(testResultsProvider).value ?? [];
     return Scaffold(
@@ -43,28 +40,7 @@ class TestHomePage extends ConsumerWidget {
             ),
             const SizedBox(height: 18),
             for (final exam in items) ...[
-              Card(
-                child: ListTile(
-                  contentPadding: const EdgeInsets.all(18),
-                  leading: const CircleAvatar(
-                    child: Icon(Icons.timer_outlined),
-                  ),
-                  title: Text(exam.titleJa),
-                  subtitle: Text(
-                    exam.supportsTest
-                        ? '${exam.questionCount}問 ・ ローカル教材'
-                        : '${exam.questionCount}問 ・ 練習専用・採点データ未収録',
-                  ),
-                  trailing: Icon(
-                    exam.supportsTest
-                        ? Icons.chevron_right
-                        : Icons.lock_outline,
-                  ),
-                  onTap: exam.supportsTest
-                      ? () => context.push('/test/${exam.id}/session')
-                      : null,
-                ),
-              ),
+              _TestExamCard(exam: exam),
               const SizedBox(height: 12),
             ],
             if (results.isNotEmpty) ...[
@@ -88,5 +64,109 @@ class TestHomePage extends ConsumerWidget {
         ),
       ),
     );
+  }
+}
+
+/// Test開始前のDownload確認と重複Route遷移を管理する試験カード。
+class _TestExamCard extends ConsumerStatefulWidget {
+  /// [exam]に対応するTestカードを生成します。
+  const _TestExamCard({required this.exam});
+
+  /// 表示・開始対象となる試験metadataです。
+  final ExamSummary exam;
+
+  @override
+  ConsumerState<_TestExamCard> createState() => _TestExamCardState();
+}
+
+/// Test入口のDialog・Download・Route遷移を直列化するState。
+class _TestExamCardState extends ConsumerState<_TestExamCard> {
+  /// Test開始処理の多重実行を防ぐフラグです。
+  bool _isOpening = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final exam = widget.exam;
+    final requiresDownload =
+        exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired;
+    if (exam.supportsTest && requiresDownload) {
+      ref.watch(examDownloadCheckProvider(exam.id));
+    }
+    final downloadState = requiresDownload
+        ? ref.watch(downloadControllerProvider)[exam.id] ??
+              const ExamDownloadState.notDownloaded()
+        : const ExamDownloadState.notDownloaded();
+    final subtitle = !exam.supportsTest
+        ? '${exam.questionCount}問 ・ 練習専用・採点データ未収録'
+        : requiresDownload
+        ? downloadState.isDownloading
+              ? '${exam.questionCount}問 ・ ダウンロード中 '
+                    '${(downloadState.progress * 100).round()}%'
+              : downloadState.isDownloaded
+              ? '${exam.questionCount}問 ・ ダウンロード済み'
+              : downloadState.isFailed
+              ? '${exam.questionCount}問 ・ ダウンロード失敗・再試行できます'
+              : '${exam.questionCount}問 ・ 音声ダウンロードが必要です'
+        : '${exam.questionCount}問 ・ ローカル教材';
+
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.all(18),
+        leading: const CircleAvatar(child: Icon(Icons.timer_outlined)),
+        title: Text(exam.titleJa),
+        subtitle: Text(subtitle),
+        trailing: exam.supportsTest
+            ? downloadState.isDownloading
+                  ? SizedBox.square(
+                      dimension: 22,
+                      child: CircularProgressIndicator(
+                        value: downloadState.progress,
+                        strokeWidth: 2,
+                      ),
+                    )
+                  : const Icon(Icons.chevron_right)
+            : const Icon(Icons.lock_outline),
+        onTap: !exam.supportsTest || _isOpening || downloadState.isDownloading
+            ? null
+            : _open,
+      ),
+    );
+  }
+
+  /// 必要な音声を確認・保存・再検証してからTest Sessionへ遷移します。
+  Future<void> _open() async {
+    if (_isOpening) return;
+    setState(() => _isOpening = true);
+    try {
+      final exam = widget.exam;
+      if (exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired) {
+        final resource = await ref.read(examResourceProvider(exam.id).future);
+        final controller = ref.read(downloadControllerProvider.notifier);
+        final alreadyDownloaded = await controller.ensureStatusChecked(
+          exam,
+          resource,
+        );
+        if (!mounted) return;
+        if (!alreadyDownloaded) {
+          final confirmed = await showExamDownloadConfirmation(context, exam);
+          if (!mounted || !confirmed) return;
+          try {
+            final completed = await controller.download(exam, resource);
+            if (!completed ||
+                !await controller.ensureStatusChecked(exam, resource)) {
+              throw StateError('download verification failed');
+            }
+          } catch (_) {
+            if (mounted) showExamDownloadError(context);
+            return;
+          }
+        }
+      }
+      if (mounted) context.push('/test/${widget.exam.id}/session');
+    } catch (_) {
+      if (mounted) showExamDownloadError(context);
+    } finally {
+      if (mounted) setState(() => _isOpening = false);
+    }
   }
 }

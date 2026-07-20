@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/providers.dart';
 import 'package:nihongo_listening/app/theme.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
+import 'package:nihongo_listening/features/player/application/audio_resource_resolver_provider.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/practice/presentation/widgets/transcript_list.dart';
@@ -15,14 +16,15 @@ import '../../../helpers/practice_test_fakes.dart';
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('時間付き文をタップすると1回seekしactive表示を更新する', (
-    tester,
-  ) async {
+  testWidgets('時間付き文をタップすると1回seekしactive表示を更新する', (tester) async {
     SharedPreferences.setMockInitialValues({});
     final audio = FakeAudioPlaybackService();
     final container = ProviderContainer(
       overrides: [
         audioPlaybackServiceProvider.overrideWithValue(audio),
+        audioResourceResolverProvider.overrideWithValue(
+          const FakeAudioResourceResolver(),
+        ),
         learningRepositoryProvider.overrideWithValue(FakeLearningRepository()),
       ],
     );
@@ -68,6 +70,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         audioPlaybackServiceProvider.overrideWithValue(audio),
+        audioResourceResolverProvider.overrideWithValue(
+          const FakeAudioResourceResolver(),
+        ),
         learningRepositoryProvider.overrideWithValue(FakeLearningRepository()),
       ],
     );

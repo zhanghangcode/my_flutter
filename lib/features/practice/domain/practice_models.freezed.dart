@@ -287,7 +287,7 @@ as List<ExamSummary>,
 /// @nodoc
 mixin _$ExamSummary {
 
- String get id; int? get year; int? get month; String get titleJa; String get audioQuality; int get questionCount; String get resourcePath; bool get supportsTest;
+ String get id; int? get year; int? get month; String get titleJa; String get audioQuality; int get questionCount; String get resourcePath; bool get supportsTest; AudioDeliveryMode get audioDeliveryMode; int get audioResourceVersion;
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -300,16 +300,16 @@ $ExamSummaryCopyWith<ExamSummary> get copyWith => _$ExamSummaryCopyWithImpl<Exam
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest)&&(identical(other.audioDeliveryMode, audioDeliveryMode) || other.audioDeliveryMode == audioDeliveryMode)&&(identical(other.audioResourceVersion, audioResourceVersion) || other.audioResourceVersion == audioResourceVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest);
+int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest,audioDeliveryMode,audioResourceVersion);
 
 @override
 String toString() {
-  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest)';
+  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest, audioDeliveryMode: $audioDeliveryMode, audioResourceVersion: $audioResourceVersion)';
 }
 
 
@@ -320,7 +320,7 @@ abstract mixin class $ExamSummaryCopyWith<$Res>  {
   factory $ExamSummaryCopyWith(ExamSummary value, $Res Function(ExamSummary) _then) = _$ExamSummaryCopyWithImpl;
 @useResult
 $Res call({
- String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest
+ String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest, AudioDeliveryMode audioDeliveryMode, int audioResourceVersion
 });
 
 
@@ -337,7 +337,7 @@ class _$ExamSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,Object? audioDeliveryMode = null,Object? audioResourceVersion = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
@@ -347,7 +347,9 @@ as String,audioQuality: null == audioQuality ? _self.audioQuality : audioQuality
 as String,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,resourcePath: null == resourcePath ? _self.resourcePath : resourcePath // ignore: cast_nullable_to_non_nullable
 as String,supportsTest: null == supportsTest ? _self.supportsTest : supportsTest // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,audioDeliveryMode: null == audioDeliveryMode ? _self.audioDeliveryMode : audioDeliveryMode // ignore: cast_nullable_to_non_nullable
+as AudioDeliveryMode,audioResourceVersion: null == audioResourceVersion ? _self.audioResourceVersion : audioResourceVersion // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 
@@ -432,10 +434,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest,  AudioDeliveryMode audioDeliveryMode,  int audioResourceVersion)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ExamSummary() when $default != null:
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest,_that.audioDeliveryMode,_that.audioResourceVersion);case _:
   return orElse();
 
 }
@@ -453,10 +455,10 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest,  AudioDeliveryMode audioDeliveryMode,  int audioResourceVersion)  $default,) {final _that = this;
 switch (_that) {
 case _ExamSummary():
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest,_that.audioDeliveryMode,_that.audioResourceVersion);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -473,10 +475,10 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int? year,  int? month,  String titleJa,  String audioQuality,  int questionCount,  String resourcePath,  bool supportsTest,  AudioDeliveryMode audioDeliveryMode,  int audioResourceVersion)?  $default,) {final _that = this;
 switch (_that) {
 case _ExamSummary() when $default != null:
-return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest);case _:
+return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality,_that.questionCount,_that.resourcePath,_that.supportsTest,_that.audioDeliveryMode,_that.audioResourceVersion);case _:
   return null;
 
 }
@@ -488,7 +490,7 @@ return $default(_that.id,_that.year,_that.month,_that.titleJa,_that.audioQuality
 @JsonSerializable()
 
 class _ExamSummary implements ExamSummary {
-  const _ExamSummary({required this.id, this.year, this.month, required this.titleJa, required this.audioQuality, required this.questionCount, required this.resourcePath, required this.supportsTest});
+  const _ExamSummary({required this.id, this.year, this.month, required this.titleJa, required this.audioQuality, required this.questionCount, required this.resourcePath, required this.supportsTest, this.audioDeliveryMode = AudioDeliveryMode.bundled, this.audioResourceVersion = 1});
   factory _ExamSummary.fromJson(Map<String, dynamic> json) => _$ExamSummaryFromJson(json);
 
 @override final  String id;
@@ -499,6 +501,8 @@ class _ExamSummary implements ExamSummary {
 @override final  int questionCount;
 @override final  String resourcePath;
 @override final  bool supportsTest;
+@override@JsonKey() final  AudioDeliveryMode audioDeliveryMode;
+@override@JsonKey() final  int audioResourceVersion;
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
@@ -513,16 +517,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExamSummary&&(identical(other.id, id) || other.id == id)&&(identical(other.year, year) || other.year == year)&&(identical(other.month, month) || other.month == month)&&(identical(other.titleJa, titleJa) || other.titleJa == titleJa)&&(identical(other.audioQuality, audioQuality) || other.audioQuality == audioQuality)&&(identical(other.questionCount, questionCount) || other.questionCount == questionCount)&&(identical(other.resourcePath, resourcePath) || other.resourcePath == resourcePath)&&(identical(other.supportsTest, supportsTest) || other.supportsTest == supportsTest)&&(identical(other.audioDeliveryMode, audioDeliveryMode) || other.audioDeliveryMode == audioDeliveryMode)&&(identical(other.audioResourceVersion, audioResourceVersion) || other.audioResourceVersion == audioResourceVersion));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest);
+int get hashCode => Object.hash(runtimeType,id,year,month,titleJa,audioQuality,questionCount,resourcePath,supportsTest,audioDeliveryMode,audioResourceVersion);
 
 @override
 String toString() {
-  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest)';
+  return 'ExamSummary(id: $id, year: $year, month: $month, titleJa: $titleJa, audioQuality: $audioQuality, questionCount: $questionCount, resourcePath: $resourcePath, supportsTest: $supportsTest, audioDeliveryMode: $audioDeliveryMode, audioResourceVersion: $audioResourceVersion)';
 }
 
 
@@ -533,7 +537,7 @@ abstract mixin class _$ExamSummaryCopyWith<$Res> implements $ExamSummaryCopyWith
   factory _$ExamSummaryCopyWith(_ExamSummary value, $Res Function(_ExamSummary) _then) = __$ExamSummaryCopyWithImpl;
 @override @useResult
 $Res call({
- String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest
+ String id, int? year, int? month, String titleJa, String audioQuality, int questionCount, String resourcePath, bool supportsTest, AudioDeliveryMode audioDeliveryMode, int audioResourceVersion
 });
 
 
@@ -550,7 +554,7 @@ class __$ExamSummaryCopyWithImpl<$Res>
 
 /// Create a copy of ExamSummary
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? year = freezed,Object? month = freezed,Object? titleJa = null,Object? audioQuality = null,Object? questionCount = null,Object? resourcePath = null,Object? supportsTest = null,Object? audioDeliveryMode = null,Object? audioResourceVersion = null,}) {
   return _then(_ExamSummary(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,year: freezed == year ? _self.year : year // ignore: cast_nullable_to_non_nullable
@@ -560,7 +564,9 @@ as String,audioQuality: null == audioQuality ? _self.audioQuality : audioQuality
 as String,questionCount: null == questionCount ? _self.questionCount : questionCount // ignore: cast_nullable_to_non_nullable
 as int,resourcePath: null == resourcePath ? _self.resourcePath : resourcePath // ignore: cast_nullable_to_non_nullable
 as String,supportsTest: null == supportsTest ? _self.supportsTest : supportsTest // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,audioDeliveryMode: null == audioDeliveryMode ? _self.audioDeliveryMode : audioDeliveryMode // ignore: cast_nullable_to_non_nullable
+as AudioDeliveryMode,audioResourceVersion: null == audioResourceVersion ? _self.audioResourceVersion : audioResourceVersion // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/providers.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
+import 'package:nihongo_listening/features/player/application/audio_resource_resolver_provider.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
 import 'package:nihongo_listening/features/player/domain/question_playback_mode.dart';
 import 'package:nihongo_listening/features/practice/application/practice_detail_controller.dart';
@@ -358,7 +359,12 @@ void main() {
     test('問題切り替えのstop完了後にだけ新音源をloadする', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final questions = buildTestExam(questionCount: 2).questions;
@@ -398,7 +404,12 @@ void main() {
     test('文の4200msへseekし、再生中の状態とactive文を維持する', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       audio.pauseOnSeek = true;
@@ -446,7 +457,12 @@ void main() {
     test('一時停止中と再生完了後は文seekで自動再生しない', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final question = buildTestExam(questionCount: 1).questions.single;
@@ -483,7 +499,12 @@ void main() {
     test('null・負数・音源長超過・別問題の文ではseekしない', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       const currentQuestionSentences = [
@@ -528,7 +549,12 @@ void main() {
     test('音源load完了前は時間付き文でもseekしない', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final question = buildTestExam(questionCount: 1).questions.single;
@@ -549,7 +575,12 @@ void main() {
     test('文時間がない問題でも問題単位の3つの再生modeを切り替えられる', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final question = buildTestExam(questionCount: 1).questions.single
@@ -596,7 +627,12 @@ void main() {
     test('古いloadが後から完了しても新しい問題を上書きしない', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final questions = buildTestExam(questionCount: 2).questions;
@@ -630,7 +666,12 @@ void main() {
     test('Provider破棄後に保留中loadが完了しても例外を発生させない', () async {
       final audio = FakeAudioPlaybackService();
       final container = ProviderContainer(
-        overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(),
+          ),
+        ],
       );
       final controller = container.read(audioPlayerControllerProvider.notifier);
       final question = buildTestExam(questionCount: 1).questions.single;
@@ -645,6 +686,39 @@ void main() {
 
       // Then: 破棄済みNotifierへStateを書き戻さず、Futureは正常終了します。
       await expectLater(load, completes);
+      await audio.dispose();
+    });
+
+    test('Local File未保存時はAssetへfallbackせずPlayer errorを維持する', () async {
+      final audio = FakeAudioPlaybackService();
+      final container = ProviderContainer(
+        overrides: [
+          audioPlaybackServiceProvider.overrideWithValue(audio),
+          audioResourceResolverProvider.overrideWithValue(
+            const FakeAudioResourceResolver(
+              errorMessage: '音声データがダウンロードされていません。',
+            ),
+          ),
+        ],
+      );
+      final controller = container.read(audioPlayerControllerProvider.notifier);
+
+      await controller.loadQuestion(
+        buildTestExam(questionCount: 1).questions.single,
+      );
+      await controller.togglePlayPause();
+
+      expect(
+        container.read(audioPlayerControllerProvider).status,
+        AudioPlayerStatus.error,
+      );
+      expect(
+        container.read(audioPlayerControllerProvider).errorMessage,
+        '音声データがダウンロードされていません。',
+      );
+      expect(audio.loadedSources, isEmpty);
+      expect(audio.playCount, 0);
+      container.dispose();
       await audio.dispose();
     });
   });

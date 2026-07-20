@@ -5,22 +5,18 @@ import 'package:go_router/go_router.dart';
 import '../../../app/providers.dart';
 import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
+import '../../downloads/application/download_controller.dart';
+import '../../downloads/domain/download_state.dart';
+import '../../downloads/presentation/download_confirmation_dialog.dart';
 import '../domain/practice_models.dart';
 
-/// 利用可能な試験を年月単位のカードで表示する練習の入口画面。
-///
-/// Scaffold と AppBar で主画面の枠を作り、FutureProvider の状態に応じて
-/// 読み込み中・エラー・空状態・教材一覧を切り替えます。
+/// 利用可能な試験をカードで表示する練習の入口画面。
 class PracticeListPage extends ConsumerWidget {
-  /// 利用可能な練習教材を表示する画面を生成します。
-  ///
-  /// [key]は任意のWidget識別子で、生成時に教材読み込みを直接開始しません。
+  /// 練習教材一覧を表示する画面を生成します。
   const PracticeListPage({super.key});
 
   @override
-  /// 教材一覧Providerの状態に応じた練習一覧UIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
-    // ref.watch により、再試行や更新で catalog が変わると画面も再 build されます。
     final catalog = ref.watch(examCatalogProvider);
     return Scaffold(
       appBar: AppBar(title: const Text('練習')),
@@ -53,23 +49,44 @@ class PracticeListPage extends ConsumerWidget {
   }
 }
 
-/// 1 回分の試験情報とローカル利用状態を表示するカード。
-class _ExamCard extends StatelessWidget {
-  /// 1件の試験教材を開くカードを生成します。
-  ///
-  /// [exam]は表示する試験メタデータです。カードを生成しただけではRoute遷移は行いません。
+/// 1試験分のLocal利用状態と、重複操作を防ぐ開く処理を管理するカード。
+class _ExamCard extends ConsumerStatefulWidget {
+  /// [exam]に対応する教材カードを生成します。
   const _ExamCard({required this.exam});
 
-  /// カードへ表示する試験メタデータです。
+  /// 表示・遷移対象となる試験metadataです。
   final ExamSummary exam;
 
   @override
-  /// 試験情報とタップ可能なカードUIを構築します。
+  ConsumerState<_ExamCard> createState() => _ExamCardState();
+}
+
+/// Dialog・Download・Route遷移を1回に直列化するカードState。
+class _ExamCardState extends ConsumerState<_ExamCard> {
+  /// Dialog表示からRoute遷移までの多重実行を防ぐフラグです。
+  bool _isOpening = false;
+
+  @override
   Widget build(BuildContext context) {
+    final exam = widget.exam;
+    final requiresDownload =
+        exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired;
+    if (requiresDownload) {
+      ref.watch(examDownloadCheckProvider(exam.id));
+    }
+    final downloadState = requiresDownload
+        ? ref.watch(downloadControllerProvider)[exam.id] ??
+              const ExamDownloadState.notDownloaded()
+        : ExamDownloadState.downloaded(
+            localAudioPaths: const {},
+            resourceVersion: exam.audioResourceVersion,
+          );
+    final isLocked = _isOpening || downloadState.isDownloading;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => context.push('/practice/${exam.id}'),
+        onTap: isLocked ? null : _open,
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
@@ -97,23 +114,10 @@ class _ExamCard extends StatelessWidget {
                       '音質: ${exam.audioQuality}  ・  ${exam.questionCount}問',
                       style: const TextStyle(color: Colors.white60),
                     ),
-                    const SizedBox(height: 4),
-                    const Row(
-                      children: [
-                        Icon(
-                          Icons.offline_pin,
-                          size: 16,
-                          color: AppColors.success,
-                        ),
-                        SizedBox(width: 4),
-                        Text(
-                          'ローカルで利用可能',
-                          style: TextStyle(
-                            color: AppColors.success,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
+                    const SizedBox(height: 5),
+                    _DownloadStatusLine(
+                      bundled: !requiresDownload,
+                      state: downloadState,
                     ),
                   ],
                 ),
@@ -123,6 +127,98 @@ class _ExamCard extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  /// 必要な場合だけ確認・保存・再検証を行い、問題一覧へ1回だけ遷移します。
+  Future<void> _open() async {
+    if (_isOpening) return;
+    setState(() => _isOpening = true);
+    try {
+      final exam = widget.exam;
+      if (exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired) {
+        final resource = await ref.read(examResourceProvider(exam.id).future);
+        final controller = ref.read(downloadControllerProvider.notifier);
+        final alreadyDownloaded = await controller.ensureStatusChecked(
+          exam,
+          resource,
+        );
+        if (!mounted) return;
+        if (!alreadyDownloaded) {
+          final confirmed = await showExamDownloadConfirmation(context, exam);
+          if (!mounted || !confirmed) return;
+          try {
+            final completed = await controller.download(exam, resource);
+            if (!completed ||
+                !await controller.ensureStatusChecked(exam, resource)) {
+              throw StateError('download verification failed');
+            }
+          } catch (_) {
+            if (mounted) showExamDownloadError(context);
+            return;
+          }
+        }
+      }
+      if (!mounted) return;
+      context.push('/practice/${widget.exam.id}');
+    } catch (_) {
+      if (mounted) showExamDownloadError(context);
+    } finally {
+      if (mounted) setState(() => _isOpening = false);
+    }
+  }
+}
+
+/// 配送方式と現在Stateに応じて、カード内の利用状態・進捗を表示します。
+class _DownloadStatusLine extends StatelessWidget {
+  /// bundledまたはDownload Stateを表示するWidgetを生成します。
+  const _DownloadStatusLine({required this.bundled, required this.state});
+
+  /// Bundle Assetを直接利用できる教材かを示します。
+  final bool bundled;
+
+  /// Download必須教材の現在Stateです。
+  final ExamDownloadState state;
+
+  @override
+  Widget build(BuildContext context) {
+    if (state.isDownloading) {
+      return Row(
+        children: [
+          Expanded(
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(4),
+              child: LinearProgressIndicator(
+                value: state.progress,
+                minHeight: 6,
+                backgroundColor: AppColors.surfaceHigh,
+                color: AppColors.accent,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Text(
+            '${(state.progress * 100).round()}%',
+            style: const TextStyle(color: AppColors.accent, fontSize: 12),
+          ),
+        ],
+      );
+    }
+    final (icon, text, color) = bundled
+        ? (Icons.offline_pin, 'ローカルで利用可能', AppColors.success)
+        : state.isDownloaded
+        ? (Icons.offline_pin, 'ダウンロード済み', AppColors.success)
+        : state.isFailed
+        ? (Icons.error_outline, 'ダウンロード失敗・タップして再試行', AppColors.accent)
+        : (Icons.cloud_download_outlined, 'タップしてダウンロード', Colors.white38);
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: color),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(text, style: TextStyle(color: color, fontSize: 12)),
+        ),
+      ],
     );
   }
 }

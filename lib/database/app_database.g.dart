@@ -198,11 +198,22 @@ class $PracticeProgressTable extends PracticeProgress
 
 class PracticeProgressData extends DataClass
     implements Insertable<PracticeProgressData> {
+  /// 進捗の所属先となる問題IDです。主キーとして一意に保存します。
   final String questionId;
+
+  /// 最後の再生位置。問題音声先頭からのmillisecondsです。
   final int lastPositionMs;
+
+  /// 最後に表示していたContentModeの文字列表現です。
   final String lastContentMode;
+
+  /// この問題を開いた累計回数です。
   final int practiceCount;
+
+  /// 練習を完了として扱うかを示すフラグです。
   final bool completed;
+
+  /// 最後に練習したUTC時刻をUnix millisecondsで保存します。
   final int lastPracticedAtUtc;
   const PracticeProgressData({
     required this.questionId,
@@ -613,10 +624,19 @@ class $PracticeAnswersTable extends PracticeAnswers
 }
 
 class PracticeAnswer extends DataClass implements Insertable<PracticeAnswer> {
+  /// 回答の所属先となる問題IDです。主キーとして一意に保存します。
   final String questionId;
+
+  /// 最後に選択した選択肢IDです。
   final String selectedOptionId;
+
+  /// 最後の回答が正解だったかを示します。
   final bool isCorrect;
+
+  /// 同じ問題へ回答した累計回数です。
   final int attemptCount;
+
+  /// 最後に回答したUTC時刻をUnix millisecondsで保存します。
   final int answeredAtUtc;
   const PracticeAnswer({
     required this.questionId,
@@ -922,7 +942,10 @@ class $FavoriteQuestionsTable extends FavoriteQuestions
 
 class FavoriteQuestion extends DataClass
     implements Insertable<FavoriteQuestion> {
+  /// お気に入りに登録した問題IDです。主キーとして一意に保存します。
   final String questionId;
+
+  /// お気に入りに登録したUTC時刻をUnix millisecondsで保存します。
   final int createdAtUtc;
   const FavoriteQuestion({
     required this.questionId,
@@ -1174,8 +1197,13 @@ class $FavoriteSentencesTable extends FavoriteSentences
 
 class FavoriteSentence extends DataClass
     implements Insertable<FavoriteSentence> {
+  /// お気に入りに登録した文の一意なIDです。
   final String sentenceId;
+
+  /// 文が属する問題の一意なIDです。
   final String questionId;
+
+  /// お気に入りに登録したUTC時刻をUnix millisecondsで保存します。
   final int createdAtUtc;
   const FavoriteSentence({
     required this.sentenceId,
@@ -1570,13 +1598,28 @@ class $TestSessionsTable extends TestSessions
 }
 
 class TestSession extends DataClass implements Insertable<TestSession> {
+  /// Driftが自動採番するテストセッションIDです。
   final int id;
+
+  /// テスト対象となる試験の一意なIDです。
   final String examId;
+
+  /// 進行中・提出済みなどを表すセッション状態の文字列です。
   final String status;
+
+  /// テスト開始UTC時刻をUnix millisecondsで保存します。
   final int startedAtUtc;
+
+  /// 提出UTC時刻をUnix millisecondsで保存します。未提出時は`null`です。
   final int? submittedAtUtc;
+
+  /// テスト開始から提出までのmillisecondsです。
   final int durationMs;
+
+  /// 採点対象の問題数です。
   final int totalCount;
+
+  /// 正答した問題数です。
   final int correctCount;
   const TestSession({
     required this.id,
@@ -2026,10 +2069,19 @@ class $TestSessionAnswersTable extends TestSessionAnswers
 
 class TestSessionAnswer extends DataClass
     implements Insertable<TestSessionAnswer> {
+  /// 所属するテストセッションIDです。親セッション削除時にcascade削除されます。
   final int sessionId;
+
+  /// 回答対象となる問題の一意なIDです。
   final String questionId;
+
+  /// 利用者が選択した選択肢IDです。未回答時は`null`です。
   final String? selectedOptionId;
+
+  /// 提出時点の正解選択肢IDを保存したスナップショットです。
   final String correctOptionId;
+
+  /// 選択肢が正解と一致したかを示します。
   final bool isCorrect;
   const TestSessionAnswer({
     required this.sessionId,
@@ -2250,6 +2302,460 @@ class TestSessionAnswersCompanion extends UpdateCompanion<TestSessionAnswer> {
   }
 }
 
+class $ExamDownloadsTable extends ExamDownloads
+    with TableInfo<$ExamDownloadsTable, ExamDownload> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExamDownloadsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _examIdMeta = const VerificationMeta('examId');
+  @override
+  late final GeneratedColumn<String> examId = GeneratedColumn<String>(
+    'exam_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _statusMeta = const VerificationMeta('status');
+  @override
+  late final GeneratedColumn<String> status = GeneratedColumn<String>(
+    'status',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _downloadedAtUtcMeta = const VerificationMeta(
+    'downloadedAtUtc',
+  );
+  @override
+  late final GeneratedColumn<int> downloadedAtUtc = GeneratedColumn<int>(
+    'downloaded_at_utc',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _localDirectoryMeta = const VerificationMeta(
+    'localDirectory',
+  );
+  @override
+  late final GeneratedColumn<String> localDirectory = GeneratedColumn<String>(
+    'local_directory',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _resourceVersionMeta = const VerificationMeta(
+    'resourceVersion',
+  );
+  @override
+  late final GeneratedColumn<int> resourceVersion = GeneratedColumn<int>(
+    'resource_version',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _audioFileCountMeta = const VerificationMeta(
+    'audioFileCount',
+  );
+  @override
+  late final GeneratedColumn<int> audioFileCount = GeneratedColumn<int>(
+    'audio_file_count',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    examId,
+    status,
+    downloadedAtUtc,
+    localDirectory,
+    resourceVersion,
+    audioFileCount,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exam_downloads';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExamDownload> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('exam_id')) {
+      context.handle(
+        _examIdMeta,
+        examId.isAcceptableOrUnknown(data['exam_id']!, _examIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_examIdMeta);
+    }
+    if (data.containsKey('status')) {
+      context.handle(
+        _statusMeta,
+        status.isAcceptableOrUnknown(data['status']!, _statusMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_statusMeta);
+    }
+    if (data.containsKey('downloaded_at_utc')) {
+      context.handle(
+        _downloadedAtUtcMeta,
+        downloadedAtUtc.isAcceptableOrUnknown(
+          data['downloaded_at_utc']!,
+          _downloadedAtUtcMeta,
+        ),
+      );
+    }
+    if (data.containsKey('local_directory')) {
+      context.handle(
+        _localDirectoryMeta,
+        localDirectory.isAcceptableOrUnknown(
+          data['local_directory']!,
+          _localDirectoryMeta,
+        ),
+      );
+    }
+    if (data.containsKey('resource_version')) {
+      context.handle(
+        _resourceVersionMeta,
+        resourceVersion.isAcceptableOrUnknown(
+          data['resource_version']!,
+          _resourceVersionMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_resourceVersionMeta);
+    }
+    if (data.containsKey('audio_file_count')) {
+      context.handle(
+        _audioFileCountMeta,
+        audioFileCount.isAcceptableOrUnknown(
+          data['audio_file_count']!,
+          _audioFileCountMeta,
+        ),
+      );
+    } else if (isInserting) {
+      context.missing(_audioFileCountMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {examId};
+  @override
+  ExamDownload map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExamDownload(
+      examId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exam_id'],
+      )!,
+      status: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}status'],
+      )!,
+      downloadedAtUtc: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}downloaded_at_utc'],
+      ),
+      localDirectory: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}local_directory'],
+      ),
+      resourceVersion: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}resource_version'],
+      )!,
+      audioFileCount: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}audio_file_count'],
+      )!,
+    );
+  }
+
+  @override
+  $ExamDownloadsTable createAlias(String alias) {
+    return $ExamDownloadsTable(attachedDatabase, alias);
+  }
+}
+
+class ExamDownload extends DataClass implements Insertable<ExamDownload> {
+  /// ダウンロード対象となる試験IDです。
+  final String examId;
+
+  /// `downloaded`または`failed`の保存状態です。
+  final String status;
+
+  /// 全音声の検証が完了したUTC時刻です。失敗時は`null`です。
+  final int? downloadedAtUtc;
+
+  /// Application Support Directoryを基準とする保存先の相対pathです。
+  final String? localDirectory;
+
+  /// 保存した音声リソースのversionです。
+  final int resourceVersion;
+
+  /// 検証済みの問題別音声ファイル数です。
+  final int audioFileCount;
+  const ExamDownload({
+    required this.examId,
+    required this.status,
+    this.downloadedAtUtc,
+    this.localDirectory,
+    required this.resourceVersion,
+    required this.audioFileCount,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['exam_id'] = Variable<String>(examId);
+    map['status'] = Variable<String>(status);
+    if (!nullToAbsent || downloadedAtUtc != null) {
+      map['downloaded_at_utc'] = Variable<int>(downloadedAtUtc);
+    }
+    if (!nullToAbsent || localDirectory != null) {
+      map['local_directory'] = Variable<String>(localDirectory);
+    }
+    map['resource_version'] = Variable<int>(resourceVersion);
+    map['audio_file_count'] = Variable<int>(audioFileCount);
+    return map;
+  }
+
+  ExamDownloadsCompanion toCompanion(bool nullToAbsent) {
+    return ExamDownloadsCompanion(
+      examId: Value(examId),
+      status: Value(status),
+      downloadedAtUtc: downloadedAtUtc == null && nullToAbsent
+          ? const Value.absent()
+          : Value(downloadedAtUtc),
+      localDirectory: localDirectory == null && nullToAbsent
+          ? const Value.absent()
+          : Value(localDirectory),
+      resourceVersion: Value(resourceVersion),
+      audioFileCount: Value(audioFileCount),
+    );
+  }
+
+  factory ExamDownload.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExamDownload(
+      examId: serializer.fromJson<String>(json['examId']),
+      status: serializer.fromJson<String>(json['status']),
+      downloadedAtUtc: serializer.fromJson<int?>(json['downloadedAtUtc']),
+      localDirectory: serializer.fromJson<String?>(json['localDirectory']),
+      resourceVersion: serializer.fromJson<int>(json['resourceVersion']),
+      audioFileCount: serializer.fromJson<int>(json['audioFileCount']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'examId': serializer.toJson<String>(examId),
+      'status': serializer.toJson<String>(status),
+      'downloadedAtUtc': serializer.toJson<int?>(downloadedAtUtc),
+      'localDirectory': serializer.toJson<String?>(localDirectory),
+      'resourceVersion': serializer.toJson<int>(resourceVersion),
+      'audioFileCount': serializer.toJson<int>(audioFileCount),
+    };
+  }
+
+  ExamDownload copyWith({
+    String? examId,
+    String? status,
+    Value<int?> downloadedAtUtc = const Value.absent(),
+    Value<String?> localDirectory = const Value.absent(),
+    int? resourceVersion,
+    int? audioFileCount,
+  }) => ExamDownload(
+    examId: examId ?? this.examId,
+    status: status ?? this.status,
+    downloadedAtUtc: downloadedAtUtc.present
+        ? downloadedAtUtc.value
+        : this.downloadedAtUtc,
+    localDirectory: localDirectory.present
+        ? localDirectory.value
+        : this.localDirectory,
+    resourceVersion: resourceVersion ?? this.resourceVersion,
+    audioFileCount: audioFileCount ?? this.audioFileCount,
+  );
+  ExamDownload copyWithCompanion(ExamDownloadsCompanion data) {
+    return ExamDownload(
+      examId: data.examId.present ? data.examId.value : this.examId,
+      status: data.status.present ? data.status.value : this.status,
+      downloadedAtUtc: data.downloadedAtUtc.present
+          ? data.downloadedAtUtc.value
+          : this.downloadedAtUtc,
+      localDirectory: data.localDirectory.present
+          ? data.localDirectory.value
+          : this.localDirectory,
+      resourceVersion: data.resourceVersion.present
+          ? data.resourceVersion.value
+          : this.resourceVersion,
+      audioFileCount: data.audioFileCount.present
+          ? data.audioFileCount.value
+          : this.audioFileCount,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamDownload(')
+          ..write('examId: $examId, ')
+          ..write('status: $status, ')
+          ..write('downloadedAtUtc: $downloadedAtUtc, ')
+          ..write('localDirectory: $localDirectory, ')
+          ..write('resourceVersion: $resourceVersion, ')
+          ..write('audioFileCount: $audioFileCount')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    examId,
+    status,
+    downloadedAtUtc,
+    localDirectory,
+    resourceVersion,
+    audioFileCount,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExamDownload &&
+          other.examId == this.examId &&
+          other.status == this.status &&
+          other.downloadedAtUtc == this.downloadedAtUtc &&
+          other.localDirectory == this.localDirectory &&
+          other.resourceVersion == this.resourceVersion &&
+          other.audioFileCount == this.audioFileCount);
+}
+
+class ExamDownloadsCompanion extends UpdateCompanion<ExamDownload> {
+  final Value<String> examId;
+  final Value<String> status;
+  final Value<int?> downloadedAtUtc;
+  final Value<String?> localDirectory;
+  final Value<int> resourceVersion;
+  final Value<int> audioFileCount;
+  final Value<int> rowid;
+  const ExamDownloadsCompanion({
+    this.examId = const Value.absent(),
+    this.status = const Value.absent(),
+    this.downloadedAtUtc = const Value.absent(),
+    this.localDirectory = const Value.absent(),
+    this.resourceVersion = const Value.absent(),
+    this.audioFileCount = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExamDownloadsCompanion.insert({
+    required String examId,
+    required String status,
+    this.downloadedAtUtc = const Value.absent(),
+    this.localDirectory = const Value.absent(),
+    required int resourceVersion,
+    required int audioFileCount,
+    this.rowid = const Value.absent(),
+  }) : examId = Value(examId),
+       status = Value(status),
+       resourceVersion = Value(resourceVersion),
+       audioFileCount = Value(audioFileCount);
+  static Insertable<ExamDownload> custom({
+    Expression<String>? examId,
+    Expression<String>? status,
+    Expression<int>? downloadedAtUtc,
+    Expression<String>? localDirectory,
+    Expression<int>? resourceVersion,
+    Expression<int>? audioFileCount,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (examId != null) 'exam_id': examId,
+      if (status != null) 'status': status,
+      if (downloadedAtUtc != null) 'downloaded_at_utc': downloadedAtUtc,
+      if (localDirectory != null) 'local_directory': localDirectory,
+      if (resourceVersion != null) 'resource_version': resourceVersion,
+      if (audioFileCount != null) 'audio_file_count': audioFileCount,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExamDownloadsCompanion copyWith({
+    Value<String>? examId,
+    Value<String>? status,
+    Value<int?>? downloadedAtUtc,
+    Value<String?>? localDirectory,
+    Value<int>? resourceVersion,
+    Value<int>? audioFileCount,
+    Value<int>? rowid,
+  }) {
+    return ExamDownloadsCompanion(
+      examId: examId ?? this.examId,
+      status: status ?? this.status,
+      downloadedAtUtc: downloadedAtUtc ?? this.downloadedAtUtc,
+      localDirectory: localDirectory ?? this.localDirectory,
+      resourceVersion: resourceVersion ?? this.resourceVersion,
+      audioFileCount: audioFileCount ?? this.audioFileCount,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (examId.present) {
+      map['exam_id'] = Variable<String>(examId.value);
+    }
+    if (status.present) {
+      map['status'] = Variable<String>(status.value);
+    }
+    if (downloadedAtUtc.present) {
+      map['downloaded_at_utc'] = Variable<int>(downloadedAtUtc.value);
+    }
+    if (localDirectory.present) {
+      map['local_directory'] = Variable<String>(localDirectory.value);
+    }
+    if (resourceVersion.present) {
+      map['resource_version'] = Variable<int>(resourceVersion.value);
+    }
+    if (audioFileCount.present) {
+      map['audio_file_count'] = Variable<int>(audioFileCount.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExamDownloadsCompanion(')
+          ..write('examId: $examId, ')
+          ..write('status: $status, ')
+          ..write('downloadedAtUtc: $downloadedAtUtc, ')
+          ..write('localDirectory: $localDirectory, ')
+          ..write('resourceVersion: $resourceVersion, ')
+          ..write('audioFileCount: $audioFileCount, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -2266,6 +2772,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $TestSessionsTable testSessions = $TestSessionsTable(this);
   late final $TestSessionAnswersTable testSessionAnswers =
       $TestSessionAnswersTable(this);
+  late final $ExamDownloadsTable examDownloads = $ExamDownloadsTable(this);
   @override
   Iterable<TableInfo<Table, Object?>> get allTables =>
       allSchemaEntities.whereType<TableInfo<Table, Object?>>();
@@ -2277,6 +2784,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     favoriteSentences,
     testSessions,
     testSessionAnswers,
+    examDownloads,
   ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules([
@@ -3791,6 +4299,233 @@ typedef $$TestSessionAnswersTableProcessedTableManager =
       TestSessionAnswer,
       PrefetchHooks Function({bool sessionId})
     >;
+typedef $$ExamDownloadsTableCreateCompanionBuilder =
+    ExamDownloadsCompanion Function({
+      required String examId,
+      required String status,
+      Value<int?> downloadedAtUtc,
+      Value<String?> localDirectory,
+      required int resourceVersion,
+      required int audioFileCount,
+      Value<int> rowid,
+    });
+typedef $$ExamDownloadsTableUpdateCompanionBuilder =
+    ExamDownloadsCompanion Function({
+      Value<String> examId,
+      Value<String> status,
+      Value<int?> downloadedAtUtc,
+      Value<String?> localDirectory,
+      Value<int> resourceVersion,
+      Value<int> audioFileCount,
+      Value<int> rowid,
+    });
+
+class $$ExamDownloadsTableFilterComposer
+    extends Composer<_$AppDatabase, $ExamDownloadsTable> {
+  $$ExamDownloadsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get examId => $composableBuilder(
+    column: $table.examId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get downloadedAtUtc => $composableBuilder(
+    column: $table.downloadedAtUtc,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get localDirectory => $composableBuilder(
+    column: $table.localDirectory,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get resourceVersion => $composableBuilder(
+    column: $table.resourceVersion,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get audioFileCount => $composableBuilder(
+    column: $table.audioFileCount,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ExamDownloadsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExamDownloadsTable> {
+  $$ExamDownloadsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get examId => $composableBuilder(
+    column: $table.examId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get status => $composableBuilder(
+    column: $table.status,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get downloadedAtUtc => $composableBuilder(
+    column: $table.downloadedAtUtc,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get localDirectory => $composableBuilder(
+    column: $table.localDirectory,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get resourceVersion => $composableBuilder(
+    column: $table.resourceVersion,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get audioFileCount => $composableBuilder(
+    column: $table.audioFileCount,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ExamDownloadsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExamDownloadsTable> {
+  $$ExamDownloadsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get examId =>
+      $composableBuilder(column: $table.examId, builder: (column) => column);
+
+  GeneratedColumn<String> get status =>
+      $composableBuilder(column: $table.status, builder: (column) => column);
+
+  GeneratedColumn<int> get downloadedAtUtc => $composableBuilder(
+    column: $table.downloadedAtUtc,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<String> get localDirectory => $composableBuilder(
+    column: $table.localDirectory,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get resourceVersion => $composableBuilder(
+    column: $table.resourceVersion,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get audioFileCount => $composableBuilder(
+    column: $table.audioFileCount,
+    builder: (column) => column,
+  );
+}
+
+class $$ExamDownloadsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ExamDownloadsTable,
+          ExamDownload,
+          $$ExamDownloadsTableFilterComposer,
+          $$ExamDownloadsTableOrderingComposer,
+          $$ExamDownloadsTableAnnotationComposer,
+          $$ExamDownloadsTableCreateCompanionBuilder,
+          $$ExamDownloadsTableUpdateCompanionBuilder,
+          (
+            ExamDownload,
+            BaseReferences<_$AppDatabase, $ExamDownloadsTable, ExamDownload>,
+          ),
+          ExamDownload,
+          PrefetchHooks Function()
+        > {
+  $$ExamDownloadsTableTableManager(_$AppDatabase db, $ExamDownloadsTable table)
+    : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExamDownloadsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExamDownloadsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExamDownloadsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> examId = const Value.absent(),
+                Value<String> status = const Value.absent(),
+                Value<int?> downloadedAtUtc = const Value.absent(),
+                Value<String?> localDirectory = const Value.absent(),
+                Value<int> resourceVersion = const Value.absent(),
+                Value<int> audioFileCount = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ExamDownloadsCompanion(
+                examId: examId,
+                status: status,
+                downloadedAtUtc: downloadedAtUtc,
+                localDirectory: localDirectory,
+                resourceVersion: resourceVersion,
+                audioFileCount: audioFileCount,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String examId,
+                required String status,
+                Value<int?> downloadedAtUtc = const Value.absent(),
+                Value<String?> localDirectory = const Value.absent(),
+                required int resourceVersion,
+                required int audioFileCount,
+                Value<int> rowid = const Value.absent(),
+              }) => ExamDownloadsCompanion.insert(
+                examId: examId,
+                status: status,
+                downloadedAtUtc: downloadedAtUtc,
+                localDirectory: localDirectory,
+                resourceVersion: resourceVersion,
+                audioFileCount: audioFileCount,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ExamDownloadsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ExamDownloadsTable,
+      ExamDownload,
+      $$ExamDownloadsTableFilterComposer,
+      $$ExamDownloadsTableOrderingComposer,
+      $$ExamDownloadsTableAnnotationComposer,
+      $$ExamDownloadsTableCreateCompanionBuilder,
+      $$ExamDownloadsTableUpdateCompanionBuilder,
+      (
+        ExamDownload,
+        BaseReferences<_$AppDatabase, $ExamDownloadsTable, ExamDownload>,
+      ),
+      ExamDownload,
+      PrefetchHooks Function()
+    >;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -3807,4 +4542,6 @@ class $AppDatabaseManager {
       $$TestSessionsTableTableManager(_db, _db.testSessions);
   $$TestSessionAnswersTableTableManager get testSessionAnswers =>
       $$TestSessionAnswersTableTableManager(_db, _db.testSessionAnswers);
+  $$ExamDownloadsTableTableManager get examDownloads =>
+      $$ExamDownloadsTableTableManager(_db, _db.examDownloads);
 }

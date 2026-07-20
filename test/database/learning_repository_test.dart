@@ -1,4 +1,5 @@
 import 'package:drift/native.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/database/app_database.dart';
 import 'package:nihongo_listening/features/practice/data/drift_learning_repository.dart';
@@ -58,6 +59,18 @@ void main() {
     await repository.toggleSentenceFavorite('s1', 'q1');
     await repository.saveAnswer('q1', 'a', false);
     await repository.markQuestionOpened('q1');
+    await database
+        .into(database.examDownloads)
+        .insert(
+          ExamDownloadsCompanion.insert(
+            examId: 'exam',
+            status: 'downloaded',
+            downloadedAtUtc: const Value(1),
+            localDirectory: const Value('downloads/exams/exam/audio'),
+            resourceVersion: 1,
+            audioFileCount: 1,
+          ),
+        );
 
     // When: 学習データの一括削除を実行します。
     await repository.clearAll();
@@ -67,5 +80,6 @@ void main() {
     expect(await repository.watchFavoriteSentenceIds().first, isEmpty);
     expect(await repository.getAnswer('q1'), isNull);
     expect(await repository.getProgress('q1'), isNull);
+    expect(await database.select(database.examDownloads).get(), hasLength(1));
   });
 }

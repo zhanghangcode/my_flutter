@@ -136,6 +136,31 @@ class TestSessionAnswers extends Table {
   Set<Column<Object>> get primaryKey => {sessionId, questionId};
 }
 
+/// 試験単位で端末へ保存した音声のLocal Manifestを保持するテーブル。
+class ExamDownloads extends Table {
+  /// ダウンロード対象となる試験IDです。
+  TextColumn get examId => text()();
+
+  /// `downloaded`または`failed`の保存状態です。
+  TextColumn get status => text()();
+
+  /// 全音声の検証が完了したUTC時刻です。失敗時は`null`です。
+  IntColumn get downloadedAtUtc => integer().nullable()();
+
+  /// Application Support Directoryを基準とする保存先の相対pathです。
+  TextColumn get localDirectory => text().nullable()();
+
+  /// 保存した音声リソースのversionです。
+  IntColumn get resourceVersion => integer()();
+
+  /// 検証済みの問題別音声ファイル数です。
+  IntColumn get audioFileCount => integer()();
+
+  @override
+  /// 試験ごとに1件だけManifestを保持する主キーを返します。
+  Set<Column<Object>> get primaryKey => {examId};
+}
+
 @DriftDatabase(
   tables: [
     PracticeProgress,
@@ -144,12 +169,13 @@ class TestSessionAnswers extends Table {
     FavoriteSentences,
     TestSessions,
     TestSessionAnswers,
+    ExamDownloads,
   ],
 )
 /// 学習データを管理する Drift データベース。
 ///
 /// 静的な教材本文は JSON を正として保持し、このデータベースにはユーザー固有の
-/// 進捗・回答・お気に入り・テスト結果だけを保存します。
+/// 進捗・回答・お気に入り・テスト結果と、音声のLocal Manifestを保存します。
 class AppDatabase extends _$AppDatabase {
   /// Application Support 配下の SQLite ファイルを使用する本番用コンストラクタ。
   AppDatabase() : super(_openConnection());
@@ -159,13 +185,19 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   /// 現在のDrift schema versionを返します。
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   /// 新規DB作成時と接続開始時の移行処理を返します。
   MigrationStrategy get migration => MigrationStrategy(
     onCreate: (migrator) async {
       await migrator.createAll();
+    },
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        // V1の学習データを維持したまま、音声Manifest用テーブルだけを追加します。
+        await migrator.createTable(examDownloads);
+      }
     },
     beforeOpen: (details) async {
       // TestSessionAnswers の cascade 削除をすべての接続で有効にします。

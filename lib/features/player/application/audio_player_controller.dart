@@ -4,7 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../practice/domain/practice_models.dart';
+import 'audio_resource_resolver_provider.dart';
 import '../data/audio_playback_service.dart';
+import '../domain/audio_resource_resolver.dart';
+import '../domain/audio_source_location.dart';
 import '../domain/question_playback_mode.dart';
 
 /// UI が表示する音声プレイヤーの状態。
@@ -132,11 +135,14 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   /// Controllerが操作する音声サービスです。[build]でProviderから取得します。
   late final AudioPlaybackService _service;
 
+  /// 教材metadataからAsset/File音源を解決するResolverです。
+  late final AudioResourceResolver _resolver;
+
   /// AudioPlaybackServiceのStream購読一覧です。Provider破棄時にすべて解除します。
   final List<StreamSubscription<Object?>> _subscriptions = [];
 
-  /// 現在読み込み中または読み込み済みのAsset相対pathです。未設定時は`null`です。
-  String? _currentAudioAssetPath;
+  /// 現在読み込み中または読み込み済みの音源場所です。未設定時は`null`です。
+  AudioSourceLocation? _currentAudioLocation;
 
   /// 新旧の非同期load結果を区別するための単調増加する要求IDです。
   int _sourceRequestId = 0;
@@ -150,6 +156,7 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
   /// Provider初回作成時に呼ばれ、破棄時は購読を解除して遅延イベントによるState更新を防ぎます。
   AudioPlayerState build() {
     _service = ref.watch(audioPlaybackServiceProvider);
+    _resolver = ref.watch(audioResourceResolverProvider);
     // 複数の Plugin Stream を単一 State へ集約し、UI 側の購読を簡潔にします。
     _subscriptions
       ..add(_service.positionStream.listen(_onPosition))
@@ -160,7 +167,7 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
       )
       ..add(
         _service.durationStream.listen((duration) {
-          // loadAssetの戻り値を確定値とし、古い音源から遅れて届くdurationは無視します。
+          // loadSourceの戻り値を確定値とし、古い音源から遅れて届くdurationは無視します。
           if (duration != null && state.status == AudioPlayerStatus.loading) {
             state = state.copyWith(duration: duration);
           }
@@ -195,7 +202,7 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
     }
     final pendingStop = _pendingStopOperation;
     final requestId = ++_sourceRequestId;
-    _currentAudioAssetPath = question.audioAssetPath;
+    _currentAudioLocation = null;
     state = AudioPlayerState(
       status: AudioPlayerStatus.loading,
       questionId: question.id,
@@ -207,12 +214,15 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
       // 切り替え開始時のstopを待ってから新音源を設定し、Plugin操作の前後関係を保証します。
       if (pendingStop != null) await pendingStop;
       if (requestId != _sourceRequestId) return;
+      final location = await _resolver.resolve(question);
+      if (requestId != _sourceRequestId) return;
+      _currentAudioLocation = location;
       // 問題単位のmodeだけをjust_audioへ反映し、問題間の連続再生は画面側で管理します。
       await _service.setQuestionLooping(
         playbackMode == QuestionPlaybackMode.repeatCurrent,
       );
       if (requestId != _sourceRequestId) return;
-      final duration = await _service.loadAsset(question.audioAssetPath);
+      final duration = await _service.loadSource(location);
       if (requestId != _sourceRequestId) return;
       await _service.setSpeed(speed);
       if (requestId != _sourceRequestId) return;
@@ -234,6 +244,12 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
         clearActiveSentence: !question.hasCompleteTimeline,
         clearError: true,
       );
+    } on AudioResourceUnavailableException catch (error) {
+      if (requestId != _sourceRequestId) return;
+      state = state.copyWith(
+        status: AudioPlayerStatus.error,
+        errorMessage: error.message,
+      );
     } catch (error) {
       // 新しいrequestが開始済みなら、古いloadの完了やerrorをStateへ反映しません。
       if (requestId != _sourceRequestId) return;
@@ -246,10 +262,15 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
 
   /// 現在状態に応じて再生と一時停止を切り替えます。
   ///
-  /// completed状態では先頭へ戻してから再生します。音源未設定または読み込み中の場合は何もせず、
-  /// Plugin例外はerror StateとしてUIへ公開します。
+  /// completed状態では先頭へ戻してから再生します。音源未設定・読み込み中・errorの場合は
+  /// 何もせず、Plugin例外はerror StateとしてUIへ公開します。
   Future<void> togglePlayPause() async {
-    if (!state.hasSource || state.status == AudioPlayerStatus.loading) return;
+    if (!state.hasSource ||
+        state.status == AudioPlayerStatus.idle ||
+        state.status == AudioPlayerStatus.loading ||
+        state.status == AudioPlayerStatus.error) {
+      return;
+    }
     try {
       if (state.isPlaying) {
         await _service.pause();
@@ -406,7 +427,7 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
 
     final previous = state;
     final requestId = ++_sourceRequestId;
-    _currentAudioAssetPath = null;
+    _currentAudioLocation = null;
     if (preservePreferences) {
       // 問題切り替えだけはPlatformのstop完了を待たず、Route置換前に操作を無効化します。
       state = AudioPlayerState(
@@ -458,7 +479,8 @@ class AudioPlayerController extends Notifier<AudioPlayerState> {
       'positionBeforeMs=${before.inMilliseconds}, '
       'positionAfterMs=${after.inMilliseconds}, '
       'audioDurationMs=${state.duration.inMilliseconds}, '
-      'audioAsset=$_currentAudioAssetPath, '
+      'audioSource=${_currentAudioLocation?.type.name}:'
+      '${_currentAudioLocation?.path}, '
       'playingBefore=$wasPlaying, playingAfter=${state.isPlaying}',
     );
   }

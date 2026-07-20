@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/theme.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
+import 'package:nihongo_listening/features/player/application/audio_resource_resolver_provider.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
 import 'package:nihongo_listening/features/player/presentation/audio_player_bar.dart';
 
@@ -294,7 +295,12 @@ Future<void> _pumpBar(
 }) {
   return tester.pumpWidget(
     ProviderScope(
-      overrides: [audioPlaybackServiceProvider.overrideWithValue(audio)],
+      overrides: [
+        audioPlaybackServiceProvider.overrideWithValue(audio),
+        audioResourceResolverProvider.overrideWithValue(
+          const FakeAudioResourceResolver(),
+        ),
+      ],
       child: MaterialApp(
         theme: buildDarkTheme(),
         home: Scaffold(

@@ -4,6 +4,8 @@ import 'package:audio_session/audio_session.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../domain/audio_source_location.dart';
+
 /// just_audio のProcessingStateをアプリ内で扱うための抽象化。
 enum AudioEngineProcessing {
   /// 音源が設定されていない停止状態です。
@@ -55,8 +57,8 @@ abstract interface class AudioPlaybackService {
   /// 再生・読み込み状態の変化を配信します。
   Stream<AudioEngineSnapshot> get stateStream;
 
-  /// Asset 音源を読み込み、総再生時間を返します。
-  Future<Duration> loadAsset(String assetPath);
+  /// AssetまたはLocal File音源を読み込み、総再生時間を返します。
+  Future<Duration> loadSource(AudioSourceLocation source);
 
   /// 読み込み済み音源を再生します。
   ///
@@ -135,15 +137,18 @@ class JustAudioPlaybackService implements AudioPlaybackService {
     ),
   );
 
-  /// 指定Assetを読み込み、判定された再生時間を返します。
+  /// 指定されたAssetまたはLocal Fileを読み込み、判定された再生時間を返します。
   ///
-  /// [assetPath]はpubspecに登録したAsset相対pathです。AudioSession設定完了後に
-  /// AudioSourceを置き換えるため、以前の音源はこの呼び出しで破棄されます。
+  /// [source]の保存場所に対応するAudioSourceを選び、以前の音源を置き換えます。
   @override
-  Future<Duration> loadAsset(String assetPath) async {
+  Future<Duration> loadSource(AudioSourceLocation source) async {
     // AudioSession の準備が完了してから音源を設定し、初回再生時の競合を避けます。
     await _sessionReady;
-    final duration = await _player.setAudioSource(AudioSource.asset(assetPath));
+    final audioSource = switch (source.type) {
+      AudioSourceLocationType.asset => AudioSource.asset(source.path),
+      AudioSourceLocationType.file => AudioSource.file(source.path),
+    };
+    final duration = await _player.setAudioSource(audioSource);
     return duration ?? Duration.zero;
   }
 

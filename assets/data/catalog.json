@@ -9,7 +9,9 @@
       "audioQuality": "良い",
       "questionCount": 3,
       "resourcePath": "assets/data/exams/2026_07_demo.json",
-      "supportsTest": true
+      "supportsTest": true,
+      "audioDeliveryMode": "downloadRequired",
+      "audioResourceVersion": 1
     },
     {
       "id": "n2_listening_problem1",
@@ -19,7 +21,9 @@
       "audioQuality": "不明",
       "questionCount": 3,
       "resourcePath": "assets/data/exams/n2_listening_problem1.json",
-      "supportsTest": false
+      "supportsTest": false,
+      "audioDeliveryMode": "bundled",
+      "audioResourceVersion": 1
     }
   ]
 }

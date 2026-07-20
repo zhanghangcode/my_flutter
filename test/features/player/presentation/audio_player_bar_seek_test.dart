@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nihongo_listening/app/providers.dart';
 import 'package:nihongo_listening/app/theme.dart';
 import 'package:nihongo_listening/features/player/application/audio_player_controller.dart';
+import 'package:nihongo_listening/features/player/application/audio_resource_resolver_provider.dart';
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
 import 'package:nihongo_listening/features/player/presentation/audio_player_bar.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
@@ -24,6 +25,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         audioPlaybackServiceProvider.overrideWithValue(audio),
+        audioResourceResolverProvider.overrideWithValue(
+          const FakeAudioResourceResolver(),
+        ),
         learningRepositoryProvider.overrideWithValue(FakeLearningRepository()),
       ],
     );
@@ -113,6 +117,9 @@ void main() {
     final container = ProviderContainer(
       overrides: [
         audioPlaybackServiceProvider.overrideWithValue(audio),
+        audioResourceResolverProvider.overrideWithValue(
+          const FakeAudioResourceResolver(),
+        ),
         learningRepositoryProvider.overrideWithValue(FakeLearningRepository()),
       ],
     );

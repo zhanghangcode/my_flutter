@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:nihongo_listening/features/player/data/audio_playback_service.dart';
+import 'package:nihongo_listening/features/player/domain/audio_resource_resolver.dart';
+import 'package:nihongo_listening/features/player/domain/audio_source_location.dart';
 import 'package:nihongo_listening/features/practice/domain/learning_repository.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/practice/domain/practice_repository.dart';
@@ -28,8 +30,13 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
   /// 指定 Asset の load で送出するエラー一覧。
   final Map<String, Object> loadErrors = {};
 
-  /// loadAsset に渡された Asset path の履歴。
-  final List<String> loadedAssets = [];
+  /// loadSourceに渡された音源場所の履歴。
+  final List<AudioSourceLocation> loadedSources = [];
+
+  /// 既存テストがpathだけを検証するための互換用一覧。
+  List<String> get loadedAssets => [
+    for (final source in loadedSources) source.path,
+  ];
 
   /// stop と load の実行順を検証するための操作履歴。
   final List<String> operationLog = [];
@@ -85,16 +92,17 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
   @override
   Stream<AudioEngineSnapshot> get stateStream => stateController.stream;
 
-  /// Asset を読み込み、テスト設定に応じて再生時間またはエラーを返します。
+  /// Asset/Fileを読み込み、テスト設定に応じて再生時間またはエラーを返します。
   @override
-  Future<Duration> loadAsset(String assetPath) async {
-    operationLog.add('load:$assetPath');
-    loadedAssets.add(assetPath);
-    final error = loadErrors[assetPath];
+  Future<Duration> loadSource(AudioSourceLocation source) async {
+    final path = source.path;
+    operationLog.add('load:$path');
+    loadedSources.add(source);
+    final error = loadErrors[path];
     if (error != null) throw error;
-    final pending = pendingLoads[assetPath];
+    final pending = pendingLoads[path];
     final duration = pending == null
-        ? durations[assetPath] ?? const Duration(seconds: 30)
+        ? durations[path] ?? const Duration(seconds: 30)
         : await pending.future;
     durationController.add(duration);
     return duration;
@@ -182,16 +190,52 @@ class FakeAudioPlaybackService implements AudioPlaybackService {
   }
 }
 
+/// すべての問題をBundle Assetとして解決するControllerテスト用Resolver。
+class FakeAudioResourceResolver implements AudioResourceResolver {
+  /// questionIdごとにLocal Fileへ置き換える任意のpathを受け取ります。
+  const FakeAudioResourceResolver({
+    this.localPaths = const {},
+    this.errorMessage,
+  });
+
+  /// questionIdをキーとするLocal File pathです。
+  final Map<String, String> localPaths;
+
+  /// 全問題の解決時に送出する任意の利用者向けエラーです。
+  final String? errorMessage;
+
+  @override
+  Future<AudioSourceLocation> resolve(Question question) async {
+    final message = errorMessage;
+    if (message != null) throw AudioResourceUnavailableException(message);
+    final localPath = localPaths[question.id];
+    return localPath == null
+        ? AudioSourceLocation.asset(question.audioAssetPath)
+        : AudioSourceLocation.file(localPath);
+  }
+}
+
 /// 順序付きの試験データをそのまま返すテスト用Repository。
 class FakePracticeRepository implements PracticeRepository {
   /// [exam] を固定で返すテスト用 Repository を構築します。
-  FakePracticeRepository(this.exam, {this.supportsTest = true});
+  FakePracticeRepository(
+    this.exam, {
+    this.supportsTest = true,
+    this.audioDeliveryMode = AudioDeliveryMode.bundled,
+    this.audioResourceVersion = 1,
+  });
 
   /// テスト対象として返す試験データ。
   final ExamResource exam;
 
   /// 試験がテストモードに対応するかどうか。
   final bool supportsTest;
+
+  /// テスト教材の音声配送方式です。
+  final AudioDeliveryMode audioDeliveryMode;
+
+  /// テスト教材の音声リソースversionです。
+  final int audioResourceVersion;
 
   /// 固定試験からカタログ用の要約を生成します。
   @override
@@ -205,6 +249,8 @@ class FakePracticeRepository implements PracticeRepository {
       questionCount: exam.questions.length,
       resourcePath: 'unused.json',
       supportsTest: supportsTest,
+      audioDeliveryMode: audioDeliveryMode,
+      audioResourceVersion: audioResourceVersion,
     ),
   ];
 

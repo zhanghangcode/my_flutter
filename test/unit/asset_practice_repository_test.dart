@@ -22,6 +22,10 @@ void main() {
     expect(exams, hasLength(2));
     final demo = await repository.getExam('2026_07_demo');
     expect(demo.questions, hasLength(3));
+    expect(
+      exams.singleWhere((exam) => exam.id == '2026_07_demo').audioDeliveryMode,
+      AudioDeliveryMode.downloadRequired,
+    );
     expect(demo.questions.first.sentences, isNotEmpty);
     expect(
       demo.questions.first.options.any(
@@ -38,6 +42,8 @@ void main() {
     expect(summary.year, isNull);
     expect(summary.month, isNull);
     expect(summary.supportsTest, isFalse);
+    expect(summary.audioDeliveryMode, AudioDeliveryMode.bundled);
+    expect(summary.audioResourceVersion, 1);
     final practice = await repository.getExam(summary.id);
     expect(practice.schemaVersion, 2);
     expect(practice.questions, hasLength(3));
@@ -201,12 +207,44 @@ void main() {
       ),
     );
   });
+
+  test('rejects invalid audio delivery mode and resource version', () async {
+    AssetPracticeRepository repositoryFor(Map<String, dynamic> summary) {
+      return AssetPracticeRepository(
+        bundle: _MemoryAssetBundle({
+          'assets/data/catalog.json': utf8.encode(
+            jsonEncode({
+              'schemaVersion': 2,
+              'exams': [summary],
+            }),
+          ),
+        }),
+      );
+    }
+
+    await expectLater(
+      repositoryFor(_summary(audioDeliveryMode: 'invalid')).getExams(),
+      throwsA(isA<ContentValidationException>()),
+    );
+    await expectLater(
+      repositoryFor(_summary(audioResourceVersion: 0)).getExams(),
+      throwsA(
+        isA<ContentValidationException>().having(
+          (error) => error.toString(),
+          'message',
+          contains('音声versionが不正です'),
+        ),
+      ),
+    );
+  });
 }
 
 Map<String, dynamic> _summary({
   String id = 'exam',
   String path = 'assets/data/exams/exam.json',
   int questionCount = 1,
+  String audioDeliveryMode = 'bundled',
+  int audioResourceVersion = 1,
 }) => {
   'id': id,
   'year': null,
@@ -216,6 +254,8 @@ Map<String, dynamic> _summary({
   'questionCount': questionCount,
   'resourcePath': path,
   'supportsTest': false,
+  'audioDeliveryMode': audioDeliveryMode,
+  'audioResourceVersion': audioResourceVersion,
 };
 
 Map<String, dynamic> _resource({

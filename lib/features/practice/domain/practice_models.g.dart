@@ -28,19 +28,34 @@ _ExamSummary _$ExamSummaryFromJson(Map<String, dynamic> json) => _ExamSummary(
   questionCount: (json['questionCount'] as num).toInt(),
   resourcePath: json['resourcePath'] as String,
   supportsTest: json['supportsTest'] as bool,
+  audioDeliveryMode:
+      $enumDecodeNullable(
+        _$AudioDeliveryModeEnumMap,
+        json['audioDeliveryMode'],
+      ) ??
+      AudioDeliveryMode.bundled,
+  audioResourceVersion: (json['audioResourceVersion'] as num?)?.toInt() ?? 1,
 );
 
-Map<String, dynamic> _$ExamSummaryToJson(_ExamSummary instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'year': instance.year,
-      'month': instance.month,
-      'titleJa': instance.titleJa,
-      'audioQuality': instance.audioQuality,
-      'questionCount': instance.questionCount,
-      'resourcePath': instance.resourcePath,
-      'supportsTest': instance.supportsTest,
-    };
+Map<String, dynamic> _$ExamSummaryToJson(
+  _ExamSummary instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'year': instance.year,
+  'month': instance.month,
+  'titleJa': instance.titleJa,
+  'audioQuality': instance.audioQuality,
+  'questionCount': instance.questionCount,
+  'resourcePath': instance.resourcePath,
+  'supportsTest': instance.supportsTest,
+  'audioDeliveryMode': _$AudioDeliveryModeEnumMap[instance.audioDeliveryMode]!,
+  'audioResourceVersion': instance.audioResourceVersion,
+};
+
+const _$AudioDeliveryModeEnumMap = {
+  AudioDeliveryMode.bundled: 'bundled',
+  AudioDeliveryMode.downloadRequired: 'downloadRequired',
+};
 
 _ExamResource _$ExamResourceFromJson(Map<String, dynamic> json) =>
     _ExamResource(

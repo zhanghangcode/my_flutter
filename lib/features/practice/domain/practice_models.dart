@@ -28,6 +28,15 @@ enum ContentMode {
   explanation,
 }
 
+/// 教材音声をBundleから読むか、端末への事前保存を必須とするかを表します。
+enum AudioDeliveryMode {
+  /// Appに同梱したAssetを直接再生します。
+  bundled,
+
+  /// Local Manifestで検証済みの端末内ファイルだけを再生します。
+  downloadRequired,
+}
+
 /// 教材一覧 JSON のルートモデル。
 ///
 /// schemaVersion により、アプリが対応できる教材形式かを読み込み時に判定します。
@@ -56,7 +65,8 @@ abstract class ExamSummary with _$ExamSummary {
   ///
   /// [id]は試験の一意な識別子、[year]と[month]は試験年月です。年月が未設定の教材は
   /// どちらも`null`です。[resourcePath]は詳細JSONのAsset相対path、[supportsTest]は
-  /// 採点可能なTestモードを提供するかを示します。生成時の副作用はありません。
+  /// 採点可能なTestモードを提供するかを示します。[audioDeliveryMode]は音声の取得方法、
+  /// [audioResourceVersion]は端末保存済み音声の互換性判定に使用します。
   const factory ExamSummary({
     required String id,
     int? year,
@@ -66,6 +76,8 @@ abstract class ExamSummary with _$ExamSummary {
     required int questionCount,
     required String resourcePath,
     required bool supportsTest,
+    @Default(AudioDeliveryMode.bundled) AudioDeliveryMode audioDeliveryMode,
+    @Default(1) int audioResourceVersion,
   }) = _ExamSummary;
 
   /// JSONから試験メタデータを復元します。

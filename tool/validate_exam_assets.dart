@@ -57,6 +57,8 @@ Future<void> main() async {
       final resourcePath = rawExam['resourcePath'];
       final questionCount = rawExam['questionCount'];
       final supportsTest = rawExam['supportsTest'];
+      final audioDeliveryMode = rawExam['audioDeliveryMode'];
+      final audioResourceVersion = rawExam['audioResourceVersion'];
       if (examId is! String || examId.isEmpty) {
         errors.add('examIdが空または不正です: $_catalogPath');
         continue;
@@ -73,6 +75,19 @@ Future<void> main() async {
       }
       if (supportsTest is! bool) {
         errors.add('supportsTestがboolではありません: $examId ($resourcePath)');
+      }
+      if (audioDeliveryMode != 'bundled' &&
+          audioDeliveryMode != 'downloadRequired') {
+        errors.add(
+          'audioDeliveryModeが不正です: $examId '
+          'value=$audioDeliveryMode ($resourcePath)',
+        );
+      }
+      if (audioResourceVersion is! int || audioResourceVersion <= 0) {
+        errors.add(
+          'audioResourceVersionが正の整数ではありません: '
+          '$examId ($resourcePath)',
+        );
       }
       await _validateExam(
         examId: examId,

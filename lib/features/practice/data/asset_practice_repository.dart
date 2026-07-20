@@ -125,6 +125,9 @@ class AssetPracticeRepository implements PracticeRepository {
         if (exam.questionCount < 0) {
           throw ContentValidationException('問題数が不正です: ${exam.id}');
         }
+        if (exam.audioResourceVersion <= 0) {
+          throw ContentValidationException('音声versionが不正です: ${exam.id}');
+        }
         if (!ids.add(exam.id)) {
           throw ContentValidationException('試験IDが重複しています: ${exam.id}');
         }
