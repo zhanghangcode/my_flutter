@@ -70,6 +70,8 @@ Use Flutter stable and Dart stable.
 Use the latest mutually compatible stable versions of:
 
 - flutter_riverpod
+- flutter_hooks
+- hooks_riverpod
 - go_router
 - just_audio
 - drift
@@ -118,6 +120,13 @@ Separate:
 - Audio player logic
 
 Widgets must not directly access the database or audio player package.
+
+Use `HookConsumerWidget` when a presentation Widget only needs small,
+Widget-local lifecycle state and Hooks make that lifecycle easier to follow.
+Keep business state, shared state, and asynchronous workflows in Riverpod
+Providers or Notifiers. Call Hooks unconditionally at the top level of `build`
+and keep their call order stable. Do not migrate complex lifecycle code only to
+standardize Widget types.
 
 ## UI rules
 

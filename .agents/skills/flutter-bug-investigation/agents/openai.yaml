@@ -1,0 +1,4 @@
+interface:
+  display_name: "Flutter Bug Investigation"
+  short_description: "Investigate Flutter bugs with verified minimal fixes"
+  default_prompt: "Use $flutter-bug-investigation to investigate this Flutter bug and propose the smallest verified fix."

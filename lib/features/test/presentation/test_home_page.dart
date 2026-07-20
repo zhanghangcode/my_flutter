@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show useState;
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../../core/widgets/async_states.dart';
@@ -68,7 +69,10 @@ class TestHomePage extends ConsumerWidget {
 }
 
 /// Test開始前のDownload確認と重複Route遷移を管理する試験カード。
-class _TestExamCard extends ConsumerStatefulWidget {
+///
+/// カード内だけで必要な多重操作防止フラグはHookで保持し、Downloadや
+/// Test開始の業務状態はRiverpodのControllerへ集約します。
+class _TestExamCard extends HookConsumerWidget {
   /// [exam]に対応するTestカードを生成します。
   const _TestExamCard({required this.exam});
 
@@ -76,17 +80,10 @@ class _TestExamCard extends ConsumerStatefulWidget {
   final ExamSummary exam;
 
   @override
-  ConsumerState<_TestExamCard> createState() => _TestExamCardState();
-}
-
-/// Test入口のDialog・Download・Route遷移を直列化するState。
-class _TestExamCardState extends ConsumerState<_TestExamCard> {
-  /// Test開始処理の多重実行を防ぐフラグです。
-  bool _isOpening = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final exam = widget.exam;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Widgetの表示期間だけ必要なフラグなので、共有StateではなくHookを使います。
+    // Hookの呼び出し順を固定するため、条件分岐より前で必ず初期化します。
+    final isOpening = useState(false);
     final requiresDownload =
         exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired;
     if (exam.supportsTest && requiresDownload) {
@@ -126,30 +123,35 @@ class _TestExamCardState extends ConsumerState<_TestExamCard> {
                     )
                   : const Icon(Icons.chevron_right)
             : const Icon(Icons.lock_outline),
-        onTap: !exam.supportsTest || _isOpening || downloadState.isDownloading
+        onTap:
+            !exam.supportsTest || isOpening.value || downloadState.isDownloading
             ? null
-            : _open,
+            : () => _open(context, ref, isOpening),
       ),
     );
   }
 
   /// 必要な音声を確認・保存・再検証してからTest Sessionへ遷移します。
-  Future<void> _open() async {
-    if (_isOpening) return;
-    setState(() => _isOpening = true);
+  Future<void> _open(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<bool> isOpening,
+  ) async {
+    if (isOpening.value) return;
+    isOpening.value = true;
     try {
-      final exam = widget.exam;
       if (exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired) {
         final resource = await ref.read(examResourceProvider(exam.id).future);
+        if (!context.mounted) return;
         final controller = ref.read(downloadControllerProvider.notifier);
         final alreadyDownloaded = await controller.ensureStatusChecked(
           exam,
           resource,
         );
-        if (!mounted) return;
+        if (!context.mounted) return;
         if (!alreadyDownloaded) {
           final confirmed = await showExamDownloadConfirmation(context, exam);
-          if (!mounted || !confirmed) return;
+          if (!context.mounted || !confirmed) return;
           try {
             final completed = await controller.download(exam, resource);
             if (!completed ||
@@ -157,16 +159,17 @@ class _TestExamCardState extends ConsumerState<_TestExamCard> {
               throw StateError('download verification failed');
             }
           } catch (_) {
-            if (mounted) showExamDownloadError(context);
+            if (context.mounted) showExamDownloadError(context);
             return;
           }
         }
       }
-      if (mounted) context.push('/test/${widget.exam.id}/session');
+      if (context.mounted) context.push('/test/${exam.id}/session');
     } catch (_) {
-      if (mounted) showExamDownloadError(context);
+      if (context.mounted) showExamDownloadError(context);
     } finally {
-      if (mounted) setState(() => _isOpening = false);
+      // Widgetが破棄されている場合は、Hookが管理する値を更新しません。
+      if (context.mounted) isOpening.value = false;
     }
   }
 }

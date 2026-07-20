@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -47,7 +49,9 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    // 同じカードを連続で押しても、Hookのローカル状態によりDialogは1つだけ開きます。
     await tester.tap(find.text(_summary.titleJa));
+    await tester.tap(find.text(_summary.titleJa), warnIfMissed: false);
     await tester.pumpAndSettle();
     expect(find.text('音声データをダウンロードしますか？'), findsOneWidget);
     expect(
@@ -111,10 +115,65 @@ void main() {
     expect(repository.downloadCount, 1);
     expect(find.text('test-target'), findsOneWidget);
   });
+
+  testWidgets('Download待機中にカードを破棄してもHookのStateを更新しない', (tester) async {
+    final pendingDownload = Completer<DownloadInspection>();
+    final repository = _EntryDownloadRepository(
+      pendingDownload: pendingDownload,
+    );
+    final router = GoRouter(
+      initialLocation: '/practice',
+      routes: [
+        GoRoute(path: '/practice', builder: (_, _) => const PracticeListPage()),
+        GoRoute(
+          path: '/practice/:examId',
+          builder: (_, _) => const Scaffold(body: Text('practice-target')),
+        ),
+      ],
+    );
+    addTearDown(router.dispose);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [
+          practiceRepositoryProvider.overrideWithValue(
+            FakePracticeRepository(
+              _resource,
+              audioDeliveryMode: AudioDeliveryMode.downloadRequired,
+            ),
+          ),
+          downloadRepositoryProvider.overrideWithValue(repository),
+        ],
+        child: MaterialApp.router(
+          theme: buildDarkTheme(),
+          routerConfig: router,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text(_summary.titleJa));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('ダウンロード'));
+    await tester.pump();
+
+    // 非同期処理の完了前にWidget treeを破棄する状況を再現します。
+    await tester.pumpWidget(const SizedBox.shrink());
+    pendingDownload.complete(_EntryDownloadRepository.inspection);
+    await tester.pump();
+    await tester.pump();
+
+    expect(tester.takeException(), isNull);
+  });
 }
 
 /// 初回は未保存、download後はLocal pathを返す入口テスト用Repository。
 class _EntryDownloadRepository implements DownloadRepository {
+  /// 完了を外部から制御する場合に[pendingDownload]を指定します。
+  _EntryDownloadRepository({this.pendingDownload});
+
+  /// Widget破棄前後の非同期完了を再現するための任意の待機処理です。
+  final Completer<DownloadInspection>? pendingDownload;
+
   /// Downloadが完了済みかを保持します。
   bool downloaded = false;
 
@@ -129,9 +188,16 @@ class _EntryDownloadRepository implements DownloadRepository {
   }) async {
     downloadCount++;
     onProgress(0.5);
+    final pending = pendingDownload;
+    if (pending != null) {
+      final result = await pending.future;
+      downloaded = result.isDownloaded;
+      onProgress(1);
+      return result;
+    }
     downloaded = true;
     onProgress(1);
-    return _inspection;
+    return inspection;
   }
 
   @override
@@ -139,7 +205,7 @@ class _EntryDownloadRepository implements DownloadRepository {
     ExamSummary summary,
     ExamResource resource,
   ) async => downloaded
-      ? _inspection
+      ? inspection
       : const DownloadInspection(status: DownloadStatus.notDownloaded);
 
   @override
@@ -150,7 +216,7 @@ class _EntryDownloadRepository implements DownloadRepository {
   ) async => downloaded ? '/local/q1.mp3' : null;
 
   /// 保存完了時に返す固定検査結果です。
-  static const _inspection = DownloadInspection(
+  static const inspection = DownloadInspection(
     status: DownloadStatus.downloaded,
     localAudioPaths: {'q1': '/local/q1.mp3'},
     resourceVersion: 1,

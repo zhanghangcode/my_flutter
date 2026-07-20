@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart' show useState;
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../app/providers.dart';
 import '../../../app/theme.dart';
@@ -50,7 +51,10 @@ class PracticeListPage extends ConsumerWidget {
 }
 
 /// 1試験分のLocal利用状態と、重複操作を防ぐ開く処理を管理するカード。
-class _ExamCard extends ConsumerStatefulWidget {
+///
+/// 画面内だけで完結する多重操作防止フラグはHookで保持し、Downloadの
+/// 業務状態は引き続きRiverpodのControllerへ委譲します。
+class _ExamCard extends HookConsumerWidget {
   /// [exam]に対応する教材カードを生成します。
   const _ExamCard({required this.exam});
 
@@ -58,17 +62,10 @@ class _ExamCard extends ConsumerStatefulWidget {
   final ExamSummary exam;
 
   @override
-  ConsumerState<_ExamCard> createState() => _ExamCardState();
-}
-
-/// Dialog・Download・Route遷移を1回に直列化するカードState。
-class _ExamCardState extends ConsumerState<_ExamCard> {
-  /// Dialog表示からRoute遷移までの多重実行を防ぐフラグです。
-  bool _isOpening = false;
-
-  @override
-  Widget build(BuildContext context) {
-    final exam = widget.exam;
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Widgetの表示期間だけ必要なフラグのため、共有StateにはせずHookで管理します。
+    // useStateは条件分岐より前で常に同じ順序で呼び出します。
+    final isOpening = useState(false);
     final requiresDownload =
         exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired;
     if (requiresDownload) {
@@ -81,12 +78,12 @@ class _ExamCardState extends ConsumerState<_ExamCard> {
             localAudioPaths: const {},
             resourceVersion: exam.audioResourceVersion,
           );
-    final isLocked = _isOpening || downloadState.isDownloading;
+    final isLocked = isOpening.value || downloadState.isDownloading;
 
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: isLocked ? null : _open,
+        onTap: isLocked ? null : () => _open(context, ref, isOpening),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
@@ -131,22 +128,26 @@ class _ExamCardState extends ConsumerState<_ExamCard> {
   }
 
   /// 必要な場合だけ確認・保存・再検証を行い、問題一覧へ1回だけ遷移します。
-  Future<void> _open() async {
-    if (_isOpening) return;
-    setState(() => _isOpening = true);
+  Future<void> _open(
+    BuildContext context,
+    WidgetRef ref,
+    ValueNotifier<bool> isOpening,
+  ) async {
+    if (isOpening.value) return;
+    isOpening.value = true;
     try {
-      final exam = widget.exam;
       if (exam.audioDeliveryMode == AudioDeliveryMode.downloadRequired) {
         final resource = await ref.read(examResourceProvider(exam.id).future);
+        if (!context.mounted) return;
         final controller = ref.read(downloadControllerProvider.notifier);
         final alreadyDownloaded = await controller.ensureStatusChecked(
           exam,
           resource,
         );
-        if (!mounted) return;
+        if (!context.mounted) return;
         if (!alreadyDownloaded) {
           final confirmed = await showExamDownloadConfirmation(context, exam);
-          if (!mounted || !confirmed) return;
+          if (!context.mounted || !confirmed) return;
           try {
             final completed = await controller.download(exam, resource);
             if (!completed ||
@@ -154,17 +155,18 @@ class _ExamCardState extends ConsumerState<_ExamCard> {
               throw StateError('download verification failed');
             }
           } catch (_) {
-            if (mounted) showExamDownloadError(context);
+            if (context.mounted) showExamDownloadError(context);
             return;
           }
         }
       }
-      if (!mounted) return;
-      context.push('/practice/${widget.exam.id}');
+      if (!context.mounted) return;
+      context.push('/practice/${exam.id}');
     } catch (_) {
-      if (mounted) showExamDownloadError(context);
+      if (context.mounted) showExamDownloadError(context);
     } finally {
-      if (mounted) setState(() => _isOpening = false);
+      // Widget破棄後のValueNotifier更新を避け、Hookのlifecycleに合わせます。
+      if (context.mounted) isOpening.value = false;
     }
   }
 }

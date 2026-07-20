@@ -11,7 +11,7 @@
 | 項目 | 内容 |
 |---|---|
 | 調査日 | 2026-07-19（Asia/Tokyo） |
-| 文書バージョン | 1.6.0 |
+| 文書バージョン | 1.7.0 |
 | 対象 Git branch | `main` |
 | 対象 commit hash | `11b2630684e221293973c3516e31ccbaa79a76fc` |
 | 対象 Flutter | 3.44.6 stable、framework revision `ee80f08bbf` |
@@ -69,7 +69,9 @@ Version は `flutter --version`、`dart --version`、`pubspec.yaml`、`pubspec.l
 | SDK | Flutter | 3.44.6 stable | Android / iOS UI と Plugin host | 全体 | 使用中 |
 | Language | Dart | 3.12.2 | App、domain、test | `lib/`、`test/` | 使用中 |
 | UI | Material Design 3 | Flutter SDK 同梱 | `Scaffold`、`NavigationBar`、Theme | Presentation 全体 | 使用中 |
+| UI lifecycle | `flutter_hooks` | 0.21.3+1 | 小規模なWidgetローカルStateのlifecycle管理 | Practice / Testの教材カード | 使用中 |
 | State | `flutter_riverpod` | 3.3.2 | DI、非同期 State、Stream、Controller | [`providers.dart`](../lib/app/providers.dart) 等 | 使用中 |
+| State / Hooks | `hooks_riverpod` | 3.3.2 | HookとRiverpodを併用するConsumer Widget | Practice / Testの教材カード | 使用中 |
 | Navigation | `go_router` | 17.3.0 | declarative route、shell、root route | [`router.dart`](../lib/app/router.dart) | 使用中 |
 | Audio | `just_audio` | 0.10.6 | Asset / Local File音声、再生、seek、速度、loop | [`audio_playback_service.dart`](../lib/features/player/data/audio_playback_service.dart) | 使用中 |
 | Audio session | `audio_session` | 0.2.4 | speech 用 OS audio session | 同上 | 使用中 |
@@ -382,7 +384,9 @@ shell.goBranch(
 
 ### 10.1 Riverpod 構成
 
-`ProviderScope` は [`main.dart`](../lib/main.dart) で `NihongoListeningApp` の直上に 1 個配置される。現行コードは `Provider`、`FutureProvider`、`StreamProvider`、`NotifierProvider`、`AsyncNotifierProvider`、`ConsumerWidget`、`ConsumerStatefulWidget`、`WidgetRef`、`Ref` 相当の callback 引数を使用する。`StateProvider` は使用しない。明示的な `autoDispose` は使用しない。
+`ProviderScope` は [`main.dart`](../lib/main.dart) で `NihongoListeningApp` の直上に 1 個配置される。現行コードは `Provider`、`FutureProvider`、`StreamProvider`、`NotifierProvider`、`AsyncNotifierProvider`、`ConsumerWidget`、`ConsumerStatefulWidget`、`HookConsumerWidget`、`WidgetRef`、`Ref` 相当の callback 引数を使用する。`StateProvider` は使用しない。明示的な `autoDispose` は使用しない。
+
+`HookConsumerWidget`はPractice / Testの教材カードだけに導入し、DialogからRoute遷移までの多重操作を防ぐWidgetローカルフラグを`useState`で管理する。Download進捗、教材、回答、音声などの業務Stateは従来どおりRiverpodのProvider / Notifierに保持する。Hookは`build`のトップレベルから条件分岐なしで固定順に呼び出し、複雑なlifecycleを持つ既存Widgetは一律に移行しない。
 
 | Provider 名 | 定義ファイル | State / 値型 | 初期値・生成 | 主な参照元 | 更新元 / lifecycle |
 |---|---|---|---|---|---|
@@ -981,6 +985,8 @@ sequenceDiagram
 | `flutter` | SDK | 0.0.0 | runtime | 使用中 | 全 UI / Platform bridge |
 | `cupertino_icons` | `^1.0.8` | 1.0.8 | runtime | 追加済み・未使用 | import なし |
 | `flutter_riverpod` | `^3.3.2` | 3.3.2 | runtime | 使用中 | `main.dart`、Providers、Consumer Widgets |
+| `flutter_hooks` | `^0.21.3+1` | 0.21.3+1 | runtime | 使用中 | Practice / Test教材カードのローカルState |
+| `hooks_riverpod` | `^3.3.2` | 3.3.2 | runtime | 使用中 | `HookConsumerWidget`と`WidgetRef`の統合 |
 | `go_router` | `^17.3.0` | 17.3.0 | runtime | 使用中 | `app/router.dart` と遷移元 pages |
 | `just_audio` | `^0.10.6` | 0.10.6 | runtime | 使用中 | `audio_playback_service.dart` |
 | `audio_session` | `^0.2.4` | 0.2.4 | runtime | 使用中 | 同上 |
@@ -1004,6 +1010,7 @@ sequenceDiagram
 | Package | Lock Version | 由来 / 用途 |
 |---|---:|---|
 | `riverpod` | 3.3.2 | `flutter_riverpod` core |
+| `hooks` | 2.0.2 | `hooks_riverpod`のHook lifecycle連携 |
 | `sqlite3` | 3.4.0 | Drift native database |
 | `rxdart` | 0.28.0 | audio stream dependency |
 | `just_audio_platform_interface` | 4.6.0 | audio Platform interface |
@@ -1232,6 +1239,8 @@ Coverage は未計測。
 | `StatefulWidget` | 対応する `State` object が lifecycle と可変情報を保持できる Widget。 |
 | `ConsumerWidget` | `WidgetRef` を受け取り、Riverpod Provider を watch / read できる Widget。 |
 | `ConsumerStatefulWidget` | StatefulWidget の lifecycle と Riverpod 参照を両方使用できる Widget。 |
+| `HookConsumerWidget` | HookでWidgetローカルStateを管理しながら、`WidgetRef`でRiverpod Providerを参照できるWidget。 |
+| Hook | Widgetの`build`内からローカルStateやlifecycleを宣言的に扱う仕組み。条件分岐せず固定順に呼び出す。 |
 | `ProviderScope` | Riverpod Provider の値と lifecycle を管理する container を Widget tree へ提供する境界。 |
 | `Provider` | 値、Repository、State を生成し、依存先へ公開する Riverpod の仕組み。狭義には同期値用 `Provider` を指す。 |
 | Riverpod | dependency injection と reactive State management を提供する Package。 |
