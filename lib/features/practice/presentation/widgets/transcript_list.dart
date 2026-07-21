@@ -43,15 +43,20 @@ class _TranscriptListState extends ConsumerState<TranscriptList> {
   /// 音声State、設定、お気に入りを購読してTranscript一覧を構築します。
   Widget build(BuildContext context) {
     final player = ref.watch(audioPlayerControllerProvider);
+
     final favoriteIds = ref.watch(favoriteSentenceIdsProvider).value ?? {};
+
     final settings = ref.watch(settingsControllerProvider).value;
+
     final timelineAvailable = widget.question.hasCompleteTimeline;
+
     final synchronizationEnabled =
         timelineAvailable &&
         player.questionId == widget.question.id &&
         player.status != AudioPlayerStatus.idle &&
         player.status != AudioPlayerStatus.loading &&
         player.status != AudioPlayerStatus.error;
+
     final activeId =
         timelineAvailable && player.questionId == widget.question.id
         ? player.activeSentenceId

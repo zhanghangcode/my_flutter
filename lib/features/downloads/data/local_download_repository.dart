@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as p;
@@ -11,7 +12,7 @@ import '../domain/download_repository.dart';
 import '../domain/download_source.dart';
 import '../domain/download_state.dart';
 
-/// Download Sourceから取得した音声を原子的に保存し、Drift Manifestと照合するRepository。
+/// Download Sourceから取得したZIPを展開・検証し、Drift Manifestと照合するRepository。
 ///
 /// 保存済みflagだけではなく、resource version、ファイル数、実在、非0-byte、`.part`の
 /// 不在を毎回確認します。検証に失敗した音声を再生可能として返すことはありません。
@@ -99,36 +100,74 @@ class LocalDownloadRepository implements DownloadRepository {
     _validateRequest(summary, resource);
     final examDirectory = await _examDirectory(summary.id);
     final audioDirectory = await _audioDirectory(summary.id);
+    final archiveFile = File(
+      p.join(examDirectory.path, '${summary.id}.part.zip'),
+    );
+    final extractedDirectory = Directory(
+      p.join(examDirectory.path, '.extracted'),
+    );
     try {
       // 以前の失敗・version違いを混在させず、試験単位で常に作り直します。
       if (await examDirectory.exists()) {
         await examDirectory.delete(recursive: true);
       }
-      await audioDirectory.create(recursive: true);
+      await examDirectory.create(recursive: true);
       onProgress(0);
 
       final items = _buildItems(resource);
+      await _source.downloadArchive(
+        summary,
+        resource,
+        archiveFile,
+        onProgress: (progress) {
+          // 解凍・照合・原子的保存用に最後の10%を確保します。
+          onProgress(progress.clamp(0.0, 1.0).toDouble() * 0.9);
+        },
+      );
+      if (!await archiveFile.exists() || await archiveFile.length() <= 0) {
+        throw StateError('0-byte archive');
+      }
+
+      await extractedDirectory.create(recursive: true);
+      await extractFileToDisk(archiveFile.path, extractedDirectory.path);
+      final extractedEntities = await extractedDirectory
+          .list(recursive: true, followLinks: false)
+          .toList();
+      if (extractedEntities.whereType<Link>().isNotEmpty) {
+        throw StateError('symbolic links are not allowed');
+      }
+      final extractedFiles = extractedEntities.whereType<File>().toList();
+      await audioDirectory.create(recursive: true);
+
       for (var index = 0; index < items.length; index++) {
         final item = items[index];
-        final bytes = await _source.fetch(item);
-        if (bytes.isEmpty) {
-          throw StateError('0-byte source: ${item.questionId}');
+        final matches = extractedFiles
+            .where(
+              (file) => p.basename(file.path) == p.basename(item.sourcePath),
+            )
+            .toList();
+        if (matches.length != 1 || await matches.single.length() <= 0) {
+          throw StateError('missing or duplicate audio: ${item.questionId}');
         }
 
         final target = File(p.join(audioDirectory.path, item.fileName));
         final partial = File('${target.path}.part');
-        await partial.writeAsBytes(bytes, flush: true);
+        await matches.single.copy(partial.path);
+        final sourceBytes = await matches.single.length();
         final writtenBytes = await partial.length();
-        if (writtenBytes <= 0 || writtenBytes != bytes.length) {
+        if (writtenBytes <= 0 || writtenBytes != sourceBytes) {
           throw StateError('incomplete file: ${item.questionId}');
         }
         if (await target.exists()) await target.delete();
         await partial.rename(target.path);
-        if (!await target.exists() || await target.length() != bytes.length) {
+        if (!await target.exists() || await target.length() != sourceBytes) {
           throw StateError('rename verification failed: ${item.questionId}');
         }
-        onProgress((index + 1) / items.length);
+        onProgress(0.9 + ((index + 1) / items.length * 0.1));
       }
+
+      await _deleteIfExists(archiveFile);
+      await _deleteDirectoryIfExists(extractedDirectory);
 
       final paths = await _verifyAudioDirectory(summary, resource);
       if (paths == null) {
@@ -192,17 +231,18 @@ class LocalDownloadRepository implements DownloadRepository {
   }
 
   /// questionIdと元音声の拡張子から、安全なLocal Manifest項目を生成します。
-  List<DownloadItem> _buildItems(ExamResource resource) {
+  List<_ExpectedAudioFile> _buildItems(ExamResource resource) {
     final questionIds = <String>{};
     return [
       for (final question in resource.questions)
         if (_safeId.hasMatch(question.id) &&
             questionIds.add(question.id) &&
             p.extension(question.audioAssetPath).isNotEmpty)
-          DownloadItem(
+          _ExpectedAudioFile(
             questionId: question.id,
             sourcePath: question.audioAssetPath,
-            fileName: '${question.id}${p.extension(question.audioAssetPath)}',
+            fileName:
+                '${question.id}${p.extension(question.audioAssetPath).toLowerCase()}',
           )
         else
           throw const ExamDownloadException('問題別音声の情報が正しくありません。'),
@@ -276,4 +316,35 @@ class LocalDownloadRepository implements DownloadRepository {
     final base = await _resolveBaseDirectory();
     return Directory(p.join(base.path, _relativeAudioDirectory(examId)));
   }
+
+  /// 成功後の一時ZIPを削除します。削除失敗は検証済み音声を無効にしません。
+  Future<void> _deleteIfExists(File file) async {
+    try {
+      if (await file.exists()) await file.delete();
+    } catch (error, stackTrace) {
+      debugPrint('Failed to clean archive: $error\n$stackTrace');
+    }
+  }
+
+  /// 成功後の展開用Directoryを削除します。
+  Future<void> _deleteDirectoryIfExists(Directory directory) async {
+    try {
+      if (await directory.exists()) await directory.delete(recursive: true);
+    } catch (error, stackTrace) {
+      debugPrint('Failed to clean extracted files: $error\n$stackTrace');
+    }
+  }
+}
+
+/// ZIP内の元ファイル名と検証後のLocalファイル名を対応付けます。
+class _ExpectedAudioFile {
+  const _ExpectedAudioFile({
+    required this.questionId,
+    required this.sourcePath,
+    required this.fileName,
+  });
+
+  final String questionId;
+  final String sourcePath;
+  final String fileName;
 }

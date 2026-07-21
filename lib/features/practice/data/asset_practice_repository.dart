@@ -55,7 +55,11 @@ class AssetPracticeRepository implements PracticeRepository {
       );
       // UI へ不整合な教材を渡す前に、ID・正解・時間軸の整合性を確認します。
       _validateResource(resource, summary);
-      await _validateAudioAssets(resource);
+      // downloadRequired教材はDownload完了までAssetを同梱しないため、Bundle Assetの
+      // 存在確認はbundled教材だけに限定します。
+      if (summary.audioDeliveryMode == AudioDeliveryMode.bundled) {
+        await _validateAudioAssets(resource);
+      }
       _examCache[examId] = resource;
       return resource;
     } on ContentValidationException {

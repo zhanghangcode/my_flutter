@@ -67,6 +67,8 @@ abstract class ExamSummary with _$ExamSummary {
   /// どちらも`null`です。[resourcePath]は詳細JSONのAsset相対path、[supportsTest]は
   /// 採点可能なTestモードを提供するかを示します。[audioDeliveryMode]は音声の取得方法、
   /// [audioResourceVersion]は端末保存済み音声の互換性判定に使用します。
+  /// [audioPackageUrl]は`downloadRequired`教材が音声ZIPを取得する完全なHTTPS URLで、
+  /// bundled教材では`null`のままとします。
   const factory ExamSummary({
     required String id,
     int? year,
@@ -78,6 +80,7 @@ abstract class ExamSummary with _$ExamSummary {
     required bool supportsTest,
     @Default(AudioDeliveryMode.bundled) AudioDeliveryMode audioDeliveryMode,
     @Default(1) int audioResourceVersion,
+    String? audioPackageUrl,
   }) = _ExamSummary;
 
   /// JSONから試験メタデータを復元します。

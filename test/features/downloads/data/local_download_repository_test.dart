@@ -1,5 +1,7 @@
+import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive.dart';
 import 'package:drift/native.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,7 +56,11 @@ void main() {
     );
 
     expect(downloaded.status, DownloadStatus.downloaded);
-    expect(progress, [0, 0.5, 1]);
+    expect(progress.first, 0);
+    expect(progress.last, 1);
+    for (var index = 1; index < progress.length; index++) {
+      expect(progress[index], greaterThanOrEqualTo(progress[index - 1]));
+    }
     expect(downloaded.localAudioPaths.keys, {'q1', 'q2'});
     expect(
       downloaded.localAudioPaths['q1'],
@@ -133,6 +139,75 @@ void main() {
     expect(versionMismatch.isDownloaded, isFalse);
   });
 
+  test('audio-vbr配下・日本語ファイル名・__MACOSX混入のZIPを29問すべて保存する', () async {
+    final practiceRepository = AssetPracticeRepository();
+    final summary = (await practiceRepository.getExams()).singleWhere(
+      (exam) => exam.id == 'n2_listening',
+    );
+    final resource = await practiceRepository.getExam(summary.id);
+    final zipSource = _ZipDownloadSource((archive) {
+      for (final question in resource.questions) {
+        final basename = p.basename(question.audioAssetPath);
+        archive.addFile(
+          ArchiveFile.bytes(
+            'audio-vbr/$basename',
+            Uint8List.fromList(utf8.encode(question.id)),
+          ),
+        );
+      }
+      archive.addFile(
+        ArchiveFile.bytes('__MACOSX/audio-vbr/._junk.mp3', Uint8List(4)),
+      );
+      archive.addFile(
+        ArchiveFile.bytes('__MACOSX/._audio-vbr', Uint8List.fromList([0, 0])),
+      );
+    });
+    final zipRepository = LocalDownloadRepository(
+      zipSource,
+      database,
+      resolveBaseDirectory: () async => temporaryDirectory,
+    );
+
+    final inspection = await zipRepository.download(
+      summary,
+      resource,
+      onProgress: (_) {},
+    );
+
+    expect(inspection.status, DownloadStatus.downloaded);
+    expect(inspection.localAudioPaths, hasLength(29));
+    for (final question in resource.questions) {
+      final path = inspection.localAudioPaths[question.id]!;
+      expect(await File(path).readAsString(), question.id);
+    }
+  });
+
+  test('ZIP内の重複basenameは保存全体を失敗させる', () async {
+    final zipSource = _ZipDownloadSource((archive) {
+      archive.addFile(
+        ArchiveFile.bytes('assets/audio/q1.mp3', Uint8List.fromList([1])),
+      );
+      archive.addFile(
+        ArchiveFile.bytes('audio-vbr/q1.mp3', Uint8List.fromList([2])),
+      );
+      archive.addFile(
+        ArchiveFile.bytes('assets/audio/q2.m4a', Uint8List.fromList([3])),
+      );
+    });
+    final zipRepository = LocalDownloadRepository(
+      zipSource,
+      database,
+      resolveBaseDirectory: () async => temporaryDirectory,
+    );
+
+    await expectLater(
+      zipRepository.download(_summary(), _resource(), onProgress: (_) {}),
+      throwsA(anything),
+    );
+    final inspection = await zipRepository.inspect(_summary(), _resource());
+    expect(inspection.status, DownloadStatus.failed);
+  });
+
   test('途中取得が失敗した場合は試験Directoryを削除してfailed Manifestを保存する', () async {
     source.errors['assets/audio/q2.m4a'] = StateError('source failure');
 
@@ -150,7 +225,7 @@ void main() {
   });
 }
 
-/// pathごとに固定bytesまたはエラーを返すDownload Source。
+/// pathごとの固定bytesからZIPを生成するDownload Source。
 class _MemoryDownloadSource implements DownloadSource {
   /// [bytes]を取得結果として保持します。
   _MemoryDownloadSource(this.bytes);
@@ -165,11 +240,55 @@ class _MemoryDownloadSource implements DownloadSource {
   final List<String> fetchedQuestionIds = [];
 
   @override
-  Future<Uint8List> fetch(DownloadItem item) async {
-    fetchedQuestionIds.add(item.questionId);
-    final error = errors[item.sourcePath];
-    if (error != null) throw error;
-    return bytes[item.sourcePath] ?? Uint8List(0);
+  Future<void> downloadArchive(
+    ExamSummary summary,
+    ExamResource resource,
+    File destination, {
+    required void Function(double progress) onProgress,
+  }) async {
+    final archive = Archive();
+    onProgress(0);
+    for (var index = 0; index < resource.questions.length; index++) {
+      final question = resource.questions[index];
+      fetchedQuestionIds.add(question.id);
+      final error = errors[question.audioAssetPath];
+      if (error != null) throw error;
+      final content = bytes[question.audioAssetPath] ?? Uint8List(0);
+      archive.addFile(ArchiveFile.bytes(question.audioAssetPath, content));
+      onProgress((index + 1) / resource.questions.length);
+    }
+    await destination.parent.create(recursive: true);
+    await destination.writeAsBytes(
+      ZipEncoder().encodeBytes(archive),
+      flush: true,
+    );
+  }
+}
+
+/// 任意のZIP内容を[build]で組み立てて返すDownload Source。
+class _ZipDownloadSource implements DownloadSource {
+  /// [build]でarchiveへ任意のentryを追加するSourceを生成します。
+  _ZipDownloadSource(this.build);
+
+  /// ZIPへentryを追加するcallbackです。
+  final void Function(Archive archive) build;
+
+  @override
+  Future<void> downloadArchive(
+    ExamSummary summary,
+    ExamResource resource,
+    File destination, {
+    required void Function(double progress) onProgress,
+  }) async {
+    onProgress(0);
+    final archive = Archive();
+    build(archive);
+    await destination.parent.create(recursive: true);
+    await destination.writeAsBytes(
+      ZipEncoder().encodeBytes(archive),
+      flush: true,
+    );
+    onProgress(1);
   }
 }
 

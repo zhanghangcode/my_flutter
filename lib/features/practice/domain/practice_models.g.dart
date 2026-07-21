@@ -35,6 +35,7 @@ _ExamSummary _$ExamSummaryFromJson(Map<String, dynamic> json) => _ExamSummary(
       ) ??
       AudioDeliveryMode.bundled,
   audioResourceVersion: (json['audioResourceVersion'] as num?)?.toInt() ?? 1,
+  audioPackageUrl: json['audioPackageUrl'] as String?,
 );
 
 Map<String, dynamic> _$ExamSummaryToJson(
@@ -50,6 +51,7 @@ Map<String, dynamic> _$ExamSummaryToJson(
   'supportsTest': instance.supportsTest,
   'audioDeliveryMode': _$AudioDeliveryModeEnumMap[instance.audioDeliveryMode]!,
   'audioResourceVersion': instance.audioResourceVersion,
+  'audioPackageUrl': instance.audioPackageUrl,
 };
 
 const _$AudioDeliveryModeEnumMap = {

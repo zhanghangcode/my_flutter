@@ -146,9 +146,13 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     });
     // Route の破棄時は ref.read を使えないため、必要な依存と State を事前に保持します。
     _learningRepository = ref.read(learningRepositoryProvider);
+
     _audioPlayerController = ref.read(audioPlayerControllerProvider.notifier);
+
     _latestPlayerState = player;
+
     _latestContentMode = detail.mode;
+
     return PopScope(
       canPop: !detail.isChangingQuestion,
       child: Scaffold(

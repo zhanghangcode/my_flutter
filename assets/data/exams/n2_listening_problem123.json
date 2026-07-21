@@ -9,6 +9,8 @@
       "section": 1,
       "number": 1,
       "type": "課題理解",
+      "promptJa": "男の学生は、この後まず何をしますか",
+      "options": [],
       "audioAssetPath": "output/audio/問題1_第01問.mp3",
       "sentences": [
         {
@@ -100,11 +102,7 @@
           "endMs": 77520
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q02",
@@ -112,6 +110,8 @@
       "section": 1,
       "number": 2,
       "type": "課題理解",
+      "promptJa": "女の店員はこの後まず、何をしますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題1_第02問.mp3",
       "sentences": [
         {
@@ -194,11 +194,7 @@
           "endMs": 72380
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q03",
@@ -206,6 +202,8 @@
       "section": 1,
       "number": 3,
       "type": "課題理解",
+      "promptJa": "男の人は何の写真を撮らなければなりませんか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題1_第03問.mp3",
       "sentences": [
         {
@@ -297,11 +295,7 @@
           "endMs": 80380
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q04",
@@ -309,6 +303,8 @@
       "section": 1,
       "number": 4,
       "type": "課題理解",
+      "promptJa": "女の職員はこの後まず、何をしますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題1_第04問.mp3",
       "sentences": [
         {
@@ -409,11 +405,7 @@
           "endMs": 77780
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q05",
@@ -421,6 +413,8 @@
       "section": 1,
       "number": 5,
       "type": "課題理解",
+      "promptJa": "女の学生はこの後、何をしますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題1_第05問.mp3",
       "sentences": [
         {
@@ -530,11 +524,7 @@
           "endMs": 81240
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q06",
@@ -542,6 +532,8 @@
       "section": 2,
       "number": 1,
       "type": "ポイント理解",
+      "promptJa": "店長はどうしてパン屋を始めたと言っていますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第01問.mp3",
       "sentences": [
         {
@@ -615,11 +607,7 @@
           "endMs": 103990
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q07",
@@ -627,6 +615,8 @@
       "section": 2,
       "number": 2,
       "type": "ポイント理解",
+      "promptJa": "２人は引っ越しの値段を安くするため、どうすることにしましたか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第02問.mp3",
       "sentences": [
         {
@@ -718,11 +708,7 @@
           "endMs": 124550
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q08",
@@ -730,6 +716,8 @@
       "section": 2,
       "number": 3,
       "type": "ポイント理解",
+      "promptJa": "女の人はアンケートに何を書くと言っていますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第03問.mp3",
       "sentences": [
         {
@@ -820,11 +808,7 @@
           "endMs": 106440
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q09",
@@ -832,6 +816,8 @@
       "section": 2,
       "number": 4,
       "type": "ポイント理解",
+      "promptJa": "男の学生は女の学生にどうしたら１番いいと言っていますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第04問.mp3",
       "sentences": [
         {
@@ -923,11 +909,7 @@
           "endMs": 131410
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q10",
@@ -935,6 +917,8 @@
       "section": 2,
       "number": 5,
       "type": "ポイント理解",
+      "promptJa": "女の人が今の会社に転職した理由は何ですか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第05問.mp3",
       "sentences": [
         {
@@ -999,11 +983,7 @@
           "endMs": 101810
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q11",
@@ -1011,6 +991,8 @@
       "section": 2,
       "number": 6,
       "type": "ポイント理解",
+      "promptJa": "コーチはこのサッカークラブでは特にどのような力を持った選手に育てたいと言っていますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題2_第06問.mp3",
       "sentences": [
         {
@@ -1039,11 +1021,7 @@
           "endMs": 91270
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     },
     {
       "id": "n2_q12",
@@ -1051,6 +1029,29 @@
       "section": 3,
       "number": 1,
       "type": "概要理解",
+      "promptJa": "歯医者は何について話していますか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "歯の構造"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "歯の役割"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "歯の正しいケアの仕方"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "歯の病気の原因"
+        }
+      ],
       "audioAssetPath": "output/audio/問題3_第01問.mp3",
       "sentences": [
         {
@@ -1111,33 +1112,7 @@
           "endMs": 65520
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "歯の構造"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "歯の役割"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "歯の正しいケアの仕方"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "歯の病気の原因"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q13",
@@ -1145,6 +1120,29 @@
       "section": 3,
       "number": 2,
       "type": "概要理解",
+      "promptJa": "鉄道の写真家が伝えたいことは何ですか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "鉄道の写真を撮る時に大切なこと"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "鉄道の写真を撮るのに良い場所"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "鉄道の美しさを表現する楽しさ"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "鉄道の写真を上手に撮るテクニック"
+        }
+      ],
       "audioAssetPath": "output/audio/問題3_第02問.mp3",
       "sentences": [
         {
@@ -1205,33 +1203,7 @@
           "endMs": 89420
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "鉄道の写真を撮る時に大切なこと"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "鉄道の写真を撮るのに良い場所"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "鉄道の美しさを表現する楽しさ"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "鉄道の写真を上手に撮るテクニック"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q14",
@@ -1239,6 +1211,29 @@
       "section": 3,
       "number": 3,
       "type": "概要理解",
+      "promptJa": "工業デザイナーは何について話していますか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "メガネを買う人へのアドバイス"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "人気があるメガネのデザイン"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "おしゃれなデザインのポイント"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "デザインを意識し始めたきっかけ"
+        }
+      ],
       "audioAssetPath": "output/audio/問題3_第03問.mp3",
       "sentences": [
         {
@@ -1299,33 +1294,7 @@
           "endMs": 86130
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "メガネを買う人へのアドバイス"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "人気があるメガネのデザイン"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "おしゃれなデザインのポイント"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "デザインを意識し始めたきっかけ"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q15",
@@ -1333,6 +1302,29 @@
       "section": 3,
       "number": 4,
       "type": "概要理解",
+      "promptJa": "タレントは何について話していますか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "時間を上手に使う工夫"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "仕事の楽しみ方"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "自分の仕事の内容"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "自分の計画性のなさ"
+        }
+      ],
       "audioAssetPath": "output/audio/問題3_第04問.mp3",
       "sentences": [
         {
@@ -1393,33 +1385,7 @@
           "endMs": 69461
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "時間を上手に使う工夫"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "仕事の楽しみ方"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "自分の仕事の内容"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "自分の計画性のなさ"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q16",
@@ -1427,6 +1393,29 @@
       "section": 3,
       "number": 5,
       "type": "概要理解",
+      "promptJa": "俳優は何について話していますか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "旅の思い出"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "1 人で行く旅の計画"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "旅をすることの重要性"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "自分が考える旅というもの"
+        }
+      ],
       "audioAssetPath": "output/audio/問題3_第05問.mp3",
       "sentences": [
         {
@@ -1487,33 +1476,7 @@
           "endMs": 73960
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "旅の思い出"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "1 人で行く旅の計画"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "旅をすることの重要性"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "自分が考える旅というもの"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q17",
@@ -1521,6 +1484,24 @@
       "section": 4,
       "number": 1,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "頑張ればできるんじゃない？"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "楽にできるって思ってるんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "簡単に覚えられてすごいね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第01問.mp3",
       "sentences": [
         {
@@ -1557,28 +1538,7 @@
           "endMs": 23100
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "頑張ればできるんじゃない？"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "楽にできるって思ってるんだね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "簡単に覚えられてすごいね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q18",
@@ -1586,6 +1546,24 @@
       "section": 4,
       "number": 2,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "資料、見てくれるんですね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "資料は私が作っておきますね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "資料、見ておきます"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第02問.mp3",
       "sentences": [
         {
@@ -1622,28 +1600,7 @@
           "endMs": 22510
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "資料、見てくれるんですね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "資料は私が作っておきますね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "資料、見ておきます"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q19",
@@ -1651,6 +1608,24 @@
       "section": 4,
       "number": 3,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "募集は経験が無い人だけなんだ"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "経験がなくてもいいんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "やっぱり経験が無いといけないのか"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第03問.mp3",
       "sentences": [
         {
@@ -1687,28 +1662,7 @@
           "endMs": 22700
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "募集は経験が無い人だけなんだ"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "経験がなくてもいいんだね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "やっぱり経験が無いといけないのか"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q20",
@@ -1716,6 +1670,24 @@
       "section": 4,
       "number": 4,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "じゃ、やらないでおくね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "忘れないようにするね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "水、毎日やっちゃだめなんだね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第04問.mp3",
       "sentences": [
         {
@@ -1752,28 +1724,7 @@
           "endMs": 22940
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "じゃ、やらないでおくね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "忘れないようにするね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "水、毎日やっちゃだめなんだね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q21",
@@ -1781,6 +1732,24 @@
       "section": 4,
       "number": 5,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "間に合ってよかったね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "遅れちゃったんだ"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "あと少しだったのにね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第05問.mp3",
       "sentences": [
         {
@@ -1817,28 +1786,7 @@
           "endMs": 20900
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "間に合ってよかったね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "遅れちゃったんだ"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "あと少しだったのにね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q22",
@@ -1846,6 +1794,24 @@
       "section": 4,
       "number": 6,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "自由に話していいんですね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "ここに書いてあるように話すんですね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "パンフレットに関係なく話すんですね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第06問.mp3",
       "sentences": [
         {
@@ -1882,28 +1848,7 @@
           "endMs": 25010
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "自由に話していいんですね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "ここに書いてあるように話すんですね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "パンフレットに関係なく話すんですね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q23",
@@ -1911,6 +1856,24 @@
       "section": 4,
       "number": 7,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "随分落ち着いてるんだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "そんなに緊張しなくても大丈夫だよ"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "少しは緊張感持たないとだめだよ"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第07問.mp3",
       "sentences": [
         {
@@ -1947,28 +1910,7 @@
           "endMs": 26010
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "随分落ち着いてるんだね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "そんなに緊張しなくても大丈夫だよ"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "少しは緊張感持たないとだめだよ"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q24",
@@ -1976,6 +1918,24 @@
       "section": 4,
       "number": 8,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "プレゼン、やらなくてよくなったの？"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "プレゼンできてうれしいんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "そういうことなら、仕方ないね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第08問.mp3",
       "sentences": [
         {
@@ -2012,28 +1972,7 @@
           "endMs": 24060
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "プレゼン、やらなくてよくなったの？"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "プレゼンできてうれしいんだね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "そういうことなら、仕方ないね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q25",
@@ -2041,6 +1980,24 @@
       "section": 4,
       "number": 9,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "本当、お腹いっぱいになったね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "そうそう、あれじゃ足りない人多いよね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "確かに、量が少なめでちょうどよかったね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第09問.mp3",
       "sentences": [
         {
@@ -2077,28 +2034,7 @@
           "endMs": 32680
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "本当、お腹いっぱいになったね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "そうそう、あれじゃ足りない人多いよね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "確かに、量が少なめでちょうどよかったね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q26",
@@ -2106,6 +2042,24 @@
       "section": 4,
       "number": 10,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "他の人を探さないとだめだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "山田さんに断られたか"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "じゃ、お願いしてみようかな"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第10問.mp3",
       "sentences": [
         {
@@ -2142,28 +2096,7 @@
           "endMs": 25280
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "他の人を探さないとだめだね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "山田さんに断られたか"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "じゃ、お願いしてみようかな"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q27",
@@ -2171,6 +2104,24 @@
       "section": 4,
       "number": 11,
       "type": "即時応答",
+      "promptJa": "",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "いろいろ悩んだんだね"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "すぐに決められたんだね"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "少しは迷ったんだね"
+        }
+      ],
       "audioAssetPath": "output/audio/問題4_第11問.mp3",
       "sentences": [
         {
@@ -2207,28 +2158,7 @@
           "endMs": 22800
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "いろいろ悩んだんだね"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "すぐに決められたんだね"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "少しは迷ったんだね"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q28",
@@ -2236,6 +2166,29 @@
       "section": 5,
       "number": 1,
       "type": "統合理解",
+      "promptJa": "公園のゴミを減らすため、何を市役所に提案することにしましたか。",
+      "options": [
+        {
+          "id": "a",
+          "label": 1,
+          "textJa": "ベンチの近くに花壇を作ること"
+        },
+        {
+          "id": "b",
+          "label": 2,
+          "textJa": "ベンチを塗り直してきれいにすること"
+        },
+        {
+          "id": "c",
+          "label": 3,
+          "textJa": "看板を立てること"
+        },
+        {
+          "id": "d",
+          "label": 4,
+          "textJa": "公園を見回ること"
+        }
+      ],
       "audioAssetPath": "output/audio/問題5_第01問.mp3",
       "sentences": [
         {
@@ -2394,33 +2347,7 @@
           "endMs": 166800
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      },
-      "options": [
-        {
-          "id": "a",
-          "label": 1,
-          "textJa": "ベンチの近くに花壇を作ること"
-        },
-        {
-          "id": "b",
-          "label": 2,
-          "textJa": "ベンチを塗り直してきれいにすること"
-        },
-        {
-          "id": "c",
-          "label": 3,
-          "textJa": "看板を立てること"
-        },
-        {
-          "id": "d",
-          "label": 4,
-          "textJa": "公園を見回ること"
-        }
-      ]
+      "explanation": null
     },
     {
       "id": "n2_q29",
@@ -2428,6 +2355,8 @@
       "section": 5,
       "number": 2,
       "type": "統合理解",
+      "promptJa": "質問１：２人は最初にどの会場に行きますか。\n質問２：２人は２番目にどの会場に行きますか。",
+      "options": [],
       "audioAssetPath": "output/audio/問題5_第02問.mp3",
       "sentences": [
         {
@@ -2526,12 +2455,7 @@
           "endMs": 161440
         }
       ],
-      "explanation": {
-        "ja": null,
-        "zh": null,
-        "optionReasonsZh": {}
-      }
+      "explanation": null
     }
   ]
 }
-

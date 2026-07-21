@@ -14,6 +14,19 @@
       "audioResourceVersion": 1
     },
     {
+      "id": "n2_listening",
+      "year": 2024,
+      "month": 7,
+      "titleJa": "2024年7月・JLPT N2聴解",
+      "audioQuality": "不明",
+      "questionCount": 29,
+      "resourcePath": "assets/data/exams/n2_listening_problem123.json",
+      "supportsTest": false,
+      "audioDeliveryMode": "downloadRequired",
+      "audioResourceVersion": 1,
+      "audioPackageUrl": "https://download.appsaudio.com/202407_audio.zip"
+    },
+    {
       "id": "n2_listening_problem1",
       "year": null,
       "month": null,

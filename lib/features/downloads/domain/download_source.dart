@@ -1,31 +1,19 @@
-import 'dart:typed_data';
+import 'dart:io';
 
-/// 取得元と保存名をquestionIdで結び付けた1音声分の要求。
-class DownloadItem {
-  /// 問題別音声の取得要求を生成します。
-  const DownloadItem({
-    required this.questionId,
-    required this.sourcePath,
-    required this.fileName,
-  });
+import '../../practice/domain/practice_models.dart';
 
-  /// 音声と問題を対応付ける一意なIDです。
-  final String questionId;
-
-  /// 現在のDownload Sourceが読み込む音声pathです。
-  final String sourcePath;
-
-  /// Local Directoryへ保存するquestionIdベースのファイル名です。
-  final String fileName;
-}
-
-/// examに紐づく問題別音声のbytesを取得する取得元の抽象化。
+/// 試験単位のZIPを取得し、一時ファイルへ保存する取得元の抽象化。
 ///
-/// Mock（Bundle Asset）と将来のHTTP（Dio）実装を同じInterfaceで扱うことで、
-/// DownloadRepositoryはSourceの種類を意識せずに済みます。
+/// R2 HTTPとBundle Assetを使うMockを同じInterfaceで扱い、解凍・検証・Manifest保存は
+/// Repositoryへ集約します。
 abstract interface class DownloadSource {
-  /// 指定した問題別音声のbytesを取得します。
+  /// [summary]に対応するZIPを[destination]へ保存します。
   ///
-  /// [item]のquestionIdは保存後の対応確認、sourcePathは実際の取得に使用します。
-  Future<Uint8List> fetch(DownloadItem item);
+  /// [onProgress]にはネットワークまたは生成処理の進捗を`0.0`〜`1.0`で通知します。
+  Future<void> downloadArchive(
+    ExamSummary summary,
+    ExamResource resource,
+    File destination, {
+    required void Function(double progress) onProgress,
+  });
 }

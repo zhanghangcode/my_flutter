@@ -5,17 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../app/providers.dart';
 import '../../practice/domain/practice_models.dart';
 import '../data/local_download_repository.dart';
-import '../data/mock_download_source.dart';
+import '../data/r2_zip_download_source.dart';
 import '../domain/download_repository.dart';
 import '../domain/download_source.dart';
 import '../domain/download_state.dart';
 
-/// 問題別音声bytesの取得元を提供するProvider。
+/// R2 Custom Domainから試験単位ZIPを取得するSourceを提供するProvider。
 ///
-/// 現在はBundle Assetをサーバー応答に見立てたMockを使用し、将来はこのProviderだけを
-/// HTTP実装へ差し替えます。
+/// `AUDIO_PACKAGE_BASE_URL`は`--dart-define`で環境別に差し替えられます。
 final downloadSourceProvider = Provider<DownloadSource>(
-  (ref) => MockDownloadSource(),
+  (ref) => R2ZipDownloadSource(),
 );
 
 /// DownloadControllerと音源Resolverが共有するRepositoryを提供するProvider。

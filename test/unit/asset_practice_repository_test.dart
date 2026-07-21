@@ -19,7 +19,7 @@ void main() {
     final exams = await repository.getExams();
 
     // Then: 件数、本文、正解参照が想定どおりで、検証を通過したことを確認します。
-    expect(exams, hasLength(2));
+    expect(exams, hasLength(3));
     final demo = await repository.getExam('2026_07_demo');
     expect(demo.questions, hasLength(3));
     expect(
@@ -69,6 +69,33 @@ void main() {
     for (final question in practice.questions) {
       expect(question.hasCompleteTimeline, isTrue);
     }
+  });
+
+  test('downloadRequired教材はBundle Assetが存在しなくても検証を通過する', () async {
+    final repository = AssetPracticeRepository();
+    final exams = await repository.getExams();
+
+    final summary = exams.singleWhere((exam) => exam.id == 'n2_listening');
+    expect(summary.titleJa, '2024年7月・JLPT N2聴解');
+    expect(summary.year, 2024);
+    expect(summary.month, 7);
+    expect(summary.supportsTest, isFalse);
+    expect(summary.questionCount, 29);
+    expect(summary.audioDeliveryMode, AudioDeliveryMode.downloadRequired);
+    expect(
+      summary.audioPackageUrl,
+      'https://download.appsaudio.com/202407_audio.zip',
+    );
+
+    // 音声pathはZIP内の元ファイル名を指し、Bundle Assetとしては存在しません。
+    // downloadRequired教材はDownload前にBundle Assetを検証しないため、
+    // ここでは例外を送出せずに29問すべてを読み込めます。
+    final resource = await repository.getExam('n2_listening');
+    expect(resource.questions, hasLength(29));
+    expect(
+      resource.questions.first.audioAssetPath,
+      isNot(startsWith('assets/')),
+    );
   });
 
   test('rejects a partial sentence timeline', () async {
