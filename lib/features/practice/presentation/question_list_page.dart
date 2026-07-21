@@ -99,24 +99,27 @@ class _SectionCard extends StatelessWidget {
   final List<Question> questions;
 
   @override
-  /// section見出しと「第N問」の行一覧を1枚のCardとして構築します。
+  /// section見出しをタップで開閉できるCardとして構築します。既定は折りたたみ状態です。
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
       clipBehavior: Clip.antiAlias,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: ExpansionTile(
+        initiallyExpanded: false,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+        shape: const Border(),
+        collapsedShape: const Border(),
+        backgroundColor: Colors.transparent,
+        collapsedBackgroundColor: Colors.transparent,
+        iconColor: AppColors.muted,
+        collapsedIconColor: AppColors.muted,
+        title: Text(
+          '問題$section $typeLabel',
+          style: Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 10),
-            child: Text(
-              '問題$section $typeLabel',
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
-            ),
-          ),
-          const Divider(height: 1, color: Colors.white24),
           for (final question in questions)
             ListTile(
               title: Text('第${question.number}問'),

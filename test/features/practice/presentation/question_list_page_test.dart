@@ -45,10 +45,19 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // Then: 試験タイトルと、sectionごとの見出し・問題行を表示します。
+    // Then: 試験タイトルと、sectionごとの見出しを表示します。既定では折りたたまれており、
+    // 問題行はまだ表示しません。
     expect(find.text('2026年7月'), findsOneWidget);
     expect(find.text('問題1 課題理解'), findsOneWidget);
     expect(find.text('問題2 ポイント理解'), findsOneWidget);
+    expect(find.text('第1問'), findsNothing);
+
+    // When: 両方のsection見出しをタップして展開します。
+    await tester.tap(find.text('問題1 課題理解'));
+    await tester.tap(find.text('問題2 ポイント理解'));
+    await tester.pumpAndSettle();
+
+    // Then: 展開後は各sectionの問題行を表示します。
     expect(find.text('第1問'), findsNWidgets(2));
     expect(find.text('第2問'), findsOneWidget);
 

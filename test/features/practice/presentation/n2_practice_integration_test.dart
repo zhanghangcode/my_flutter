@@ -88,8 +88,14 @@ void main() {
     await tester.tap(find.text('N2聴解・問題1（3問）'));
     await tester.pumpAndSettle();
 
-    // Then: sectionごとの見出しと問題行を表示します。
+    // Then: sectionの見出しを表示します。既定では折りたたまれています。
     expect(find.text('問題1 課題理解'), findsOneWidget);
+
+    // When: section見出しをタップして展開します。
+    await tester.tap(find.text('問題1 課題理解'));
+    await tester.pumpAndSettle();
+
+    // Then: 展開後は問題行を表示します。
     expect(find.text('第1問'), findsOneWidget);
     expect(find.text('第2問'), findsOneWidget);
     expect(find.text('第3問'), findsOneWidget);
