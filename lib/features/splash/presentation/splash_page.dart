@@ -126,7 +126,7 @@ class _SplashPageState extends State<SplashPage>
                             child: Icon(
                               Icons.headphones,
                               size: compact ? 38 : 48,
-                              color: AppColors.accent,
+                              color: AppColors.gold,
                             ),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _SplashPageState extends State<SplashPage>
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: Colors.white,
+                                  color: AppColors.textPrimary,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.2,
                                 ),
@@ -153,7 +153,7 @@ class _SplashPageState extends State<SplashPage>
                             '聴いて、読んで、身につける',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: AppColors.muted,
+                              color: AppColors.textSecondary,
                               fontSize: 14,
                               letterSpacing: 0.6,
                             ),
@@ -170,7 +170,7 @@ class _SplashPageState extends State<SplashPage>
                         dimension: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.muted,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ),

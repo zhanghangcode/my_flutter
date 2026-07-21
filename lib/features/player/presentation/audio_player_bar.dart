@@ -105,7 +105,7 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
-                      color: AppColors.accent,
+                      color: AppColors.vermillion,
                       fontSize: 12,
                     ),
                   ),
@@ -249,8 +249,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                         color:
                             player.playbackMode ==
                                 QuestionPlaybackMode.sequential
-                            ? Colors.white
-                            : AppColors.accent,
+                            ? AppColors.textPrimary
+                            : AppColors.gold,
                         icon: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -267,8 +267,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                                   color:
                                       player.playbackMode ==
                                           QuestionPlaybackMode.sequential
-                                      ? Colors.white
-                                      : AppColors.accent,
+                                      ? AppColors.textPrimary
+                                      : AppColors.gold,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),

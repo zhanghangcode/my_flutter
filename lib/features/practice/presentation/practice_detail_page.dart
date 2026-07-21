@@ -179,8 +179,8 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
                     ? Icons.star
                     : Icons.star_outline,
                 color: favoriteIds.contains(widget.questionId)
-                    ? Colors.amber
-                    : Colors.white,
+                    ? AppColors.gold
+                    : AppColors.textPrimary,
               ),
             ),
           ],
@@ -572,7 +572,7 @@ class _ExplanationContent extends ConsumerWidget {
               child: Text(
                 '解説は未収録です',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.white60),
+                style: TextStyle(color: AppColors.textSecondary),
               ),
             ),
           ),
@@ -592,7 +592,7 @@ class _ExplanationContent extends ConsumerWidget {
         Text(explanation.ja, style: const TextStyle(fontSize: 17, height: 1.6)),
         if (showChinese) ...[
           const SizedBox(height: 20),
-          const Text('中国語翻訳', style: TextStyle(color: Colors.white60)),
+          const Text('中国語翻訳', style: TextStyle(color: AppColors.textSecondary)),
           const SizedBox(height: 8),
           Text(
             explanation.zh,
@@ -664,7 +664,7 @@ class _ModeSelector extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: selected == mode
-                          ? Colors.white24
+                          ? AppColors.gold.withValues(alpha: 0.18)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(11),
                     ),

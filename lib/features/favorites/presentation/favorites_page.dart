@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/providers.dart';
+import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../practice/domain/practice_models.dart';
 
@@ -177,7 +178,7 @@ class _SentenceList extends StatelessWidget {
         final match = matches[index];
         return Card(
           child: ListTile(
-            leading: const Icon(Icons.star, color: Colors.amber),
+            leading: const Icon(Icons.star, color: AppColors.gold),
             title: Text(match.sentence.textJa, maxLines: 2),
             subtitle: Text(
               '問題${match.question.section}-${match.question.number}番',

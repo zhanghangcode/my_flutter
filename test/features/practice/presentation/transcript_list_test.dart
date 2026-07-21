@@ -55,7 +55,7 @@ void main() {
     );
     expect(
       tester.widget<Text>(find.text('後半の文章')).style?.color,
-      AppColors.accent,
+      AppColors.gold,
     );
 
     await tester.pumpWidget(const SizedBox.shrink());

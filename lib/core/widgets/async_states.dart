@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../app/theme.dart';
+
 /// 非同期データの読み込み中に共通表示するインジケーター。
 class AppLoadingView extends StatelessWidget {
   /// 非同期データの読み込み中表示を生成します。
@@ -36,12 +38,12 @@ class AppEmptyView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: Colors.white38),
+            Icon(icon, size: 48, color: AppColors.textDisabled),
             const SizedBox(height: 16),
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.white60),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
           ],
         ),
@@ -73,7 +75,11 @@ class AppErrorView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, size: 48, color: Colors.redAccent),
+            const Icon(
+              Icons.error_outline,
+              size: 48,
+              color: AppColors.vermillion,
+            ),
             const SizedBox(height: 16),
             Text(message, textAlign: TextAlign.center),
             if (onRetry != null) ...[

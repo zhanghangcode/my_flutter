@@ -93,7 +93,7 @@ void main() {
     );
     expect(
       tester.widget<Text>(find.text('後半の文章')).style?.color,
-      AppColors.accent,
+      AppColors.gold,
     );
     final tileDecoration =
         tester
@@ -105,7 +105,7 @@ void main() {
                 )
                 .decoration
             as BoxDecoration;
-    expect((tileDecoration.border as Border).left.color, AppColors.accent);
+    expect((tileDecoration.border as Border).left.color, AppColors.gold);
 
     // Then: seek前の再生中状態を維持します(自動で一時停止しません)。
     expect(container.read(audioPlayerControllerProvider).isPlaying, isTrue);

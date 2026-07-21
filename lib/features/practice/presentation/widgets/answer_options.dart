@@ -45,7 +45,7 @@ class AnswerOptions extends ConsumerWidget {
           child: Text(
             '選択肢・正解は未収録です',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.white60),
+            style: TextStyle(color: AppColors.textSecondary),
           ),
         ),
       );
@@ -139,12 +139,12 @@ class _OptionCard extends StatelessWidget {
   /// 選択・正誤に対応する色、番号、本文を含むカードを構築します。
   Widget build(BuildContext context) {
     final color = isCorrect
-        ? AppColors.success
+        ? AppColors.jade
         : isWrong
-        ? AppColors.accent
+        ? AppColors.vermillion
         : selected
         ? Theme.of(context).colorScheme.primary
-        : Colors.white24;
+        : AppColors.border;
     return Material(
       color: AppColors.surface,
       borderRadius: BorderRadius.circular(16),
@@ -181,8 +181,9 @@ class _OptionCard extends StatelessWidget {
                 ),
               ),
               if (isCorrect)
-                const Icon(Icons.check_circle, color: AppColors.success),
-              if (isWrong) const Icon(Icons.cancel, color: AppColors.accent),
+                const Icon(Icons.check_circle, color: AppColors.jade),
+              if (isWrong)
+                const Icon(Icons.cancel, color: AppColors.vermillion),
             ],
           ),
         ),
@@ -207,7 +208,7 @@ class _ResultBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: (isCorrect ? AppColors.success : AppColors.accent).withValues(
+        color: (isCorrect ? AppColors.jade : AppColors.vermillion).withValues(
           alpha: 0.16,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -217,7 +218,7 @@ class _ResultBanner extends StatelessWidget {
         children: [
           Icon(
             isCorrect ? Icons.check_circle : Icons.cancel,
-            color: isCorrect ? AppColors.success : AppColors.accent,
+            color: isCorrect ? AppColors.jade : AppColors.vermillion,
           ),
           const SizedBox(width: 8),
           Text(isCorrect ? '正解です' : '不正解です'),

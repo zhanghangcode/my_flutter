@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../downloads/application/download_controller.dart';
 import '../../downloads/domain/download_state.dart';
@@ -37,7 +38,7 @@ class TestHomePage extends ConsumerWidget {
             const SizedBox(height: 6),
             const Text(
               '本文と解説を見ずに、音声を一度だけ聞いて回答します。',
-              style: TextStyle(color: Colors.white60),
+              style: TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 18),
             for (final exam in items) ...[

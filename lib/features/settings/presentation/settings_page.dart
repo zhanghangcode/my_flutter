@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/providers.dart';
+import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 
 /// 再生・表示設定と学習データ管理を提供する設定画面。
@@ -108,7 +109,7 @@ class SettingsPage extends ConsumerWidget {
               padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Text(
                 '収録された問題と音声は、このアプリのデモ用に作成されたオリジナル教材です。',
-                style: TextStyle(color: Colors.white54, fontSize: 12),
+                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
               ),
             ),
           ],

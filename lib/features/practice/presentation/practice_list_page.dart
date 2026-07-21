@@ -95,7 +95,7 @@ class _ExamCard extends HookConsumerWidget {
                   color: AppColors.surfaceHigh,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.graphic_eq, color: AppColors.accent),
+                child: const Icon(Icons.graphic_eq, color: AppColors.gold),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -109,7 +109,7 @@ class _ExamCard extends HookConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       '音質: ${exam.audioQuality}  ・  ${exam.questionCount}問',
-                      style: const TextStyle(color: Colors.white60),
+                      style: const TextStyle(color: AppColors.textSecondary),
                     ),
                     const SizedBox(height: 5),
                     _DownloadStatusLine(
@@ -194,25 +194,29 @@ class _DownloadStatusLine extends StatelessWidget {
                 value: state.progress,
                 minHeight: 6,
                 backgroundColor: AppColors.surfaceHigh,
-                color: AppColors.accent,
+                color: AppColors.gold,
               ),
             ),
           ),
           const SizedBox(width: 8),
           Text(
             '${(state.progress * 100).round()}%',
-            style: const TextStyle(color: AppColors.accent, fontSize: 12),
+            style: const TextStyle(color: AppColors.gold, fontSize: 12),
           ),
         ],
       );
     }
     final (icon, text, color) = bundled
-        ? (Icons.offline_pin, 'ローカルで利用可能', AppColors.success)
+        ? (Icons.offline_pin, 'ローカルで利用可能', AppColors.jade)
         : state.isDownloaded
-        ? (Icons.offline_pin, 'ダウンロード済み', AppColors.success)
+        ? (Icons.offline_pin, 'ダウンロード済み', AppColors.jade)
         : state.isFailed
-        ? (Icons.error_outline, 'ダウンロード失敗・タップして再試行', AppColors.accent)
-        : (Icons.cloud_download_outlined, 'タップしてダウンロード', Colors.white38);
+        ? (Icons.error_outline, 'ダウンロード失敗・タップして再試行', AppColors.vermillion)
+        : (
+            Icons.cloud_download_outlined,
+            'タップしてダウンロード',
+            AppColors.textDisabled,
+          );
     return Row(
       children: [
         Icon(icon, size: 16, color: color),

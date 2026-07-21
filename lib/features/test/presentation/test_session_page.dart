@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../player/application/audio_player_controller.dart';
 import '../../practice/presentation/widgets/answer_options.dart';
@@ -101,7 +102,9 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                         children: [
                           Text(
                             '問題 ${session.currentIndex + 1} / ${session.exam.questions.length}',
-                            style: const TextStyle(color: Colors.white60),
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                           const Spacer(),
                           Icon(
@@ -109,13 +112,15 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                                 ? Icons.volume_up
                                 : Icons.volume_off,
                             color: player.isPlaying
-                                ? Colors.white
-                                : Colors.white38,
+                                ? AppColors.textPrimary
+                                : AppColors.textDisabled,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             player.isPlaying ? '再生中' : '再生終了',
-                            style: const TextStyle(color: Colors.white60),
+                            style: const TextStyle(
+                              color: AppColors.textSecondary,
+                            ),
                           ),
                         ],
                       ),
