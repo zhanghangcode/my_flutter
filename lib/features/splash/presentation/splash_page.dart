@@ -3,10 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/theme.dart';
-
 /// Native Splashの後にブランド表示と起動待機を担当する画面。
 ///
+/// `assets/images/splash.png`（東京タワーの夕景）を全面背景として使用します。
 /// 現時点では最低表示時間だけを管理します。将来、設定やDatabaseなどの
 /// 初期化が必要になった場合は、[_completeStartup]で完了を待つ責務を拡張します。
 class SplashPage extends StatefulWidget {
@@ -25,17 +24,11 @@ class _SplashPageState extends State<SplashPage>
   /// Flutter Splashを最低限表示する時間です。
   static const _minimumDisplayDuration = Duration(seconds: 1);
 
-  /// ロゴと文言の表示Animationに使う時間です。
+  /// 文言の表示Animationに使う時間です。
   static const _animationDuration = Duration(milliseconds: 700);
 
-  /// ロゴ・文言Animationを進行させるControllerです。
+  /// 文言Animationを進行させるControllerです。
   late final AnimationController _animationController;
-
-  /// ロゴのフェードイン値です。
-  late final Animation<double> _logoOpacity;
-
-  /// ロゴの拡大率です。
-  late final Animation<double> _logoScale;
 
   /// アプリ名のフェードイン値です。
   late final Animation<double> _nameOpacity;
@@ -54,18 +47,13 @@ class _SplashPageState extends State<SplashPage>
       vsync: this,
       duration: _animationDuration,
     );
-    _logoOpacity = CurvedAnimation(
-      parent: _animationController,
-      curve: const Interval(0, 0.6, curve: Curves.easeOut),
-    );
-    _logoScale = Tween<double>(begin: 0.96, end: 1).animate(_logoOpacity);
     _nameOpacity = CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.2, 0.8, curve: Curves.easeOut),
+      curve: const Interval(0, 0.7, curve: Curves.easeOut),
     );
     _subtitleOpacity = CurvedAnimation(
       parent: _animationController,
-      curve: const Interval(0.4, 1, curve: Curves.easeOut),
+      curve: const Interval(0.3, 1, curve: Curves.easeOut),
     );
 
     _animationController.forward();
@@ -93,115 +81,97 @@ class _SplashPageState extends State<SplashPage>
   }
 
   @override
-  /// ロゴ、アプリ名、起動インジケーターを含むSplash UIを構築します。
+  /// 背景写真、アプリ名、起動インジケーターを含むSplash UIを構築します。
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     return Scaffold(
-      backgroundColor: AppColors.of(context).background,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
-          child: LayoutBuilder(
-            builder: (context, constraints) {
-              final compact = constraints.maxHeight < 420;
-              final logoSize = compact ? 76.0 : 96.0;
-              return Stack(
-                fit: StackFit.expand,
+      backgroundColor: Colors.black,
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset('assets/images/splash.png', fit: BoxFit.cover),
+          // 写真の明暗に関わらず文字を読みやすくするため、下部を暗くするscrimを重ねます。
+          const DecoratedBox(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                stops: [0, 0.5, 1],
+                colors: [
+                  Color(0x4D000000),
+                  Colors.transparent,
+                  Color(0xE6000000),
+                ],
+              ),
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _AnimatedSplashContent(
-                          animation: _logoOpacity,
-                          scaleAnimation: _logoScale,
-                          disableAnimation: disableAnimations,
-                          child: Container(
-                            width: logoSize,
-                            height: logoSize,
-                            decoration: BoxDecoration(
-                              color: AppColors.of(context).surface,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Icon(
-                              Icons.headphones,
-                              size: compact ? 38 : 48,
-                              color: AppColors.of(context).gold,
-                            ),
+                  _AnimatedSplashContent(
+                    animation: _nameOpacity,
+                    disableAnimation: disableAnimations,
+                    child: Text(
+                      '聴解トレーニング',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            letterSpacing: 1.2,
                           ),
-                        ),
-                        SizedBox(height: compact ? 18 : 24),
-                        _AnimatedSplashContent(
-                          animation: _nameOpacity,
-                          disableAnimation: disableAnimations,
-                          child: Text(
-                            '聴解トレーニング',
-                            textAlign: TextAlign.center,
-                            style: Theme.of(context).textTheme.headlineSmall
-                                ?.copyWith(
-                                  color: AppColors.of(context).textPrimary,
-                                  fontWeight: FontWeight.bold,
-                                  letterSpacing: 1.2,
-                                ),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        _AnimatedSplashContent(
-                          animation: _subtitleOpacity,
-                          disableAnimation: disableAnimations,
-                          child: Text(
-                            '聴いて、読んで、身につける',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColors.of(context).textSecondary,
-                              fontSize: 14,
-                              letterSpacing: 0.6,
-                            ),
-                          ),
-                        ),
-                      ],
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomCenter,
-                    child: Semantics(
-                      label: '読み込み中',
-                      child: SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.of(context).textSecondary,
-                        ),
+                  const SizedBox(height: 10),
+                  _AnimatedSplashContent(
+                    animation: _subtitleOpacity,
+                    disableAnimation: disableAnimations,
+                    child: Text(
+                      '聴いて、読んで、身につける',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        color: Colors.white.withValues(alpha: 0.85),
+                        fontSize: 14,
+                        letterSpacing: 0.6,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  Semantics(
+                    label: '読み込み中',
+                    child: SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white.withValues(alpha: 0.85),
                       ),
                     ),
                   ),
                 ],
-              );
-            },
+              ),
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 }
 
 class _AnimatedSplashContent extends StatelessWidget {
-  /// Animationの有効状態に応じて子Widgetをフェード・拡大表示するWidgetを生成します。
+  /// Animationの有効状態に応じて子Widgetをフェード表示するWidgetを生成します。
   ///
-  /// [animation]はフェード値、[scaleAnimation]は任意の拡大率です。`null`の場合は拡大せず、
-  /// [disableAnimation]が`true`なら[child]を静止表示します。
+  /// [animation]はフェード値、[disableAnimation]が`true`なら[child]を静止表示します。
   const _AnimatedSplashContent({
     required this.animation,
     required this.disableAnimation,
     required this.child,
-    this.scaleAnimation,
   });
 
   /// フェード表示に使用する0から1のAnimationです。
   final Animation<double> animation;
-
-  /// 任意の拡大率Animationです。`null`ならScaleTransitionを使用しません。
-  final Animation<double>? scaleAnimation;
 
   /// OSのreduce motion設定によりAnimationを省略するかを示します。
   final bool disableAnimation;
@@ -210,12 +180,9 @@ class _AnimatedSplashContent extends StatelessWidget {
   final Widget child;
 
   @override
-  /// 設定に応じて静止WidgetまたはFadeTransition・ScaleTransitionを構築します。
+  /// 設定に応じて静止WidgetまたはFadeTransitionを構築します。
   Widget build(BuildContext context) {
     if (disableAnimation) return child;
-    final animatedChild = scaleAnimation == null
-        ? child
-        : ScaleTransition(scale: scaleAnimation!, child: child);
-    return FadeTransition(opacity: animation, child: animatedChild);
+    return FadeTransition(opacity: animation, child: child);
   }
 }
