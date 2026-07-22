@@ -72,10 +72,10 @@ class TestResultPage extends ConsumerWidget {
                       CircularProgressIndicator(
                         value: item.accuracy,
                         strokeWidth: 14,
-                        backgroundColor: AppColors.divider,
+                        backgroundColor: AppColors.of(context).divider,
                         color: item.accuracy >= 0.7
-                            ? AppColors.jade
-                            : AppColors.vermillion,
+                            ? AppColors.of(context).jade
+                            : AppColors.of(context).vermillion,
                       ),
                       Center(
                         child: Text(
@@ -135,8 +135,8 @@ class TestResultPage extends ConsumerWidget {
                               ? Icons.star
                               : Icons.star_outline,
                           color: favoriteIds.contains(question.id)
-                              ? AppColors.gold
-                              : AppColors.textSecondary,
+                              ? AppColors.of(context).gold
+                              : AppColors.of(context).textSecondary,
                         ),
                       ),
                     ),
@@ -179,7 +179,10 @@ class _ResultRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         children: [
-          Text(label, style: const TextStyle(color: AppColors.textSecondary)),
+          Text(
+            label,
+            style: TextStyle(color: AppColors.of(context).textSecondary),
+          ),
           const Spacer(),
           Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
         ],

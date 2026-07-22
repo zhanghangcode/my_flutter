@@ -97,7 +97,7 @@ class _SplashPageState extends State<SplashPage>
   Widget build(BuildContext context) {
     final disableAnimations = MediaQuery.disableAnimationsOf(context);
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: AppColors.of(context).background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 28),
@@ -119,14 +119,14 @@ class _SplashPageState extends State<SplashPage>
                           child: Container(
                             width: logoSize,
                             height: logoSize,
-                            decoration: const BoxDecoration(
-                              color: AppColors.surface,
+                            decoration: BoxDecoration(
+                              color: AppColors.of(context).surface,
                               shape: BoxShape.circle,
                             ),
                             child: Icon(
                               Icons.headphones,
                               size: compact ? 38 : 48,
-                              color: AppColors.gold,
+                              color: AppColors.of(context).gold,
                             ),
                           ),
                         ),
@@ -139,7 +139,7 @@ class _SplashPageState extends State<SplashPage>
                             textAlign: TextAlign.center,
                             style: Theme.of(context).textTheme.headlineSmall
                                 ?.copyWith(
-                                  color: AppColors.textPrimary,
+                                  color: AppColors.of(context).textPrimary,
                                   fontWeight: FontWeight.bold,
                                   letterSpacing: 1.2,
                                 ),
@@ -149,11 +149,11 @@ class _SplashPageState extends State<SplashPage>
                         _AnimatedSplashContent(
                           animation: _subtitleOpacity,
                           disableAnimation: disableAnimations,
-                          child: const Text(
+                          child: Text(
                             '聴いて、読んで、身につける',
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              color: AppColors.textSecondary,
+                              color: AppColors.of(context).textSecondary,
                               fontSize: 14,
                               letterSpacing: 0.6,
                             ),
@@ -166,11 +166,11 @@ class _SplashPageState extends State<SplashPage>
                     alignment: Alignment.bottomCenter,
                     child: Semantics(
                       label: '読み込み中',
-                      child: const SizedBox.square(
+                      child: SizedBox.square(
                         dimension: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          color: AppColors.textSecondary,
+                          color: AppColors.of(context).textSecondary,
                         ),
                       ),
                     ),

@@ -102,8 +102,8 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                         children: [
                           Text(
                             '問題 ${session.currentIndex + 1} / ${session.exam.questions.length}',
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
+                            style: TextStyle(
+                              color: AppColors.of(context).textSecondary,
                             ),
                           ),
                           const Spacer(),
@@ -112,14 +112,14 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                                 ? Icons.volume_up
                                 : Icons.volume_off,
                             color: player.isPlaying
-                                ? AppColors.textPrimary
-                                : AppColors.textDisabled,
+                                ? AppColors.of(context).textPrimary
+                                : AppColors.of(context).textDisabled,
                           ),
                           const SizedBox(width: 6),
                           Text(
                             player.isPlaying ? '再生中' : '再生終了',
-                            style: const TextStyle(
-                              color: AppColors.textSecondary,
+                            style: TextStyle(
+                              color: AppColors.of(context).textSecondary,
                             ),
                           ),
                         ],

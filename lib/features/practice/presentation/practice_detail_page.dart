@@ -179,8 +179,8 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
                     ? Icons.star
                     : Icons.star_outline,
                 color: favoriteIds.contains(widget.questionId)
-                    ? AppColors.gold
-                    : AppColors.textPrimary,
+                    ? AppColors.of(context).gold
+                    : AppColors.of(context).textPrimary,
               ),
             ),
           ],
@@ -465,7 +465,7 @@ class _PracticeDetailPageState extends ConsumerState<PracticeDetailPage> {
     if (!context.mounted) return;
     final selectedQuestionId = await showModalBottomSheet<String>(
       context: context,
-      backgroundColor: AppColors.surface,
+      backgroundColor: AppColors.of(context).surface,
       builder: (sheetContext) => SafeArea(
         child: ListView(
           shrinkWrap: true,
@@ -560,19 +560,19 @@ class _ExplanationContent extends ConsumerWidget {
     if (explanation == null) {
       return ListView(
         padding: const EdgeInsets.all(20),
-        children: const [
-          Text(
+        children: [
+          const Text(
             '解説',
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Card(
             child: Padding(
-              padding: EdgeInsets.all(18),
+              padding: const EdgeInsets.all(18),
               child: Text(
                 '解説は未収録です',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.textSecondary),
+                style: TextStyle(color: AppColors.of(context).textSecondary),
               ),
             ),
           ),
@@ -592,7 +592,10 @@ class _ExplanationContent extends ConsumerWidget {
         Text(explanation.ja, style: const TextStyle(fontSize: 17, height: 1.6)),
         if (showChinese) ...[
           const SizedBox(height: 20),
-          const Text('中国語翻訳', style: TextStyle(color: AppColors.textSecondary)),
+          Text(
+            '中国語翻訳',
+            style: TextStyle(color: AppColors.of(context).textSecondary),
+          ),
           const SizedBox(height: 8),
           Text(
             explanation.zh,
@@ -649,7 +652,7 @@ class _ModeSelector extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.of(context).surface,
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
@@ -664,7 +667,7 @@ class _ModeSelector extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 10),
                     decoration: BoxDecoration(
                       color: selected == mode
-                          ? AppColors.gold.withValues(alpha: 0.18)
+                          ? AppColors.of(context).gold.withValues(alpha: 0.18)
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(11),
                     ),

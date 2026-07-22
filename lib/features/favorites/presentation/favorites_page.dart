@@ -178,7 +178,7 @@ class _SentenceList extends StatelessWidget {
         final match = matches[index];
         return Card(
           child: ListTile(
-            leading: const Icon(Icons.star, color: AppColors.gold),
+            leading: Icon(Icons.star, color: AppColors.of(context).gold),
             title: Text(match.sentence.textJa, maxLines: 2),
             subtitle: Text(
               '問題${match.question.section}-${match.question.number}番',

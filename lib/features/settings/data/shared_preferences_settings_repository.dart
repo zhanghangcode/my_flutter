@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../domain/app_settings.dart';
@@ -28,6 +29,9 @@ class SharedPreferencesSettingsRepository implements SettingsRepository {
   /// 再生位置復元設定を保存するKeyです。
   static const _rememberPositionKey = 'remember_position';
 
+  /// 表示テーマ設定を保存するKeyです。
+  static const _themeModeKey = 'theme_mode';
+
   @override
   /// SharedPreferencesから設定を非同期で読み込みます。
   ///
@@ -39,6 +43,7 @@ class SharedPreferencesSettingsRepository implements SettingsRepository {
       showChinese: await _preferences.getBool(_showChineseKey) ?? true,
       rememberPosition:
           await _preferences.getBool(_rememberPositionKey) ?? true,
+      themeMode: _parseThemeMode(await _preferences.getString(_themeModeKey)),
     );
   }
 
@@ -53,6 +58,17 @@ class SharedPreferencesSettingsRepository implements SettingsRepository {
       _preferences.setBool(_autoScrollKey, settings.autoScroll),
       _preferences.setBool(_showChineseKey, settings.showChinese),
       _preferences.setBool(_rememberPositionKey, settings.rememberPosition),
+      _preferences.setString(_themeModeKey, settings.themeMode.name),
     ]);
+  }
+
+  /// 保存済み文字列を[ThemeMode]へ復元します。未保存または不正値は既存ユーザーの
+  /// 見た目を変えないよう[ThemeMode.dark]にフォールバックします。
+  ThemeMode _parseThemeMode(String? value) {
+    if (value == null) return ThemeMode.dark;
+    return ThemeMode.values.firstWhere(
+      (mode) => mode.name == value,
+      orElse: () => ThemeMode.dark,
+    );
   }
 }

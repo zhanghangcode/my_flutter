@@ -39,13 +39,13 @@ class AnswerOptions extends ConsumerWidget {
   /// 問題の採点可否と現在の回答Stateに応じた選択肢UIを構築します。
   Widget build(BuildContext context, WidgetRef ref) {
     if (!question.isGradable) {
-      return const Card(
+      return Card(
         child: Padding(
-          padding: EdgeInsets.all(18),
+          padding: const EdgeInsets.all(18),
           child: Text(
             '選択肢・正解は未収録です',
             textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.textSecondary),
+            style: TextStyle(color: AppColors.of(context).textSecondary),
           ),
         ),
       );
@@ -138,15 +138,16 @@ class _OptionCard extends StatelessWidget {
   @override
   /// 選択・正誤に対応する色、番号、本文を含むカードを構築します。
   Widget build(BuildContext context) {
+    final tokens = AppColors.of(context);
     final color = isCorrect
-        ? AppColors.jade
+        ? tokens.jade
         : isWrong
-        ? AppColors.vermillion
+        ? tokens.vermillion
         : selected
         ? Theme.of(context).colorScheme.primary
-        : AppColors.border;
+        : tokens.border;
     return Material(
-      color: AppColors.surface,
+      color: tokens.surface,
       borderRadius: BorderRadius.circular(16),
       child: InkWell(
         onTap: onTap,
@@ -180,10 +181,8 @@ class _OptionCard extends StatelessWidget {
                   style: const TextStyle(fontSize: 17),
                 ),
               ),
-              if (isCorrect)
-                const Icon(Icons.check_circle, color: AppColors.jade),
-              if (isWrong)
-                const Icon(Icons.cancel, color: AppColors.vermillion),
+              if (isCorrect) Icon(Icons.check_circle, color: tokens.jade),
+              if (isWrong) Icon(Icons.cancel, color: tokens.vermillion),
             ],
           ),
         ),
@@ -205,10 +204,11 @@ class _ResultBanner extends StatelessWidget {
   @override
   /// 正誤に対応するIconと文言を含むバナーを構築します。
   Widget build(BuildContext context) {
+    final tokens = AppColors.of(context);
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: (isCorrect ? AppColors.jade : AppColors.vermillion).withValues(
+        color: (isCorrect ? tokens.jade : tokens.vermillion).withValues(
           alpha: 0.16,
         ),
         borderRadius: BorderRadius.circular(12),
@@ -218,7 +218,7 @@ class _ResultBanner extends StatelessWidget {
         children: [
           Icon(
             isCorrect ? Icons.check_circle : Icons.cancel,
-            color: isCorrect ? AppColors.jade : AppColors.vermillion,
+            color: isCorrect ? tokens.jade : tokens.vermillion,
           ),
           const SizedBox(width: 8),
           Text(isCorrect ? '正解です' : '不正解です'),

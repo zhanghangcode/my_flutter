@@ -89,7 +89,7 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
       });
     }
     return Material(
-      color: AppColors.background,
+      color: AppColors.of(context).background,
       elevation: 12,
       child: SafeArea(
         top: false,
@@ -104,8 +104,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                     player.errorMessage ?? '音声エラー',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: AppColors.vermillion,
+                    style: TextStyle(
+                      color: AppColors.of(context).vermillion,
                       fontSize: 12,
                     ),
                   ),
@@ -249,8 +249,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                         color:
                             player.playbackMode ==
                                 QuestionPlaybackMode.sequential
-                            ? AppColors.textPrimary
-                            : AppColors.gold,
+                            ? AppColors.of(context).textPrimary
+                            : AppColors.of(context).gold,
                         icon: Stack(
                           clipBehavior: Clip.none,
                           children: [
@@ -267,8 +267,8 @@ class _AudioPlayerBarState extends ConsumerState<AudioPlayerBar> {
                                   color:
                                       player.playbackMode ==
                                           QuestionPlaybackMode.sequential
-                                      ? AppColors.textPrimary
-                                      : AppColors.gold,
+                                      ? AppColors.of(context).textPrimary
+                                      : AppColors.of(context).gold,
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),

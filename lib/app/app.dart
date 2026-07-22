@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'providers.dart';
 import 'router.dart';
 import 'theme.dart';
 
@@ -7,7 +9,7 @@ import 'theme.dart';
 ///
 /// `main` の ProviderScope 配下で構築され、各画面に共通のデザインと
 /// GoRouter による画面遷移を提供します。
-class NihongoListeningApp extends StatelessWidget {
+class NihongoListeningApp extends ConsumerWidget {
   /// アプリ全体のThemeとRouterを提供するルートWidgetを生成します。
   ///
   /// [key]はWidgetツリー内でこのWidgetを識別する任意のKeyです。生成時に
@@ -16,13 +18,19 @@ class NihongoListeningApp extends StatelessWidget {
 
   @override
   /// MaterialApp.routerを構築してThemeとGoRouter設定を全画面へ適用します。
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 設定読み込み中・エラー時は既存ユーザーの見た目を変えないようDarkのままにします。
+    final themeMode =
+        ref.watch(settingsControllerProvider).value?.themeMode ??
+        ThemeMode.dark;
     // MaterialApp.router は Navigator を直接組み立てず、appRouter の宣言に従って
     // 表示画面を構築します。Theme もここで一度だけ設定し、全 Route へ継承します。
     return MaterialApp.router(
       title: '聴解トレーニング',
       debugShowCheckedModeBanner: false,
-      theme: buildDarkTheme(),
+      theme: buildLightTheme(),
+      darkTheme: buildDarkTheme(),
+      themeMode: themeMode,
       routerConfig: appRouter,
     );
   }

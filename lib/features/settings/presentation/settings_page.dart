@@ -82,6 +82,49 @@ class SettingsPage extends ConsumerWidget {
                   ),
             ),
             const _SectionTitle('表示'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: const [
+                      Icon(Icons.brightness_6),
+                      SizedBox(width: 16),
+                      Text('テーマ'),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  SegmentedButton<ThemeMode>(
+                    segments: const [
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        icon: Icon(Icons.light_mode),
+                        label: Text('ライト'),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        icon: Icon(Icons.dark_mode),
+                        label: Text('ダーク'),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        icon: Icon(Icons.brightness_auto),
+                        label: Text('自動'),
+                      ),
+                    ],
+                    selected: {value.themeMode},
+                    showSelectedIcon: false,
+                    onSelectionChanged: (selection) => ref
+                        .read(settingsControllerProvider.notifier)
+                        .saveChanges(
+                          (current) =>
+                              current.copyWith(themeMode: selection.first),
+                        ),
+                  ),
+                ],
+              ),
+            ),
             SwitchListTile(
               secondary: const Icon(Icons.translate),
               title: const Text('中国語の翻訳を表示'),
@@ -105,11 +148,14 @@ class SettingsPage extends ConsumerWidget {
               title: Text('聴解トレーニング'),
               subtitle: Text('バージョン 1.0.0 ・ オフライン体験版'),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
               child: Text(
                 '収録された問題と音声は、このアプリのデモ用に作成されたオリジナル教材です。',
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                style: TextStyle(
+                  color: AppColors.of(context).textSecondary,
+                  fontSize: 12,
+                ),
               ),
             ),
           ],

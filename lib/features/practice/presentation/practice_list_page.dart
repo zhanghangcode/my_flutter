@@ -92,10 +92,13 @@ class _ExamCard extends HookConsumerWidget {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: AppColors.surfaceHigh,
+                  color: AppColors.of(context).surfaceHigh,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.graphic_eq, color: AppColors.gold),
+                child: Icon(
+                  Icons.graphic_eq,
+                  color: AppColors.of(context).gold,
+                ),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -109,7 +112,9 @@ class _ExamCard extends HookConsumerWidget {
                     const SizedBox(height: 8),
                     Text(
                       '音質: ${exam.audioQuality}  ・  ${exam.questionCount}問',
-                      style: const TextStyle(color: AppColors.textSecondary),
+                      style: TextStyle(
+                        color: AppColors.of(context).textSecondary,
+                      ),
                     ),
                     const SizedBox(height: 5),
                     _DownloadStatusLine(
@@ -193,29 +198,33 @@ class _DownloadStatusLine extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: state.progress,
                 minHeight: 6,
-                backgroundColor: AppColors.surfaceHigh,
-                color: AppColors.gold,
+                backgroundColor: AppColors.of(context).surfaceHigh,
+                color: AppColors.of(context).gold,
               ),
             ),
           ),
           const SizedBox(width: 8),
           Text(
             '${(state.progress * 100).round()}%',
-            style: const TextStyle(color: AppColors.gold, fontSize: 12),
+            style: TextStyle(color: AppColors.of(context).gold, fontSize: 12),
           ),
         ],
       );
     }
     final (icon, text, color) = bundled
-        ? (Icons.offline_pin, 'ローカルで利用可能', AppColors.jade)
+        ? (Icons.offline_pin, 'ローカルで利用可能', AppColors.of(context).jade)
         : state.isDownloaded
-        ? (Icons.offline_pin, 'ダウンロード済み', AppColors.jade)
+        ? (Icons.offline_pin, 'ダウンロード済み', AppColors.of(context).jade)
         : state.isFailed
-        ? (Icons.error_outline, 'ダウンロード失敗・タップして再試行', AppColors.vermillion)
+        ? (
+            Icons.error_outline,
+            'ダウンロード失敗・タップして再試行',
+            AppColors.of(context).vermillion,
+          )
         : (
             Icons.cloud_download_outlined,
             'タップしてダウンロード',
-            AppColors.textDisabled,
+            AppColors.of(context).textDisabled,
           );
     return Row(
       children: [

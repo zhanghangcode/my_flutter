@@ -178,12 +178,12 @@ class TranscriptSentenceTile extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(12, 14, 4, 14),
           decoration: BoxDecoration(
             color: active
-                ? AppColors.gold.withValues(alpha: 0.08)
+                ? AppColors.of(context).gold.withValues(alpha: 0.08)
                 : Colors.transparent,
             border: Border(
               left: BorderSide(
                 width: 4,
-                color: active ? AppColors.gold : Colors.transparent,
+                color: active ? AppColors.of(context).gold : Colors.transparent,
               ),
             ),
           ),
@@ -197,7 +197,9 @@ class TranscriptSentenceTile extends ConsumerWidget {
                     Text(
                       '${sentence.speaker == null ? '' : '${sentence.speaker}：'}${sentence.textJa}',
                       style: TextStyle(
-                        color: active ? AppColors.gold : AppColors.textPrimary,
+                        color: active
+                            ? AppColors.of(context).gold
+                            : AppColors.of(context).textPrimary,
                         fontSize: 18,
                         height: 1.55,
                       ),
@@ -206,8 +208,8 @@ class TranscriptSentenceTile extends ConsumerWidget {
                       const SizedBox(height: 6),
                       Text(
                         sentence.translationZh!,
-                        style: const TextStyle(
-                          color: AppColors.textSecondary,
+                        style: TextStyle(
+                          color: AppColors.of(context).textSecondary,
                           height: 1.45,
                         ),
                       ),
@@ -222,7 +224,9 @@ class TranscriptSentenceTile extends ConsumerWidget {
                     .toggleSentenceFavorite(sentence.id, questionId),
                 icon: Icon(
                   favorite ? Icons.star : Icons.star_outline,
-                  color: favorite ? AppColors.gold : AppColors.textSecondary,
+                  color: favorite
+                      ? AppColors.of(context).gold
+                      : AppColors.of(context).textSecondary,
                 ),
               ),
             ],

@@ -111,8 +111,8 @@ class _SectionCard extends StatelessWidget {
         collapsedShape: const Border(),
         backgroundColor: Colors.transparent,
         collapsedBackgroundColor: Colors.transparent,
-        iconColor: AppColors.textSecondary,
-        collapsedIconColor: AppColors.textSecondary,
+        iconColor: AppColors.of(context).textSecondary,
+        collapsedIconColor: AppColors.of(context).textSecondary,
         title: Text(
           '問題$section $typeLabel',
           style: Theme.of(
@@ -123,9 +123,9 @@ class _SectionCard extends StatelessWidget {
           for (final question in questions)
             ListTile(
               title: Text('第${question.number}問'),
-              trailing: const Icon(
+              trailing: Icon(
                 Icons.chevron_right,
-                color: AppColors.textSecondary,
+                color: AppColors.of(context).textSecondary,
               ),
               onTap: () =>
                   context.push('/practice/$examId/question/${question.id}'),

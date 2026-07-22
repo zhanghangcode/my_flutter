@@ -36,9 +36,9 @@ class TestHomePage extends ConsumerWidget {
               style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 6),
-            const Text(
+            Text(
               '本文と解説を見ずに、音声を一度だけ聞いて回答します。',
-              style: TextStyle(color: AppColors.textSecondary),
+              style: TextStyle(color: AppColors.of(context).textSecondary),
             ),
             const SizedBox(height: 18),
             for (final exam in items) ...[
