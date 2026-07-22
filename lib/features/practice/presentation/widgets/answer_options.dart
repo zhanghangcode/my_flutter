@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme.dart';
 import '../../application/practice_detail_controller.dart';
 import '../../domain/practice_models.dart';
+import 'answer_option_image.dart';
 
 /// 練習モードとテストモードで共有する選択肢一覧。
 ///
@@ -61,6 +62,7 @@ class AnswerOptions extends ConsumerWidget {
       children: [
         for (final option in question.options) ...[
           _OptionCard(
+            question: question,
             option: option,
             selected: option.id == selected,
             isCorrect: submitted && option.id == question.correctOptionId,
@@ -110,15 +112,20 @@ class AnswerOptions extends ConsumerWidget {
 class _OptionCard extends StatelessWidget {
   /// 1つの選択肢を状態色付きで表示するカードを生成します。
   ///
-  /// [option]は表示内容、[selected]、[isCorrect]、[isWrong]は表示状態です。[onTap]は利用者が
+  /// [question]は[option]が属する問題（画像Resolverの照合に使用）、[option]は
+  /// 表示内容、[selected]、[isCorrect]、[isWrong]は表示状態です。[onTap]は利用者が
   /// カードをタップした時に呼ばれます。
   const _OptionCard({
+    required this.question,
     required this.option,
     required this.selected,
     required this.isCorrect,
     required this.isWrong,
     required this.onTap,
   });
+
+  /// [option]が属する問題です。
+  final Question question;
 
   /// 表示する選択肢です。
   final AnswerOption option;
@@ -162,27 +169,33 @@ class _OptionCard extends StatelessWidget {
               width: selected || isCorrect ? 2 : 1,
             ),
           ),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: 34,
-                height: 34,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  border: Border.all(color: color),
-                ),
-                child: Text('${option.label}'),
+              Row(
+                children: [
+                  Container(
+                    width: 34,
+                    height: 34,
+                    alignment: Alignment.center,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(color: color),
+                    ),
+                    child: Text('${option.label}'),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      option.textJa,
+                      style: const TextStyle(fontSize: 17),
+                    ),
+                  ),
+                  if (isCorrect) Icon(Icons.check_circle, color: tokens.jade),
+                  if (isWrong) Icon(Icons.cancel, color: tokens.vermillion),
+                ],
               ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Text(
-                  option.textJa,
-                  style: const TextStyle(fontSize: 17),
-                ),
-              ),
-              if (isCorrect) Icon(Icons.check_circle, color: tokens.jade),
-              if (isWrong) Icon(Icons.cancel, color: tokens.vermillion),
+              AnswerOptionImage(question: question, option: option),
             ],
           ),
         ),

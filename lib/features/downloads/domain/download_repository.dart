@@ -17,8 +17,9 @@ class DownloadInspection {
   /// questionIdをキーとする検証済みLocal Fileの絶対pathです。
   final Map<String, String> localAudioPaths;
 
-  /// 画像を持つ問題のquestionIdをキーとする検証済みLocal Fileの絶対pathです。
-  /// 画像を持たない問題のキーは含みません。
+  /// 画像を持つ問題・選択肢の検証済みLocal Fileの絶対pathです。keyは問題の場合は
+  /// questionId、選択肢の場合は`'<questionId>_<optionId>'`という複合keyです。
+  /// 画像を持たない問題・選択肢のキーは含みません。
   final Map<String, String> localImagePaths;
 
   /// 検証済みの音声リソースversionです。
@@ -80,5 +81,17 @@ abstract interface class DownloadRepository {
     ExamSummary summary,
     ExamResource resource,
     Question question,
+  );
+
+  /// 検証済みManifestから[question]に属する[option]自体の図版に対応するLocal File
+  /// pathを返します。
+  ///
+  /// [option]が画像を持たない、またはManifest・実ファイルが不完全な場合は`null`を
+  /// 返し、Assetへはfallbackしません。
+  Future<String?> resolveLocalOptionImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+    AnswerOption option,
   );
 }

@@ -24,3 +24,14 @@ final questionImageSourceProvider =
       (ref, question) =>
           ref.watch(questionImageResolverProvider).resolve(question),
     );
+
+/// [AnswerOption.hasImage]な選択肢1件分の表示可能な図版を解決するfamily Provider。
+///
+/// 画像を持たない選択肢では呼び出さないでください（Widget側で
+/// [AnswerOption.hasImage]を事前に確認します）。
+final answerOptionImageSourceProvider =
+    FutureProvider.family<QuestionImageSource, (Question, AnswerOption)>(
+      (ref, key) => ref
+          .watch(questionImageResolverProvider)
+          .resolveOption(key.$1, key.$2),
+    );

@@ -120,6 +120,7 @@ _AnswerOption _$AnswerOptionFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       label: (json['label'] as num).toInt(),
       textJa: json['textJa'] as String,
+      imageAssetPath: json['imageAssetPath'] as String?,
     );
 
 Map<String, dynamic> _$AnswerOptionToJson(_AnswerOption instance) =>
@@ -127,6 +128,7 @@ Map<String, dynamic> _$AnswerOptionToJson(_AnswerOption instance) =>
       'id': instance.id,
       'label': instance.label,
       'textJa': instance.textJa,
+      'imageAssetPath': instance.imageAssetPath,
     };
 
 _TranscriptSentence _$TranscriptSentenceFromJson(Map<String, dynamic> json) =>

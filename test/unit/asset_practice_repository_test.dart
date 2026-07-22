@@ -308,6 +308,87 @@ void main() {
     },
   );
 
+  test('画像タイプの選択肢はBundle Assetを検証してhasImageをtrueにする', () async {
+    final repository = AssetPracticeRepository(
+      bundle: _bundleFor(
+        question: _question(
+          options: [_option(imageAssetPath: 'assets/images/q1_a.jpg')],
+        ),
+        includeImage: true,
+      ),
+    );
+
+    final resource = await repository.getExam('exam');
+    final option = resource.questions.single.options.single;
+    expect(option.hasImage, isTrue);
+    expect(option.imageAssetPath, 'assets/images/q1_a.jpg');
+  });
+
+  test('画像を持たない選択肢はimageAssetPathがnullでhasImageがfalse', () async {
+    final repository = AssetPracticeRepository(
+      bundle: _bundleFor(question: _question(options: [_option()])),
+    );
+
+    final resource = await repository.getExam('exam');
+    final option = resource.questions.single.options.single;
+    expect(option.hasImage, isFalse);
+    expect(option.imageAssetPath, isNull);
+  });
+
+  test(
+    'rejects missing or zero-byte option image assets and empty imageAssetPath',
+    () async {
+      final missingImageRepository = AssetPracticeRepository(
+        bundle: _bundleFor(
+          question: _question(
+            options: [_option(imageAssetPath: 'assets/images/q1_a.jpg')],
+          ),
+          includeImage: false,
+        ),
+      );
+      await expectLater(
+        missingImageRepository.getExam('exam'),
+        throwsA(
+          isA<ContentValidationException>().having(
+            (error) => error.toString(),
+            'message',
+            allOf(contains('q1/a'), contains('assets/images/q1_a.jpg')),
+          ),
+        ),
+      );
+
+      final zeroByteImageRepository = AssetPracticeRepository(
+        bundle: _bundleFor(
+          question: _question(
+            options: [_option(imageAssetPath: 'assets/images/q1_a.jpg')],
+          ),
+          includeImage: true,
+          imageBytes: const [],
+        ),
+      );
+      await expectLater(
+        zeroByteImageRepository.getExam('exam'),
+        throwsA(isA<ContentValidationException>()),
+      );
+
+      final emptyPathRepository = AssetPracticeRepository(
+        bundle: _bundleFor(
+          question: _question(options: [_option(imageAssetPath: '')]),
+        ),
+      );
+      await expectLater(
+        emptyPathRepository.getExam('exam'),
+        throwsA(
+          isA<ContentValidationException>().having(
+            (error) => error.toString(),
+            'message',
+            contains('選択肢の画像pathが空です'),
+          ),
+        ),
+      );
+    },
+  );
+
   test('rejects invalid audio delivery mode and resource version', () async {
     AssetPracticeRepository repositoryFor(Map<String, dynamic> summary) {
       return AssetPracticeRepository(
@@ -368,20 +449,35 @@ Map<String, dynamic> _resource({
   'questions': [question],
 };
 
-Map<String, dynamic> _question({String? imageAssetPath}) => {
+Map<String, dynamic> _question({
+  String? imageAssetPath,
+  List<Map<String, dynamic>> options = const [],
+}) => {
   'id': 'q1',
   'examId': 'exam',
   'section': 1,
   'number': 1,
   'type': '課題理解',
   'promptJa': '問題文',
-  'options': <Map<String, dynamic>>[],
+  'options': options,
   'correctOptionId': null,
   'audioAssetPath': 'assets/audio/q1.mp3',
   'sentences': <Map<String, dynamic>>[
     {'id': 'q1_s1', 'order': 0, 'textJa': '本文'},
   ],
   'explanation': null,
+  'imageAssetPath': imageAssetPath,
+};
+
+Map<String, dynamic> _option({
+  String id = 'a',
+  int label = 1,
+  String textJa = '選択肢A',
+  String? imageAssetPath,
+}) => {
+  'id': id,
+  'label': label,
+  'textJa': textJa,
   'imageAssetPath': imageAssetPath,
 };
 
@@ -393,7 +489,14 @@ AssetBundle _bundleFor({
   bool includeImage = false,
   List<int> imageBytes = const [1],
 }) {
-  final imageAssetPath = question['imageAssetPath'] as String?;
+  final imagePaths = <String>{
+    if (question['imageAssetPath'] case final String path when path.isNotEmpty)
+      path,
+    for (final option
+        in (question['options'] as List).cast<Map<String, dynamic>>())
+      if (option['imageAssetPath'] case final String path when path.isNotEmpty)
+        path,
+  };
   final assets = <String, List<int>>{
     'assets/data/catalog.json': utf8.encode(
       jsonEncode({
@@ -405,8 +508,8 @@ AssetBundle _bundleFor({
       jsonEncode(_resource(id: 'exam', question: question)),
     ),
     if (includeAudio) 'assets/audio/q1.mp3': audioBytes,
-    if (includeImage && imageAssetPath != null && imageAssetPath.isNotEmpty)
-      imageAssetPath: imageBytes,
+    if (includeImage)
+      for (final path in imagePaths) path: imageBytes,
   };
   return _MemoryAssetBundle(assets);
 }

@@ -222,6 +222,14 @@ class _EntryDownloadRepository implements DownloadRepository {
     Question question,
   ) async => null;
 
+  @override
+  Future<String?> resolveLocalOptionImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+    AnswerOption option,
+  ) async => null;
+
   /// 保存完了時に返す固定検査結果です。
   static const inspection = DownloadInspection(
     status: DownloadStatus.downloaded,

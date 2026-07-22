@@ -144,16 +144,25 @@ abstract class AnswerOption with _$AnswerOption {
   /// 問題に表示する選択肢を生成します。
   ///
   /// [id]は正解・回答記録で使用する安定ID、[label]は画面上の番号、[textJa]は
-  /// 日本語の選択肢本文です。生成時の副作用はありません。
+  /// 日本語の選択肢本文です。[imageAssetPath]が非`null`の場合、選択肢自体が図版
+  /// （地図・図表など）を持つ「画像タイプ」の選択肢として扱います。生成時の副作用は
+  /// ありません。
   const factory AnswerOption({
     required String id,
     required int label,
     required String textJa,
+    String? imageAssetPath,
   }) = _AnswerOption;
 
   /// JSONから選択肢を復元します。
   factory AnswerOption.fromJson(Map<String, dynamic> json) =>
       _$AnswerOptionFromJson(json);
+}
+
+/// 選択肢データの充足状況から、図版表示の要否を判定します。
+extension AnswerOptionCapabilities on AnswerOption {
+  /// 選択肢自体に付随する図版を持つ「画像タイプ」の選択肢かを返します。
+  bool get hasImage => imageAssetPath != null;
 }
 
 /// 音声内の開始・終了時刻を持つ本文の 1 文。

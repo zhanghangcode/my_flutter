@@ -6,22 +6,24 @@ import 'package:nihongo_listening/features/practice/application/question_image_p
 import 'package:nihongo_listening/features/practice/domain/practice_models.dart';
 import 'package:nihongo_listening/features/practice/domain/question_image_resolver.dart';
 import 'package:nihongo_listening/features/practice/domain/question_image_source.dart';
-import 'package:nihongo_listening/features/practice/presentation/widgets/question_image.dart';
+import 'package:nihongo_listening/features/practice/presentation/widgets/answer_option_image.dart';
 
-/// QuestionImageの表示・読込・エラー状態と、Provider経由の解決結果を検証します。
+/// AnswerOptionImageの表示・読込・エラー状態と、Provider経由の解決結果を検証します。
 ///
 /// 実Local Fileを`Image.file`で描画する検証はflutter_testのfake時計内では
 /// 完了しない実isolate依存のdecodeを伴うため行わず、Provider層の解決結果だけを
-/// `ProviderContainer`で直接確認します。
+/// `ProviderContainer`で直接確認します（question_image_test.dartと同じ方針）。
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
-  testWidgets('画像を持たない問題は何も表示しない', (tester) async {
+  testWidgets('画像を持たない選択肢は何も表示しない', (tester) async {
     await tester.pumpWidget(
       ProviderScope(
         child: MaterialApp(
           theme: buildDarkTheme(),
-          home: Scaffold(body: QuestionImage(question: _question())),
+          home: Scaffold(
+            body: AnswerOptionImage(question: _question(), option: _option()),
+          ),
         ),
       ),
     );
@@ -43,8 +45,9 @@ void main() {
         child: MaterialApp(
           theme: buildDarkTheme(),
           home: Scaffold(
-            body: QuestionImage(
-              question: _question(imageAssetPath: 'assets/images/q1.jpg'),
+            body: AnswerOptionImage(
+              question: _question(),
+              option: _option(imageAssetPath: 'assets/images/q1_a.jpg'),
             ),
           ),
         ),
@@ -55,42 +58,40 @@ void main() {
     expect(find.text('画像を読み込めませんでした。'), findsOneWidget);
   });
 
-  test('画像を持つ問題はquestionImageSourceProviderがLocal Fileを解決する', () async {
+  test('画像を持つ選択肢はanswerOptionImageSourceProviderがLocal Fileを解決する', () async {
     final resolver = _FakeQuestionImageResolver(
-      const QuestionImageSource.file('/local/downloads/q1.jpg'),
+      const QuestionImageSource.file('/local/downloads/q1_a.jpg'),
     );
     final container = ProviderContainer(
       overrides: [questionImageResolverProvider.overrideWithValue(resolver)],
     );
     addTearDown(container.dispose);
 
-    final question = _question(imageAssetPath: 'assets/images/q1.jpg');
+    final question = _question();
+    final option = _option(imageAssetPath: 'assets/images/q1_a.jpg');
     final source = await container.read(
-      questionImageSourceProvider(question).future,
+      answerOptionImageSourceProvider((question, option)).future,
     );
 
-    expect(source, const QuestionImageSource.file('/local/downloads/q1.jpg'));
+    expect(source, const QuestionImageSource.file('/local/downloads/q1_a.jpg'));
     expect(source.isFile, isTrue);
   });
 }
 
-/// resolve結果またはエラーを固定で返すテスト用Resolver。
+/// resolveOption結果またはエラーを固定で返すテスト用Resolver。
 class _FakeQuestionImageResolver implements QuestionImageResolver {
   /// [source]を成功結果、[error]を送出する任意の失敗として保持します。
   _FakeQuestionImageResolver(this.source, {this.error});
 
-  /// resolve成功時に返す図版です。
+  /// resolveOption成功時に返す図版です。
   final QuestionImageSource? source;
 
-  /// 非`null`の場合にresolveから送出する例外です。
+  /// 非`null`の場合にresolveOptionから送出する例外です。
   final Object? error;
 
   @override
-  Future<QuestionImageSource> resolve(Question question) async {
-    final failure = error;
-    if (failure != null) throw failure;
-    return source!;
-  }
+  Future<QuestionImageSource> resolve(Question question) =>
+      throw UnimplementedError();
 
   @override
   Future<QuestionImageSource> resolveOption(
@@ -104,15 +105,22 @@ class _FakeQuestionImageResolver implements QuestionImageResolver {
 }
 
 /// テスト対象のWidgetへ渡す最小限の問題データを生成します。
-Question _question({String? imageAssetPath}) => Question(
+Question _question() => const Question(
   id: 'q1',
   examId: 'exam',
   section: 1,
   number: 1,
   type: 'demo',
   promptJa: '問題1',
-  options: const [],
+  options: [],
   audioAssetPath: 'assets/audio/q1.mp3',
-  sentences: const [],
+  sentences: [],
+);
+
+/// テスト対象のWidgetへ渡す最小限の選択肢データを生成します。
+AnswerOption _option({String? imageAssetPath}) => AnswerOption(
+  id: 'a',
+  label: 1,
+  textJa: '選択肢A',
   imageAssetPath: imageAssetPath,
 );

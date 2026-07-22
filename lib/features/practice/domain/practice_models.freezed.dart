@@ -1190,7 +1190,7 @@ $QuestionExplanationCopyWith<$Res>? get explanation {
 /// @nodoc
 mixin _$AnswerOption {
 
- String get id; int get label; String get textJa;
+ String get id; int get label; String get textJa; String? get imageAssetPath;
 /// Create a copy of AnswerOption
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -1203,16 +1203,16 @@ $AnswerOptionCopyWith<AnswerOption> get copyWith => _$AnswerOptionCopyWithImpl<A
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnswerOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.textJa, textJa) || other.textJa == textJa));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AnswerOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.textJa, textJa) || other.textJa == textJa)&&(identical(other.imageAssetPath, imageAssetPath) || other.imageAssetPath == imageAssetPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,textJa);
+int get hashCode => Object.hash(runtimeType,id,label,textJa,imageAssetPath);
 
 @override
 String toString() {
-  return 'AnswerOption(id: $id, label: $label, textJa: $textJa)';
+  return 'AnswerOption(id: $id, label: $label, textJa: $textJa, imageAssetPath: $imageAssetPath)';
 }
 
 
@@ -1223,7 +1223,7 @@ abstract mixin class $AnswerOptionCopyWith<$Res>  {
   factory $AnswerOptionCopyWith(AnswerOption value, $Res Function(AnswerOption) _then) = _$AnswerOptionCopyWithImpl;
 @useResult
 $Res call({
- String id, int label, String textJa
+ String id, int label, String textJa, String? imageAssetPath
 });
 
 
@@ -1240,12 +1240,13 @@ class _$AnswerOptionCopyWithImpl<$Res>
 
 /// Create a copy of AnswerOption
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? textJa = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? label = null,Object? textJa = null,Object? imageAssetPath = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as int,textJa: null == textJa ? _self.textJa : textJa // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageAssetPath: freezed == imageAssetPath ? _self.imageAssetPath : imageAssetPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 
@@ -1330,10 +1331,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int label,  String textJa)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  int label,  String textJa,  String? imageAssetPath)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AnswerOption() when $default != null:
-return $default(_that.id,_that.label,_that.textJa);case _:
+return $default(_that.id,_that.label,_that.textJa,_that.imageAssetPath);case _:
   return orElse();
 
 }
@@ -1351,10 +1352,10 @@ return $default(_that.id,_that.label,_that.textJa);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int label,  String textJa)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  int label,  String textJa,  String? imageAssetPath)  $default,) {final _that = this;
 switch (_that) {
 case _AnswerOption():
-return $default(_that.id,_that.label,_that.textJa);case _:
+return $default(_that.id,_that.label,_that.textJa,_that.imageAssetPath);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1371,10 +1372,10 @@ return $default(_that.id,_that.label,_that.textJa);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int label,  String textJa)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  int label,  String textJa,  String? imageAssetPath)?  $default,) {final _that = this;
 switch (_that) {
 case _AnswerOption() when $default != null:
-return $default(_that.id,_that.label,_that.textJa);case _:
+return $default(_that.id,_that.label,_that.textJa,_that.imageAssetPath);case _:
   return null;
 
 }
@@ -1386,12 +1387,13 @@ return $default(_that.id,_that.label,_that.textJa);case _:
 @JsonSerializable()
 
 class _AnswerOption implements AnswerOption {
-  const _AnswerOption({required this.id, required this.label, required this.textJa});
+  const _AnswerOption({required this.id, required this.label, required this.textJa, this.imageAssetPath});
   factory _AnswerOption.fromJson(Map<String, dynamic> json) => _$AnswerOptionFromJson(json);
 
 @override final  String id;
 @override final  int label;
 @override final  String textJa;
+@override final  String? imageAssetPath;
 
 /// Create a copy of AnswerOption
 /// with the given fields replaced by the non-null parameter values.
@@ -1406,16 +1408,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnswerOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.textJa, textJa) || other.textJa == textJa));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AnswerOption&&(identical(other.id, id) || other.id == id)&&(identical(other.label, label) || other.label == label)&&(identical(other.textJa, textJa) || other.textJa == textJa)&&(identical(other.imageAssetPath, imageAssetPath) || other.imageAssetPath == imageAssetPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,label,textJa);
+int get hashCode => Object.hash(runtimeType,id,label,textJa,imageAssetPath);
 
 @override
 String toString() {
-  return 'AnswerOption(id: $id, label: $label, textJa: $textJa)';
+  return 'AnswerOption(id: $id, label: $label, textJa: $textJa, imageAssetPath: $imageAssetPath)';
 }
 
 
@@ -1426,7 +1428,7 @@ abstract mixin class _$AnswerOptionCopyWith<$Res> implements $AnswerOptionCopyWi
   factory _$AnswerOptionCopyWith(_AnswerOption value, $Res Function(_AnswerOption) _then) = __$AnswerOptionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, int label, String textJa
+ String id, int label, String textJa, String? imageAssetPath
 });
 
 
@@ -1443,12 +1445,13 @@ class __$AnswerOptionCopyWithImpl<$Res>
 
 /// Create a copy of AnswerOption
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? textJa = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? label = null,Object? textJa = null,Object? imageAssetPath = freezed,}) {
   return _then(_AnswerOption(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,label: null == label ? _self.label : label // ignore: cast_nullable_to_non_nullable
 as int,textJa: null == textJa ? _self.textJa : textJa // ignore: cast_nullable_to_non_nullable
-as String,
+as String,imageAssetPath: freezed == imageAssetPath ? _self.imageAssetPath : imageAssetPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

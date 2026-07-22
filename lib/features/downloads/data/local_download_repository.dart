@@ -164,7 +164,7 @@ class LocalDownloadRepository implements DownloadRepository {
             )
             .toList();
         if (matches.length != 1 || await matches.single.length() <= 0) {
-          throw StateError('missing or duplicate media: ${item.questionId}');
+          throw StateError('missing or duplicate media: ${item.mediaId}');
         }
 
         final targetDirectory = item.mediaType == _MediaType.audio
@@ -176,12 +176,12 @@ class LocalDownloadRepository implements DownloadRepository {
         final sourceBytes = await matches.single.length();
         final writtenBytes = await partial.length();
         if (writtenBytes <= 0 || writtenBytes != sourceBytes) {
-          throw StateError('incomplete file: ${item.questionId}');
+          throw StateError('incomplete file: ${item.mediaId}');
         }
         if (await target.exists()) await target.delete();
         await partial.rename(target.path);
         if (!await target.exists() || await target.length() != sourceBytes) {
-          throw StateError('rename verification failed: ${item.questionId}');
+          throw StateError('rename verification failed: ${item.mediaId}');
         }
         onProgress(0.9 + ((index + 1) / items.length * 0.1));
       }
@@ -257,6 +257,28 @@ class LocalDownloadRepository implements DownloadRepository {
         : null;
   }
 
+  @override
+  Future<String?> resolveLocalOptionImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+    AnswerOption option,
+  ) async {
+    final matchedQuestion = resource.questions
+        .where((item) => item.id == question.id)
+        .singleOrNull;
+    if (question.examId != summary.id ||
+        option.imageAssetPath == null ||
+        matchedQuestion == null ||
+        !matchedQuestion.options.any((item) => item.id == option.id)) {
+      return null;
+    }
+    final inspection = await inspect(summary, resource);
+    return inspection.isDownloaded
+        ? inspection.localImagePaths['${question.id}_${option.id}']
+        : null;
+  }
+
   /// Download対象のmetadataと試験内容が安全に対応しているかを確認します。
   void _validateRequest(ExamSummary summary, ExamResource resource) {
     if (summary.audioDeliveryMode != AudioDeliveryMode.downloadRequired) {
@@ -282,7 +304,7 @@ class LocalDownloadRepository implements DownloadRepository {
             questionIds.add(question.id) &&
             p.extension(question.audioAssetPath).isNotEmpty)
           _ExpectedMediaFile(
-            questionId: question.id,
+            mediaId: question.id,
             sourcePath: question.audioAssetPath,
             fileName:
                 '${question.id}${p.extension(question.audioAssetPath).toLowerCase()}',
@@ -293,17 +315,17 @@ class LocalDownloadRepository implements DownloadRepository {
     ];
   }
 
-  /// imageAssetPathを持つ問題だけを対象に、安全なLocal Manifest項目を生成します。
+  /// imageAssetPathを持つ問題・選択肢だけを対象に、安全なLocal Manifest項目を生成します。
   ///
-  /// 画像を持たない問題は対象外とし、[ExamDownloadException]も送出しません。
+  /// 画像を持たない問題・選択肢は対象外とし、[ExamDownloadException]も送出しません。
   List<_ExpectedMediaFile> _buildImageItems(ExamResource resource) {
     return [
-      for (final question in resource.questions)
+      for (final question in resource.questions) ...[
         if (question.imageAssetPath case final imageAssetPath?)
           if (_safeId.hasMatch(question.id) &&
               p.extension(imageAssetPath).isNotEmpty)
             _ExpectedMediaFile(
-              questionId: question.id,
+              mediaId: question.id,
               sourcePath: imageAssetPath,
               fileName:
                   '${question.id}${p.extension(imageAssetPath).toLowerCase()}',
@@ -311,6 +333,22 @@ class LocalDownloadRepository implements DownloadRepository {
             )
           else
             throw const ExamDownloadException('問題別画像の情報が正しくありません。'),
+        for (final option in question.options)
+          if (option.imageAssetPath case final optionImagePath?)
+            if (_safeId.hasMatch(question.id) &&
+                _safeId.hasMatch(option.id) &&
+                p.extension(optionImagePath).isNotEmpty)
+              _ExpectedMediaFile(
+                mediaId: '${question.id}_${option.id}',
+                sourcePath: optionImagePath,
+                fileName:
+                    '${question.id}_${option.id}'
+                    '${p.extension(optionImagePath).toLowerCase()}',
+                mediaType: _MediaType.image,
+              )
+            else
+              throw const ExamDownloadException('選択肢別画像の情報が正しくありません。'),
+      ],
     ];
   }
 
@@ -332,7 +370,7 @@ class LocalDownloadRepository implements DownloadRepository {
     for (final item in _buildAudioItems(resource)) {
       final file = File(p.join(directory.path, item.fileName));
       if (!await file.exists() || await file.length() <= 0) return null;
-      paths[item.questionId] = file.path;
+      paths[item.mediaId] = file.path;
     }
     return Map.unmodifiable(paths);
   }
@@ -357,7 +395,7 @@ class LocalDownloadRepository implements DownloadRepository {
     for (final item in imageItems) {
       final file = File(p.join(directory.path, item.fileName));
       if (!await file.exists() || await file.length() <= 0) return null;
-      paths[item.questionId] = file.path;
+      paths[item.mediaId] = file.path;
     }
     return Map.unmodifiable(paths);
   }
@@ -442,15 +480,18 @@ enum _MediaType {
 }
 
 /// ZIP内の元ファイル名と検証後のLocalファイル名を対応付けます。
+///
+/// [mediaId]は保存先Mapのkeyです。問題の音声・画像はquestionIdそのもの、選択肢の
+/// 画像は`'<questionId>_<optionId>'`という複合keyを使用します。
 class _ExpectedMediaFile {
   const _ExpectedMediaFile({
-    required this.questionId,
+    required this.mediaId,
     required this.sourcePath,
     required this.fileName,
     required this.mediaType,
   });
 
-  final String questionId;
+  final String mediaId;
   final String sourcePath;
   final String fileName;
   final _MediaType mediaType;

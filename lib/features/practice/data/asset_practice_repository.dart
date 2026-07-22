@@ -188,6 +188,10 @@ class AssetPracticeRepository implements PracticeRepository {
             '選択肢IDが不正または重複しています: ${question.id}',
           );
         }
+        if (option.imageAssetPath case final imageAssetPath?
+            when imageAssetPath.isEmpty) {
+          throw ContentValidationException('選択肢の画像pathが空です: ${question.id}');
+        }
       }
       if (question.correctOptionId != null && !question.isGradable) {
         throw ContentValidationException('正解の選択肢がありません: ${question.id}');
@@ -250,25 +254,42 @@ class AssetPracticeRepository implements PracticeRepository {
     }
   }
 
-  /// imageAssetPathを持つ問題だけを対象に、画像Assetの存在と非0-byteを検証します。
+  /// imageAssetPathを持つ問題・選択肢だけを対象に、画像Assetの存在と非0-byteを
+  /// 検証します。
   ///
-  /// 画像を持たない問題は対象外です。[resource]内のいずれかのAssetを読めない場合は
-  /// 問題IDとpathを含む例外を送出します。
+  /// 画像を持たない問題・選択肢は対象外です。[resource]内のいずれかのAssetを
+  /// 読めない場合は問題ID（選択肢の場合は選択肢IDも含む）とpathを含む例外を
+  /// 送出します。
   Future<void> _validateImageAssets(ExamResource resource) async {
     for (final question in resource.questions) {
       final imageAssetPath = question.imageAssetPath;
-      if (imageAssetPath == null) continue;
-      try {
-        final data = await _bundle.load(imageAssetPath);
-        if (data.lengthInBytes == 0) {
-          throw StateError('0 byte');
-        }
-      } catch (error) {
-        throw ContentValidationException(
-          '画像Assetが見つからないか空です: ${question.id}\n'
-          '$imageAssetPath\n$error',
+      if (imageAssetPath != null) {
+        await _validateImageAsset(imageAssetPath, question.id);
+      }
+      for (final option in question.options) {
+        final optionImagePath = option.imageAssetPath;
+        if (optionImagePath == null) continue;
+        await _validateImageAsset(
+          optionImagePath,
+          '${question.id}/${option.id}',
         );
       }
+    }
+  }
+
+  /// [imageAssetPath]の存在と非0-byteを検証します。
+  ///
+  /// [label]は失敗時の利用者向けメッセージに含める問題・選択肢の識別子です。
+  Future<void> _validateImageAsset(String imageAssetPath, String label) async {
+    try {
+      final data = await _bundle.load(imageAssetPath);
+      if (data.lengthInBytes == 0) {
+        throw StateError('0 byte');
+      }
+    } catch (error) {
+      throw ContentValidationException(
+        '画像Assetが見つからないか空です: $label\n$imageAssetPath\n$error',
+      );
     }
   }
 }
