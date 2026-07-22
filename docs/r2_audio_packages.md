@@ -66,8 +66,22 @@ zip -j 2026_07_demo-v1.zip \
   assets/audio/demo_q3.wav
 ```
 
+## 画像タイプの問題（imageAssetPath）
+
+教材JSONの`Question.imageAssetPath`が非`null`の問題は、同じZIPに画像も含めてください。
+音声と同様にbasenameの一致で照合し、`imageAssetPath`を持つ問題の分だけが対象になります
+（画像を持たない問題は無視されます）。音声・画像は同じZIP・同じ`audioPackageUrl`から
+まとめて取得し、端末では`downloads/exams/<examId>/audio/`と`.../images/`へ別々に保存
+されます。
+
+```text
+audio-vbr/問題1_第01問.mp3
+images/問題1_第01問.jpg
+```
+
 ## ダウンロード前の検証について
 
 `downloadRequired`教材はBundle Assetを同梱しないため、教材読み込み時（`getExam`）では
-問題データ（本文・選択肢・時間軸など）だけを検証し、音声ファイルの存在確認は行いません。
-音声の実在・非0-byte・件数一致の検証は、ZIPダウンロード後にLocal Directoryへ対して行います。
+問題データ（本文・選択肢・時間軸など）だけを検証し、音声・画像ファイルの存在確認は行い
+ません。実在・非0-byte・件数一致の検証は、ZIPダウンロード後にLocal Directoryへ対して
+行います。

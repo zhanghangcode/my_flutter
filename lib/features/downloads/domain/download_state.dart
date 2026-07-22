@@ -23,6 +23,7 @@ class ExamDownloadState {
     this.progress = 0,
     this.errorMessage,
     this.localAudioPaths = const {},
+    this.localImagePaths = const {},
     this.resourceVersion = 0,
   });
 
@@ -39,11 +40,13 @@ class ExamDownloadState {
   /// 保存・検証まで完了した状態を生成します。
   const ExamDownloadState.downloaded({
     required Map<String, String> localAudioPaths,
+    Map<String, String> localImagePaths = const {},
     required int resourceVersion,
   }) : this._(
          status: DownloadStatus.downloaded,
          progress: 1,
          localAudioPaths: localAudioPaths,
+         localImagePaths: localImagePaths,
          resourceVersion: resourceVersion,
        );
 
@@ -64,6 +67,9 @@ class ExamDownloadState {
 
   /// questionIdをキーとする検証済みLocal Fileの絶対pathです。
   final Map<String, String> localAudioPaths;
+
+  /// 画像を持つ問題のquestionIdをキーとする検証済みLocal Fileの絶対pathです。
+  final Map<String, String> localImagePaths;
 
   /// 現在のLocal Manifestで検証済みの音声リソースversionです。
   final int resourceVersion;

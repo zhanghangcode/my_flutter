@@ -858,7 +858,7 @@ as List<Question>,
 /// @nodoc
 mixin _$Question {
 
- String get id; String get examId; int get section; int get number; String get type; String get promptJa; List<AnswerOption> get options; String? get correctOptionId; String get audioAssetPath; List<TranscriptSentence> get sentences; QuestionExplanation? get explanation;
+ String get id; String get examId; int get section; int get number; String get type; String get promptJa; List<AnswerOption> get options; String? get correctOptionId; String get audioAssetPath; List<TranscriptSentence> get sentences; QuestionExplanation? get explanation; String? get imageAssetPath;
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -871,16 +871,16 @@ $QuestionCopyWith<Question> get copyWith => _$QuestionCopyWithImpl<Question>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Question&&(identical(other.id, id) || other.id == id)&&(identical(other.examId, examId) || other.examId == examId)&&(identical(other.section, section) || other.section == section)&&(identical(other.number, number) || other.number == number)&&(identical(other.type, type) || other.type == type)&&(identical(other.promptJa, promptJa) || other.promptJa == promptJa)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionId, correctOptionId) || other.correctOptionId == correctOptionId)&&(identical(other.audioAssetPath, audioAssetPath) || other.audioAssetPath == audioAssetPath)&&const DeepCollectionEquality().equals(other.sentences, sentences)&&(identical(other.explanation, explanation) || other.explanation == explanation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Question&&(identical(other.id, id) || other.id == id)&&(identical(other.examId, examId) || other.examId == examId)&&(identical(other.section, section) || other.section == section)&&(identical(other.number, number) || other.number == number)&&(identical(other.type, type) || other.type == type)&&(identical(other.promptJa, promptJa) || other.promptJa == promptJa)&&const DeepCollectionEquality().equals(other.options, options)&&(identical(other.correctOptionId, correctOptionId) || other.correctOptionId == correctOptionId)&&(identical(other.audioAssetPath, audioAssetPath) || other.audioAssetPath == audioAssetPath)&&const DeepCollectionEquality().equals(other.sentences, sentences)&&(identical(other.explanation, explanation) || other.explanation == explanation)&&(identical(other.imageAssetPath, imageAssetPath) || other.imageAssetPath == imageAssetPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,examId,section,number,type,promptJa,const DeepCollectionEquality().hash(options),correctOptionId,audioAssetPath,const DeepCollectionEquality().hash(sentences),explanation);
+int get hashCode => Object.hash(runtimeType,id,examId,section,number,type,promptJa,const DeepCollectionEquality().hash(options),correctOptionId,audioAssetPath,const DeepCollectionEquality().hash(sentences),explanation,imageAssetPath);
 
 @override
 String toString() {
-  return 'Question(id: $id, examId: $examId, section: $section, number: $number, type: $type, promptJa: $promptJa, options: $options, correctOptionId: $correctOptionId, audioAssetPath: $audioAssetPath, sentences: $sentences, explanation: $explanation)';
+  return 'Question(id: $id, examId: $examId, section: $section, number: $number, type: $type, promptJa: $promptJa, options: $options, correctOptionId: $correctOptionId, audioAssetPath: $audioAssetPath, sentences: $sentences, explanation: $explanation, imageAssetPath: $imageAssetPath)';
 }
 
 
@@ -891,7 +891,7 @@ abstract mixin class $QuestionCopyWith<$Res>  {
   factory $QuestionCopyWith(Question value, $Res Function(Question) _then) = _$QuestionCopyWithImpl;
 @useResult
 $Res call({
- String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation
+ String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation, String? imageAssetPath
 });
 
 
@@ -908,7 +908,7 @@ class _$QuestionCopyWithImpl<$Res>
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,Object? imageAssetPath = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,examId: null == examId ? _self.examId : examId // ignore: cast_nullable_to_non_nullable
@@ -921,7 +921,8 @@ as List<AnswerOption>,correctOptionId: freezed == correctOptionId ? _self.correc
 as String?,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
 as String,sentences: null == sentences ? _self.sentences : sentences // ignore: cast_nullable_to_non_nullable
 as List<TranscriptSentence>,explanation: freezed == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
-as QuestionExplanation?,
+as QuestionExplanation?,imageAssetPath: freezed == imageAssetPath ? _self.imageAssetPath : imageAssetPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 /// Create a copy of Question
@@ -1018,10 +1019,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation,  String? imageAssetPath)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Question() when $default != null:
-return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
+return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation,_that.imageAssetPath);case _:
   return orElse();
 
 }
@@ -1039,10 +1040,10 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation,  String? imageAssetPath)  $default,) {final _that = this;
 switch (_that) {
 case _Question():
-return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
+return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation,_that.imageAssetPath);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -1059,10 +1060,10 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String examId,  int section,  int number,  String type,  String promptJa,  List<AnswerOption> options,  String? correctOptionId,  String audioAssetPath,  List<TranscriptSentence> sentences,  QuestionExplanation? explanation,  String? imageAssetPath)?  $default,) {final _that = this;
 switch (_that) {
 case _Question() when $default != null:
-return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation);case _:
+return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_that.promptJa,_that.options,_that.correctOptionId,_that.audioAssetPath,_that.sentences,_that.explanation,_that.imageAssetPath);case _:
   return null;
 
 }
@@ -1074,7 +1075,7 @@ return $default(_that.id,_that.examId,_that.section,_that.number,_that.type,_tha
 @JsonSerializable()
 
 class _Question implements Question {
-  const _Question({required this.id, required this.examId, required this.section, required this.number, required this.type, required this.promptJa, required final  List<AnswerOption> options, this.correctOptionId, required this.audioAssetPath, required final  List<TranscriptSentence> sentences, this.explanation}): _options = options,_sentences = sentences;
+  const _Question({required this.id, required this.examId, required this.section, required this.number, required this.type, required this.promptJa, required final  List<AnswerOption> options, this.correctOptionId, required this.audioAssetPath, required final  List<TranscriptSentence> sentences, this.explanation, this.imageAssetPath}): _options = options,_sentences = sentences;
   factory _Question.fromJson(Map<String, dynamic> json) => _$QuestionFromJson(json);
 
 @override final  String id;
@@ -1100,6 +1101,7 @@ class _Question implements Question {
 }
 
 @override final  QuestionExplanation? explanation;
+@override final  String? imageAssetPath;
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
@@ -1114,16 +1116,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Question&&(identical(other.id, id) || other.id == id)&&(identical(other.examId, examId) || other.examId == examId)&&(identical(other.section, section) || other.section == section)&&(identical(other.number, number) || other.number == number)&&(identical(other.type, type) || other.type == type)&&(identical(other.promptJa, promptJa) || other.promptJa == promptJa)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.correctOptionId, correctOptionId) || other.correctOptionId == correctOptionId)&&(identical(other.audioAssetPath, audioAssetPath) || other.audioAssetPath == audioAssetPath)&&const DeepCollectionEquality().equals(other._sentences, _sentences)&&(identical(other.explanation, explanation) || other.explanation == explanation));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Question&&(identical(other.id, id) || other.id == id)&&(identical(other.examId, examId) || other.examId == examId)&&(identical(other.section, section) || other.section == section)&&(identical(other.number, number) || other.number == number)&&(identical(other.type, type) || other.type == type)&&(identical(other.promptJa, promptJa) || other.promptJa == promptJa)&&const DeepCollectionEquality().equals(other._options, _options)&&(identical(other.correctOptionId, correctOptionId) || other.correctOptionId == correctOptionId)&&(identical(other.audioAssetPath, audioAssetPath) || other.audioAssetPath == audioAssetPath)&&const DeepCollectionEquality().equals(other._sentences, _sentences)&&(identical(other.explanation, explanation) || other.explanation == explanation)&&(identical(other.imageAssetPath, imageAssetPath) || other.imageAssetPath == imageAssetPath));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,id,examId,section,number,type,promptJa,const DeepCollectionEquality().hash(_options),correctOptionId,audioAssetPath,const DeepCollectionEquality().hash(_sentences),explanation);
+int get hashCode => Object.hash(runtimeType,id,examId,section,number,type,promptJa,const DeepCollectionEquality().hash(_options),correctOptionId,audioAssetPath,const DeepCollectionEquality().hash(_sentences),explanation,imageAssetPath);
 
 @override
 String toString() {
-  return 'Question(id: $id, examId: $examId, section: $section, number: $number, type: $type, promptJa: $promptJa, options: $options, correctOptionId: $correctOptionId, audioAssetPath: $audioAssetPath, sentences: $sentences, explanation: $explanation)';
+  return 'Question(id: $id, examId: $examId, section: $section, number: $number, type: $type, promptJa: $promptJa, options: $options, correctOptionId: $correctOptionId, audioAssetPath: $audioAssetPath, sentences: $sentences, explanation: $explanation, imageAssetPath: $imageAssetPath)';
 }
 
 
@@ -1134,7 +1136,7 @@ abstract mixin class _$QuestionCopyWith<$Res> implements $QuestionCopyWith<$Res>
   factory _$QuestionCopyWith(_Question value, $Res Function(_Question) _then) = __$QuestionCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation
+ String id, String examId, int section, int number, String type, String promptJa, List<AnswerOption> options, String? correctOptionId, String audioAssetPath, List<TranscriptSentence> sentences, QuestionExplanation? explanation, String? imageAssetPath
 });
 
 
@@ -1151,7 +1153,7 @@ class __$QuestionCopyWithImpl<$Res>
 
 /// Create a copy of Question
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? examId = null,Object? section = null,Object? number = null,Object? type = null,Object? promptJa = null,Object? options = null,Object? correctOptionId = freezed,Object? audioAssetPath = null,Object? sentences = null,Object? explanation = freezed,Object? imageAssetPath = freezed,}) {
   return _then(_Question(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,examId: null == examId ? _self.examId : examId // ignore: cast_nullable_to_non_nullable
@@ -1164,7 +1166,8 @@ as List<AnswerOption>,correctOptionId: freezed == correctOptionId ? _self.correc
 as String?,audioAssetPath: null == audioAssetPath ? _self.audioAssetPath : audioAssetPath // ignore: cast_nullable_to_non_nullable
 as String,sentences: null == sentences ? _self._sentences : sentences // ignore: cast_nullable_to_non_nullable
 as List<TranscriptSentence>,explanation: freezed == explanation ? _self.explanation : explanation // ignore: cast_nullable_to_non_nullable
-as QuestionExplanation?,
+as QuestionExplanation?,imageAssetPath: freezed == imageAssetPath ? _self.imageAssetPath : imageAssetPath // ignore: cast_nullable_to_non_nullable
+as String?,
   ));
 }
 

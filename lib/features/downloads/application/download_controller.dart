@@ -170,6 +170,7 @@ class DownloadController extends Notifier<Map<String, ExamDownloadState>> {
     return switch (inspection.status) {
       DownloadStatus.downloaded => ExamDownloadState.downloaded(
         localAudioPaths: inspection.localAudioPaths,
+        localImagePaths: inspection.localImagePaths,
         resourceVersion: inspection.resourceVersion,
       ),
       DownloadStatus.failed => const ExamDownloadState.failed(

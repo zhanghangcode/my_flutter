@@ -97,6 +97,7 @@ _Question _$QuestionFromJson(Map<String, dynamic> json) => _Question(
       : QuestionExplanation.fromJson(
           json['explanation'] as Map<String, dynamic>,
         ),
+  imageAssetPath: json['imageAssetPath'] as String?,
 );
 
 Map<String, dynamic> _$QuestionToJson(_Question instance) => <String, dynamic>{
@@ -111,6 +112,7 @@ Map<String, dynamic> _$QuestionToJson(_Question instance) => <String, dynamic>{
   'audioAssetPath': instance.audioAssetPath,
   'sentences': instance.sentences,
   'explanation': instance.explanation,
+  'imageAssetPath': instance.imageAssetPath,
 };
 
 _AnswerOption _$AnswerOptionFromJson(Map<String, dynamic> json) =>

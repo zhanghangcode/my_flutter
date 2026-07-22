@@ -8,6 +8,7 @@ import '../../../app/theme.dart';
 import '../../../core/widgets/async_states.dart';
 import '../../player/application/audio_player_controller.dart';
 import '../../practice/presentation/widgets/answer_options.dart';
+import '../../practice/presentation/widgets/question_image.dart';
 import '../application/test_session_controller.dart';
 
 /// 原文と正解を隠して問題を順番に解くテスト実施画面。
@@ -33,6 +34,9 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   /// セッション開始処理を一度だけ実行したかを示します。
   bool _started = false;
 
+  /// dispose 時に音声を停止するため、build 中に取得して保持する Controller。
+  AudioPlayerController? _audioPlayerController;
+
   @override
   /// 初回描画後に対象試験のテストセッションを開始します。
   void initState() {
@@ -51,8 +55,9 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   @override
   /// テストRouteを離れる時に再生中の音声を停止します。
   void dispose() {
-    // Route を離れた後もテスト音声が再生され続けないよう停止します。
-    unawaited(ref.read(audioPlayerControllerProvider.notifier).stop());
+    // Route の破棄後は ref.read が使えないため、build 中に保持した Controller を使用します。
+    final controller = _audioPlayerController;
+    if (controller != null) unawaited(controller.stop());
     super.dispose();
   }
 
@@ -61,6 +66,8 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
   Widget build(BuildContext context) {
     // AsyncValue を watch し、開始処理の loading・error・data を切り替えます。
     final sessionAsync = ref.watch(testSessionControllerProvider);
+    // Route の破棄時は ref.read を使えないため、必要な依存を事前に保持します。
+    _audioPlayerController = ref.read(audioPlayerControllerProvider.notifier);
     return PopScope(
       // システムの戻る操作も確認 Dialog を経由させ、誤終了を防ぎます。
       canPop: false,
@@ -132,6 +139,7 @@ class _TestSessionPageState extends ConsumerState<TestSessionPage> {
                         style: Theme.of(context).textTheme.headlineSmall,
                       ),
                       const SizedBox(height: 24),
+                      QuestionImage(question: question),
                       AnswerOptions(
                         question: question,
                         showPracticeActions: false,

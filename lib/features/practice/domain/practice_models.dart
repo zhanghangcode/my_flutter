@@ -116,6 +116,8 @@ abstract class Question with _$Question {
   /// 表示する問題番号、[audioAssetPath]は対応する音声Assetの相対pathです。
   /// [correctOptionId]が`null`の場合は採点情報未収録、[explanation]が`null`の場合は
   /// 解説未収録を表します。[sentences]の時間は問題音声の先頭を基準にします。
+  /// [imageAssetPath]が非`null`の場合、問題文に付随する図版を持つ「画像タイプ」の
+  /// 問題として扱います。
   const factory Question({
     required String id,
     required String examId,
@@ -128,6 +130,7 @@ abstract class Question with _$Question {
     required String audioAssetPath,
     required List<TranscriptSentence> sentences,
     QuestionExplanation? explanation,
+    String? imageAssetPath,
   }) = _Question;
 
   /// JSONから問題データを復元します。
@@ -181,6 +184,9 @@ abstract class TranscriptSentence with _$TranscriptSentence {
 
 /// 問題データの充足状況から、採点と本文同期が利用可能かを判定します。
 extension QuestionCapabilities on Question {
+  /// 問題文に付随する図版を持つ「画像タイプ」の問題かを返します。
+  bool get hasImage => imageAssetPath != null;
+
   /// 正解IDが実在する選択肢を参照している場合だけ採点可能とします。
   bool get isGradable {
     final correctId = correctOptionId;

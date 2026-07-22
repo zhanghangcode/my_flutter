@@ -15,6 +15,7 @@ import '../application/practice_detail_controller.dart';
 import '../domain/learning_repository.dart';
 import '../domain/practice_models.dart';
 import 'widgets/answer_options.dart';
+import 'widgets/question_image.dart';
 import 'widgets/transcript_list.dart';
 
 /// 本文、問題、組み合わせ、解説を切り替えて学習する練習詳細画面。
@@ -539,6 +540,7 @@ class _QuestionSection extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 22),
+        QuestionImage(question: question),
         AnswerOptions(question: question),
       ],
     );

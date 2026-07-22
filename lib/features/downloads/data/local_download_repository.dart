@@ -15,7 +15,7 @@ import '../domain/download_state.dart';
 /// Download Sourceから取得したZIPを展開・検証し、Drift Manifestと照合するRepository。
 ///
 /// 保存済みflagだけではなく、resource version、ファイル数、実在、非0-byte、`.part`の
-/// 不在を毎回確認します。検証に失敗した音声を再生可能として返すことはありません。
+/// 不在を毎回確認します。検証に失敗した音声・画像を再生・表示可能として返すことはありません。
 class LocalDownloadRepository implements DownloadRepository {
   /// 音声取得元、Manifest DB、保存先Directoryの解決方法を注入して生成します。
   LocalDownloadRepository(
@@ -25,10 +25,10 @@ class LocalDownloadRepository implements DownloadRepository {
   }) : _resolveBaseDirectory =
            resolveBaseDirectory ?? getApplicationSupportDirectory;
 
-  /// 問題別音声bytesの取得元です。
+  /// 問題別音声・画像bytesの取得元です。
   final DownloadSource _source;
 
-  /// 音声のLocal Manifestを永続化するDrift DBです。
+  /// 音声・画像のLocal Manifestを永続化するDrift DBです。
   final AppDatabase _database;
 
   /// Application Support Directoryまたはテスト用Directoryを返す関数です。
@@ -80,13 +80,24 @@ class LocalDownloadRepository implements DownloadRepository {
       return const DownloadInspection(status: DownloadStatus.notDownloaded);
     }
 
-    final paths = await _verifyAudioDirectory(summary, resource);
-    if (paths == null) {
+    final audioPaths = await _verifyAudioDirectory(summary, resource);
+    if (audioPaths == null) {
       return const DownloadInspection(status: DownloadStatus.notDownloaded);
+    }
+    // 画像を持つ問題が1つもない教材ではImage Directoryの検証自体を省略します。
+    final imageItems = _buildImageItems(resource);
+    var imagePaths = const <String, String>{};
+    if (imageItems.isNotEmpty) {
+      final verifiedImages = await _verifyImageDirectory(summary, imageItems);
+      if (verifiedImages == null) {
+        return const DownloadInspection(status: DownloadStatus.notDownloaded);
+      }
+      imagePaths = verifiedImages;
     }
     return DownloadInspection(
       status: DownloadStatus.downloaded,
-      localAudioPaths: paths,
+      localAudioPaths: audioPaths,
+      localImagePaths: imagePaths,
       resourceVersion: record.resourceVersion,
     );
   }
@@ -100,6 +111,7 @@ class LocalDownloadRepository implements DownloadRepository {
     _validateRequest(summary, resource);
     final examDirectory = await _examDirectory(summary.id);
     final audioDirectory = await _audioDirectory(summary.id);
+    final imageDirectory = await _imageDirectory(summary.id);
     final archiveFile = File(
       p.join(examDirectory.path, '${summary.id}.part.zip'),
     );
@@ -114,7 +126,11 @@ class LocalDownloadRepository implements DownloadRepository {
       await examDirectory.create(recursive: true);
       onProgress(0);
 
-      final items = _buildItems(resource);
+      // 音声は全問題必須、画像はimageAssetPathを持つ問題だけを対象にします。
+      final items = [
+        ..._buildAudioItems(resource),
+        ..._buildImageItems(resource),
+      ];
       await _source.downloadArchive(
         summary,
         resource,
@@ -138,6 +154,7 @@ class LocalDownloadRepository implements DownloadRepository {
       }
       final extractedFiles = extractedEntities.whereType<File>().toList();
       await audioDirectory.create(recursive: true);
+      await imageDirectory.create(recursive: true);
 
       for (var index = 0; index < items.length; index++) {
         final item = items[index];
@@ -147,10 +164,13 @@ class LocalDownloadRepository implements DownloadRepository {
             )
             .toList();
         if (matches.length != 1 || await matches.single.length() <= 0) {
-          throw StateError('missing or duplicate audio: ${item.questionId}');
+          throw StateError('missing or duplicate media: ${item.questionId}');
         }
 
-        final target = File(p.join(audioDirectory.path, item.fileName));
+        final targetDirectory = item.mediaType == _MediaType.audio
+            ? audioDirectory
+            : imageDirectory;
+        final target = File(p.join(targetDirectory.path, item.fileName));
         final partial = File('${target.path}.part');
         await matches.single.copy(partial.path);
         final sourceBytes = await matches.single.length();
@@ -169,9 +189,14 @@ class LocalDownloadRepository implements DownloadRepository {
       await _deleteIfExists(archiveFile);
       await _deleteDirectoryIfExists(extractedDirectory);
 
-      final paths = await _verifyAudioDirectory(summary, resource);
-      if (paths == null) {
+      final audioPaths = await _verifyAudioDirectory(summary, resource);
+      if (audioPaths == null) {
         throw StateError('download directory verification failed');
+      }
+      final imageItems = _buildImageItems(resource);
+      if (imageItems.isNotEmpty &&
+          await _verifyImageDirectory(summary, imageItems) == null) {
+        throw StateError('download image directory verification failed');
       }
       await _saveDownloadedManifest(summary, resource.questions.length);
       final verified = await inspect(summary, resource);
@@ -215,6 +240,23 @@ class LocalDownloadRepository implements DownloadRepository {
         : null;
   }
 
+  @override
+  Future<String?> resolveLocalImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+  ) async {
+    if (question.examId != summary.id ||
+        question.imageAssetPath == null ||
+        !resource.questions.any((item) => item.id == question.id)) {
+      return null;
+    }
+    final inspection = await inspect(summary, resource);
+    return inspection.isDownloaded
+        ? inspection.localImagePaths[question.id]
+        : null;
+  }
+
   /// Download対象のmetadataと試験内容が安全に対応しているかを確認します。
   void _validateRequest(ExamSummary summary, ExamResource resource) {
     if (summary.audioDeliveryMode != AudioDeliveryMode.downloadRequired) {
@@ -227,25 +269,48 @@ class LocalDownloadRepository implements DownloadRepository {
         resource.questions.length != summary.questionCount) {
       throw const ExamDownloadException('音声データの情報が正しくありません。');
     }
-    _buildItems(resource);
+    _buildAudioItems(resource);
+    _buildImageItems(resource);
   }
 
   /// questionIdと元音声の拡張子から、安全なLocal Manifest項目を生成します。
-  List<_ExpectedAudioFile> _buildItems(ExamResource resource) {
+  List<_ExpectedMediaFile> _buildAudioItems(ExamResource resource) {
     final questionIds = <String>{};
     return [
       for (final question in resource.questions)
         if (_safeId.hasMatch(question.id) &&
             questionIds.add(question.id) &&
             p.extension(question.audioAssetPath).isNotEmpty)
-          _ExpectedAudioFile(
+          _ExpectedMediaFile(
             questionId: question.id,
             sourcePath: question.audioAssetPath,
             fileName:
                 '${question.id}${p.extension(question.audioAssetPath).toLowerCase()}',
+            mediaType: _MediaType.audio,
           )
         else
           throw const ExamDownloadException('問題別音声の情報が正しくありません。'),
+    ];
+  }
+
+  /// imageAssetPathを持つ問題だけを対象に、安全なLocal Manifest項目を生成します。
+  ///
+  /// 画像を持たない問題は対象外とし、[ExamDownloadException]も送出しません。
+  List<_ExpectedMediaFile> _buildImageItems(ExamResource resource) {
+    return [
+      for (final question in resource.questions)
+        if (question.imageAssetPath case final imageAssetPath?)
+          if (_safeId.hasMatch(question.id) &&
+              p.extension(imageAssetPath).isNotEmpty)
+            _ExpectedMediaFile(
+              questionId: question.id,
+              sourcePath: imageAssetPath,
+              fileName:
+                  '${question.id}${p.extension(imageAssetPath).toLowerCase()}',
+              mediaType: _MediaType.image,
+            )
+          else
+            throw const ExamDownloadException('問題別画像の情報が正しくありません。'),
     ];
   }
 
@@ -264,7 +329,32 @@ class LocalDownloadRepository implements DownloadRepository {
     }
 
     final paths = <String, String>{};
-    for (final item in _buildItems(resource)) {
+    for (final item in _buildAudioItems(resource)) {
+      final file = File(p.join(directory.path, item.fileName));
+      if (!await file.exists() || await file.length() <= 0) return null;
+      paths[item.questionId] = file.path;
+    }
+    return Map.unmodifiable(paths);
+  }
+
+  /// Image Directory内の正式ファイル、サイズ、`.part`不在を確認してpath mapを返します。
+  ///
+  /// [imageItems]が空（画像を持つ問題が1つもない）の場合は呼び出し元で省略してください。
+  Future<Map<String, String>?> _verifyImageDirectory(
+    ExamSummary summary,
+    List<_ExpectedMediaFile> imageItems,
+  ) async {
+    final directory = await _imageDirectory(summary.id);
+    if (!await directory.exists()) return null;
+    final entities = await directory.list(followLinks: false).toList();
+    if (entities.any((entity) => entity.path.endsWith('.part')) ||
+        entities.length != imageItems.length ||
+        entities.whereType<File>().length != imageItems.length) {
+      return null;
+    }
+
+    final paths = <String, String>{};
+    for (final item in imageItems) {
       final file = File(p.join(directory.path, item.fileName));
       if (!await file.exists() || await file.length() <= 0) return null;
       paths[item.questionId] = file.path;
@@ -317,6 +407,12 @@ class LocalDownloadRepository implements DownloadRepository {
     return Directory(p.join(base.path, _relativeAudioDirectory(examId)));
   }
 
+  /// 問題別画像ファイルを保存するDirectoryを返します。
+  Future<Directory> _imageDirectory(String examId) async {
+    final base = await _resolveBaseDirectory();
+    return Directory(p.join(base.path, 'downloads', 'exams', examId, 'images'));
+  }
+
   /// 成功後の一時ZIPを削除します。削除失敗は検証済み音声を無効にしません。
   Future<void> _deleteIfExists(File file) async {
     try {
@@ -336,15 +432,26 @@ class LocalDownloadRepository implements DownloadRepository {
   }
 }
 
+/// ZIP内の元ファイルが音声・画像のどちらとして保存されるかを表します。
+enum _MediaType {
+  /// 問題別音声ファイルです。
+  audio,
+
+  /// 問題別画像ファイルです。
+  image,
+}
+
 /// ZIP内の元ファイル名と検証後のLocalファイル名を対応付けます。
-class _ExpectedAudioFile {
-  const _ExpectedAudioFile({
+class _ExpectedMediaFile {
+  const _ExpectedMediaFile({
     required this.questionId,
     required this.sourcePath,
     required this.fileName,
+    required this.mediaType,
   });
 
   final String questionId;
   final String sourcePath;
   final String fileName;
+  final _MediaType mediaType;
 }

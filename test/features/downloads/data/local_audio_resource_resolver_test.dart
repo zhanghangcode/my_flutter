@@ -74,4 +74,11 @@ class _ResolverDownloadRepository implements DownloadRepository {
     ExamResource resource,
     Question question,
   ) async => localPath;
+
+  @override
+  Future<String?> resolveLocalImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+  ) async => null;
 }

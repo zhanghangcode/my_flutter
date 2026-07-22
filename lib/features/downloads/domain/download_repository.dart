@@ -7,6 +7,7 @@ class DownloadInspection {
   const DownloadInspection({
     required this.status,
     this.localAudioPaths = const {},
+    this.localImagePaths = const {},
     this.resourceVersion = 0,
   });
 
@@ -15,6 +16,10 @@ class DownloadInspection {
 
   /// questionIdをキーとする検証済みLocal Fileの絶対pathです。
   final Map<String, String> localAudioPaths;
+
+  /// 画像を持つ問題のquestionIdをキーとする検証済みLocal Fileの絶対pathです。
+  /// 画像を持たない問題のキーは含みません。
+  final Map<String, String> localImagePaths;
 
   /// 検証済みの音声リソースversionです。
   final int resourceVersion;
@@ -62,6 +67,16 @@ abstract interface class DownloadRepository {
   ///
   /// Manifestまたは実ファイルが不完全な場合は`null`を返し、Assetへはfallbackしません。
   Future<String?> resolveLocalAudioPath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+  );
+
+  /// 検証済みManifestから[question]の図版に対応するLocal File pathを返します。
+  ///
+  /// [question]が画像を持たない、またはManifest・実ファイルが不完全な場合は`null`を
+  /// 返し、Assetへはfallbackしません。
+  Future<String?> resolveLocalImagePath(
     ExamSummary summary,
     ExamResource resource,
     Question question,

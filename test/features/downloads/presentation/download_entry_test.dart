@@ -215,6 +215,13 @@ class _EntryDownloadRepository implements DownloadRepository {
     Question question,
   ) async => downloaded ? '/local/q1.mp3' : null;
 
+  @override
+  Future<String?> resolveLocalImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+  ) async => null;
+
   /// 保存完了時に返す固定検査結果です。
   static const inspection = DownloadInspection(
     status: DownloadStatus.downloaded,

@@ -208,6 +208,64 @@ void main() {
     expect(inspection.status, DownloadStatus.failed);
   });
 
+  test(
+    'imageAssetPathを持つ問題は画像も一緒にダウンロードしresolveLocalImagePathで解決できる',
+    () async {
+      final resource = _resourceWithImage();
+      final zipSource = _ZipDownloadSource((archive) {
+        archive.addFile(
+          ArchiveFile.bytes('assets/audio/q1.mp3', Uint8List.fromList([1])),
+        );
+        archive.addFile(
+          ArchiveFile.bytes('assets/audio/q2.m4a', Uint8List.fromList([2])),
+        );
+        archive.addFile(
+          ArchiveFile.bytes('assets/images/q1.jpg', Uint8List.fromList([3, 4])),
+        );
+      });
+      final zipRepository = LocalDownloadRepository(
+        zipSource,
+        database,
+        resolveBaseDirectory: () async => temporaryDirectory,
+      );
+
+      final inspection = await zipRepository.download(
+        _summary(),
+        resource,
+        onProgress: (_) {},
+      );
+
+      expect(inspection.status, DownloadStatus.downloaded);
+      expect(inspection.localAudioPaths, hasLength(2));
+      // q2はimageAssetPathを持たないため、localImagePathsにはq1だけが含まれます。
+      expect(inspection.localImagePaths.keys, {'q1'});
+      expect(
+        inspection.localImagePaths['q1'],
+        p.join(
+          temporaryDirectory.path,
+          'downloads',
+          'exams',
+          'exam',
+          'images',
+          'q1.jpg',
+        ),
+      );
+
+      final q1Path = await zipRepository.resolveLocalImagePath(
+        _summary(),
+        resource,
+        resource.questions.first,
+      );
+      expect(q1Path, inspection.localImagePaths['q1']);
+      final q2Path = await zipRepository.resolveLocalImagePath(
+        _summary(),
+        resource,
+        resource.questions.last,
+      );
+      expect(q2Path, isNull);
+    },
+  );
+
   test('途中取得が失敗した場合は試験Directoryを削除してfailed Manifestを保存する', () async {
     source.errors['assets/audio/q2.m4a'] = StateError('source failure');
 
@@ -322,6 +380,38 @@ ExamResource _resource() => const ExamResource(
       options: [],
       audioAssetPath: 'assets/audio/q1.mp3',
       sentences: [],
+    ),
+    Question(
+      id: 'q2',
+      examId: 'exam',
+      section: 1,
+      number: 2,
+      type: 'demo',
+      promptJa: '問題2',
+      options: [],
+      audioAssetPath: 'assets/audio/q2.m4a',
+      sentences: [],
+    ),
+  ],
+);
+
+/// q1だけがimageAssetPathを持つ試験を生成します。
+ExamResource _resourceWithImage() => const ExamResource(
+  schemaVersion: 2,
+  id: 'exam',
+  titleJa: '2026年7月',
+  questions: [
+    Question(
+      id: 'q1',
+      examId: 'exam',
+      section: 1,
+      number: 1,
+      type: 'demo',
+      promptJa: '問題1',
+      options: [],
+      audioAssetPath: 'assets/audio/q1.mp3',
+      sentences: [],
+      imageAssetPath: 'assets/images/q1.jpg',
     ),
     Question(
       id: 'q2',

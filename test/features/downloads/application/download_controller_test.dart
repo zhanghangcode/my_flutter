@@ -101,6 +101,13 @@ class _FakeDownloadRepository implements DownloadRepository {
     ExamResource resource,
     Question question,
   ) async => null;
+
+  @override
+  Future<String?> resolveLocalImagePath(
+    ExamSummary summary,
+    ExamResource resource,
+    Question question,
+  ) async => null;
 }
 
 const _summary = ExamSummary(

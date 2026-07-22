@@ -235,6 +235,79 @@ void main() {
     );
   });
 
+  test('画像タイプの問題はBundle Assetを検証してhasImageをtrueにする', () async {
+    final repository = AssetPracticeRepository(
+      bundle: _bundleFor(
+        question: _question(imageAssetPath: 'assets/images/q1.jpg'),
+        includeImage: true,
+      ),
+    );
+
+    final resource = await repository.getExam('exam');
+    final question = resource.questions.single;
+    expect(question.hasImage, isTrue);
+    expect(question.imageAssetPath, 'assets/images/q1.jpg');
+  });
+
+  test('画像を持たない問題はimageAssetPathがnullでhasImageがfalse', () async {
+    final repository = AssetPracticeRepository(
+      bundle: _bundleFor(question: _question()),
+    );
+
+    final resource = await repository.getExam('exam');
+    final question = resource.questions.single;
+    expect(question.hasImage, isFalse);
+    expect(question.imageAssetPath, isNull);
+  });
+
+  test(
+    'rejects missing or zero-byte image assets and empty imageAssetPath',
+    () async {
+      final missingImageRepository = AssetPracticeRepository(
+        bundle: _bundleFor(
+          question: _question(imageAssetPath: 'assets/images/q1.jpg'),
+          includeImage: false,
+        ),
+      );
+      await expectLater(
+        missingImageRepository.getExam('exam'),
+        throwsA(
+          isA<ContentValidationException>().having(
+            (error) => error.toString(),
+            'message',
+            allOf(contains('q1'), contains('assets/images/q1.jpg')),
+          ),
+        ),
+      );
+
+      final zeroByteImageRepository = AssetPracticeRepository(
+        bundle: _bundleFor(
+          question: _question(imageAssetPath: 'assets/images/q1.jpg'),
+          includeImage: true,
+          imageBytes: const [],
+        ),
+      );
+      await expectLater(
+        zeroByteImageRepository.getExam('exam'),
+        throwsA(isA<ContentValidationException>()),
+      );
+
+      final emptyPathRepository = AssetPracticeRepository(
+        bundle: _bundleFor(question: _question(imageAssetPath: '')),
+      );
+      await expectLater(
+        emptyPathRepository.getExam('exam'),
+        throwsA(
+          isA<ContentValidationException>().having(
+            (error) => error.toString(),
+            'message',
+            contains('画像pathが空です'),
+          ),
+        ),
+      );
+    },
+  );
+
   test('rejects invalid audio delivery mode and resource version', () async {
     AssetPracticeRepository repositoryFor(Map<String, dynamic> summary) {
       return AssetPracticeRepository(
@@ -295,7 +368,7 @@ Map<String, dynamic> _resource({
   'questions': [question],
 };
 
-Map<String, dynamic> _question() => {
+Map<String, dynamic> _question({String? imageAssetPath}) => {
   'id': 'q1',
   'examId': 'exam',
   'section': 1,
@@ -309,6 +382,7 @@ Map<String, dynamic> _question() => {
     {'id': 'q1_s1', 'order': 0, 'textJa': '本文'},
   ],
   'explanation': null,
+  'imageAssetPath': imageAssetPath,
 };
 
 AssetBundle _bundleFor({
@@ -316,7 +390,10 @@ AssetBundle _bundleFor({
   bool includeAudio = true,
   List<int> audioBytes = const [1],
   int questionCount = 1,
+  bool includeImage = false,
+  List<int> imageBytes = const [1],
 }) {
+  final imageAssetPath = question['imageAssetPath'] as String?;
   final assets = <String, List<int>>{
     'assets/data/catalog.json': utf8.encode(
       jsonEncode({
@@ -328,6 +405,8 @@ AssetBundle _bundleFor({
       jsonEncode(_resource(id: 'exam', question: question)),
     ),
     if (includeAudio) 'assets/audio/q1.mp3': audioBytes,
+    if (includeImage && imageAssetPath != null && imageAssetPath.isNotEmpty)
+      imageAssetPath: imageBytes,
   };
   return _MemoryAssetBundle(assets);
 }
