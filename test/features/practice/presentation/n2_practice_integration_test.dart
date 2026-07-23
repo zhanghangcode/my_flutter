@@ -195,10 +195,8 @@ void main() {
     expect(audio.playCount, greaterThan(playCountBeforeSingleRepeat));
     expect(find.text('男の学生は、この後まず何をしますか'), findsOneWidget);
 
-    // 解説がない教材は空欄や例外ではなく、明示的な案内を表示します。
-    await tester.tap(find.text('説明文'));
-    await tester.pumpAndSettle();
-    expect(find.text('解説は未収録です'), findsOneWidget);
+    // 説明文タブは非表示のため、他のタブだけが操作対象です。
+    expect(find.text('説明文'), findsNothing);
 
     // 音源load失敗後も目標問題に留まり、SnackBar表示後は戻る操作を行えます。
     await tester.tap(find.text('問題'));

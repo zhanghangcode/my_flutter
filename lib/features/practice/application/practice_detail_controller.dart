@@ -184,7 +184,7 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
         state.questionId == questionId && state.isChangingQuestion;
     state = PracticeDetailState(
       questionId: questionId,
-      mode: preferredMode ?? state.mode,
+      mode: _visibleMode(preferredMode ?? state.mode),
       loading: true,
       currentQuestionIndex: continuingChange ? state.currentQuestionIndex : -1,
       questionCount: continuingChange ? state.questionCount : 0,
@@ -203,10 +203,9 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
       await _learningRepository.markQuestionOpened(questionId);
       state = PracticeDetailState(
         questionId: questionId,
-        mode:
-            preferredMode ??
-            progress?.lastContentMode ??
-            ContentMode.transcript,
+        mode: _visibleMode(
+          preferredMode ?? progress?.lastContentMode ?? ContentMode.transcript,
+        ),
         savedAnswer: answer,
         currentQuestionIndex: index,
         questionCount: exam.questions.length,
@@ -215,7 +214,7 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
     } catch (error) {
       state = PracticeDetailState(
         questionId: questionId,
-        mode: preferredMode ?? state.mode,
+        mode: _visibleMode(preferredMode ?? state.mode),
         currentQuestionIndex: continuingChange
             ? state.currentQuestionIndex
             : -1,
@@ -230,6 +229,13 @@ class PracticeDetailController extends Notifier<PracticeDetailState> {
   ///
   /// [mode]は次回rebuildで表示するContentModeです。
   void setMode(ContentMode mode) => state = state.copyWith(mode: mode);
+
+  /// タブを非表示にした`explanation`を、UIから選択可能な既定モードへ読み替えます。
+  ///
+  /// Driftに保存済みの`lastContentMode`が`explanation`のまま復元されても、
+  /// タブの無い状態を防ぎます。
+  ContentMode _visibleMode(ContentMode mode) =>
+      mode == ContentMode.explanation ? ContentMode.transcript : mode;
 
   /// 未提出時だけ選択中の回答を更新します。
   ///

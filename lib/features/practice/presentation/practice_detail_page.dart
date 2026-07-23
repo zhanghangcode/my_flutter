@@ -659,7 +659,9 @@ class _ModeSelector extends StatelessWidget {
         ),
         child: Row(
           children: [
-            for (final mode in ContentMode.values)
+            for (final mode in ContentMode.values.where(
+              (mode) => mode != ContentMode.explanation,
+            ))
               Expanded(
                 child: InkWell(
                   onTap: () => onSelected(mode),
